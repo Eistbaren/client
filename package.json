@@ -30,6 +30,9 @@
       "react-app/jest"
     ]
   },
+  "simple-git-hooks": {
+    "pre-commit": "npm run lint-fix"
+  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -50,6 +53,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.29.4",
-    "prettier": "^2.6.2"
+    "prettier": "^2.6.2",
+    "simple-git-hooks": "^2.7.0"
   }
 }
