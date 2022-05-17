@@ -1,5 +1,7 @@
 # Reservation-Bear frontend
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/950b4d8b136c485eb446a7e22269716a)](https://app.codacy.com/gh/Eistbaren/frontend?utm_source=github.com&utm_medium=referral&utm_content=Eistbaren/frontend&utm_campaign=Badge_Grade_Settings)
+
 This is the frontend of [Reservation-Bear](reaservation-bear.de).
 
 ## Available Scripts
