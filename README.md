@@ -2,6 +2,8 @@
 
 This is the frontend of [Reservation-Bear](reaservation-bear.de).
 
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/1d91f35265e748f785c39df0b05ea004)](https://www.codacy.com/gh/Eistbaren/frontend/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Eistbaren/frontend&amp;utm_campaign=Badge_Grade)
+
 ## Available Scripts
 
 In the project directory, you can run:
