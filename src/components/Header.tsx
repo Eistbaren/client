@@ -8,13 +8,16 @@ import {
   Typography,
 } from '@mui/material';
 
+/**
+ * Bootstrap function
+ * @return {JSX.Element}
+ */
 export default function Header() {
   const steps = [
     'Find a place to eat',
     'Select a timeslot and table',
     'Reserve your table',
   ];
-
   return (
     <AppBar position='sticky'>
       <Toolbar>

@@ -1,6 +1,11 @@
 import { CssBaseline } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
+/**
+ * Bootstrap function
+ * @param  {any} props accepts JSX elements to wrap theme in
+ * @return {JSX.Element}
+ */
 export default function Theme(props: any) {
   const { children } = props;
 
@@ -33,7 +38,6 @@ export default function Theme(props: any) {
       },
     },
   });
-
   return (
     <ThemeProvider theme={Theme}>
       <CssBaseline />

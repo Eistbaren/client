@@ -6,6 +6,10 @@ import RestaurantDetails from '../pages/RestaurantDetails';
 import ReservationDetails from '../pages/ReservationDetails';
 import ReservationApproval from '../pages/ReservationApproval';
 
+/**
+ * Landingpage component
+ * @return {JSX.Element}
+ */
 export default function Routing() {
   return (
     <BrowserRouter>

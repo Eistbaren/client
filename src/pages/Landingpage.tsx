@@ -2,8 +2,6 @@
  * Landingpage component
  * @return {JSX.Element}
  */
-function Landingpage() {
+export default function Landingpage() {
   return <div>Landing Page</div>;
 }
-
-export default Landingpage;
