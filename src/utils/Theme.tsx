@@ -15,10 +15,12 @@ export default function Theme(props: any) {
       primary: {
         main: '#81a1c1',
         dark: '#5e81ac',
+        contrastText: '#fff',
       },
       secondary: {
         main: '#88c0d0',
         light: '#8fbcbb',
+        contrastText: '#3b4252',
       },
       error: {
         main: '#bf616a',
@@ -33,7 +35,7 @@ export default function Theme(props: any) {
         main: '#a3be8c',
       },
       text: {
-        primary: '#4C566A',
+        primary: '#2e3440',
         secondary: '#4c566a',
       },
     },
