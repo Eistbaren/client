@@ -1,8 +1,9 @@
 import './App.css';
 
-import Header from './components/Header';
 import Theme from './utils/Theme';
 import Routing from './utils/Routing';
+
+import './css/index.css';
 
 /**
  * Bootstrap function
@@ -11,7 +12,6 @@ import Routing from './utils/Routing';
 function App() {
   return (
     <Theme>
-      <Header />
       <Routing />
     </Theme>
   );
