@@ -8,9 +8,6 @@ import {
   IconButton,
 } from '@mui/material';
 import { CalendarPicker, TimePicker } from '@mui/x-date-pickers';
-import InstagramIcon from '@mui/icons-material/Instagram';
-import FacebookIcon from '@mui/icons-material/Facebook';
-import LanguageIcon from '@mui/icons-material/Language';
 import InfoIcon from '@mui/icons-material/Info';
 import BookIcon from '@mui/icons-material/Book';
 

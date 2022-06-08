@@ -6,7 +6,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
  * @param  {any} props accepts JSX elements to wrap theme in
  * @return {JSX.Element}
  */
-export default function Theme(props: any) {
+export default function Theme(props: { children: JSX.Element }) {
   const { children } = props;
 
   const Theme = createTheme({
