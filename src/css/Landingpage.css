@@ -28,7 +28,7 @@
   height: 100vh;
   position: fixed;
   z-index: -1;
-  top: 0px;
+  top: 0;
   right: 0;
   background-image: linear-gradient(
       0deg,
@@ -66,8 +66,8 @@
   margin: 10px 0 40px 0 !important;
   max-height: 100% !important;
   border-radius: 5px;
-  box-shadow: rgba(50, 50, 93, 0.15) 0px 60px 105px -22px,
-    rgba(0, 0, 0, 0.15) 0px 50px 55px -33px;
+  box-shadow: rgba(50, 50, 93, 0.15) 0 60px 105px -22px,
+    rgba(0, 0, 0, 0.15) 0 50px 55px -33px;
   background-color: white;
 }
 
