@@ -2,6 +2,8 @@
   display: grid;
   grid-template-columns: 55% 45%;
   align-items: center;
+  margin: auto;
+  align-self: center;
 }
 
 .hero-content {

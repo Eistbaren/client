@@ -8,5 +8,10 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
+}
+
+.root-container {
+  flex-grow: 1;
+  display: flex !important;
 }

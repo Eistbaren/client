@@ -8,5 +8,9 @@ import Container from '@mui/material/Container';
 export default function PageTemplate(props: any) {
   const { children } = props;
 
-  return <Container maxWidth='lg'>{children}</Container>;
+  return (
+    <Container className='root-container' maxWidth='lg'>
+      {children}
+    </Container>
+  );
 }

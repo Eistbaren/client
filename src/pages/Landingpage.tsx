@@ -4,11 +4,15 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Stack,
+  Tooltip,
+  IconButton,
 } from '@mui/material';
 import { CalendarPicker, TimePicker } from '@mui/x-date-pickers';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import LanguageIcon from '@mui/icons-material/Language';
+import InfoIcon from '@mui/icons-material/Info';
+import BookIcon from '@mui/icons-material/Book';
 
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -105,9 +109,16 @@ export default function Landingpage() {
         </LocalizationProvider>
         <div className='background-image'></div>
         <div className='social-icons'>
-          <InstagramIcon fontSize='large' className='social-icon' />
-          <FacebookIcon fontSize='large' className='social-icon' />
-          <LanguageIcon fontSize='large' className='social-icon' />
+          <Tooltip title='Imprint' placement='right' arrow>
+            <IconButton>
+              <InfoIcon fontSize='large' className='social-icon' />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title='Documentation' placement='right' arrow>
+            <IconButton>
+              <BookIcon fontSize='large' className='social-icon' />
+            </IconButton>
+          </Tooltip>
         </div>
       </div>
     </div>

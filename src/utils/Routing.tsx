@@ -30,7 +30,6 @@ export default function Routing() {
           />
         </Routes>
       </PageTemplate>
-      <Footer />
     </BrowserRouter>
   );
 }
