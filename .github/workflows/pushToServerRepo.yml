@@ -40,9 +40,9 @@ jobs:
           ssh-agent -a $SSH_AUTH_SOCK > /dev/null
           ssh-add - <<< "${{ secrets.SERVER_REPO_SSH_KEY }}"
 
-      - name: Clone bitbucket repo
+      - name: Clone server repo
         run: |
-          git clone ssh://git@github.com:Eistbaren/server.git server
+          git clone git@github.com:Eistbaren/server.git server
 
       - name: Update submodule in server to current commit
         run: |
