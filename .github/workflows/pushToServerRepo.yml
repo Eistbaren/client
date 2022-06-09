@@ -1,0 +1,70 @@
+name: 'Push to server repo'
+
+on:
+  push:
+    branches: [main, workflow/pushToServerRepo]
+
+permissions:
+  contents: read
+
+jobs:
+  pushToBitbucket:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone client repo
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ github.repository }}
+          path: client
+          submodules: true
+
+      - name: Prepare environment
+        run: |
+          cd client
+          export COMMIT_USER=$(git log -n 1 --pretty=format:%an)
+          echo "COMMIT_USER=$COMMIT_USER" >> $GITHUB_ENV
+          export COMMIT_EMAIL=$(git log -n 1 --pretty=format:%ae)
+          echo "COMMIT_EMAIL=$COMMIT_EMAIL" >> $GITHUB_ENV
+          export COMMIT_HASH=$(git rev-parse HEAD)
+          echo "COMMIT_HASH=$COMMIT_HASH" >> $GITHUB_ENV
+
+          git log -1 --pretty=%B > ../COMMIT_MESSAGE
+          cd ..
+          echo "SSH_AUTH_SOCK=/tmp/ssh_agent.sock" >> $GITHUB_ENV
+          export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" 
+          echo "GIT_SSH_COMMAND=$GIT_SSH_COMMAND" >> $GITHUB_ENV
+
+      # The public key for this key is a deploy key in the server repo
+      - name: Setup SSH Key
+        run: |
+          ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+          ssh-add - <<< "${{ secrets.SERVER_REPO_SSH_KEY }}"
+
+      - name: Clone bitbucket repo
+        run: |
+          git clone ssh://git@github.com:Eistbaren/server.git server
+
+      - name: Update submodule in server to current commit
+        run: |
+          cd server
+          git submodule update --init
+          cd client
+          # This is necessary to make sure all commits are pushed
+          # sperately in case a commit is added while this workflow runs.
+          git checkout $COMMIT_HASH
+          cd ../..
+
+      - name: Commit and push server repo
+        run: |
+          cd server
+          git config user.name "$COMMIT_USER"
+          git config user.email "$COMMIT_EMAIL"
+          git add --all -f
+          git diff-index --quiet HEAD || git commit -a -F ../COMMIT_MESSAGE
+          #git push
+
+      - name: Upload aritfacts (JUST FOR TESTING!!)
+        uses: actions/upload-artifact@v3
+        with:
+          name: server
+          path: server
