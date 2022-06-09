@@ -2,7 +2,7 @@ name: 'Push to server repo'
 
 on:
   push:
-    branches: [main, workflow/pushToServerRepo]
+    branches: [main]
 
 permissions:
   contents: read
@@ -61,10 +61,4 @@ jobs:
           git config user.email "$COMMIT_EMAIL"
           git add --all -f
           git diff-index --quiet HEAD || git commit -a -F ../COMMIT_MESSAGE
-          #git push
-
-      - name: Upload aritfacts (JUST FOR TESTING!!)
-        uses: actions/upload-artifact@v3
-        with:
-          name: server
-          path: server
+          git push
