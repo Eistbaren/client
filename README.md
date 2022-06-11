@@ -1,8 +1,20 @@
-# Reservation-Bear frontend
+<h1 align="center">
+  Reservation-Bear client
+</h1>
+<p align="center">
+  <a href="https://www.codacy.com/gh/Eistbaren/client/dashboard?utm_source=github.com&utm_medium=referral&utm_content=Eistbaren/client&utm_campaign=Badge_Grade">
+    <img alt="Codacy Badge" src="https://app.codacy.com/project/badge/Grade/1d91f35265e748f785c39df0b05ea004" />
+  </a>
+  <a href="https://github.com/Eistbaren/client/actions/workflows/pushToServerRepo.yml">
+    <img alt="Push to server repo" src="https://github.com/Eistbaren/client/actions/workflows/pushToServerRepo.yml/badge.svg" />
+  </a>
+  <a href="https://github.com/Eistbaren/client/actions/workflows/build-and-deploy.yml">
+    <img alt="Build and deploy" src="https://github.com/Eistbaren/client/actions/workflows/build-and-deploy.yml/badge.svg" />
+  </a>
+</p>
 
-This is the frontend of [Reservation-Bear](reaservation-bear.de).
-
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/1d91f35265e748f785c39df0b05ea004)](https://www.codacy.com/gh/Eistbaren/frontend/dashboard?utm_source=github.com&utm_medium=referral&utm_content=Eistbaren/frontend&utm_campaign=Badge_Grade)
+Client of the Reservation-Bear. 🐻‍❄️  
+Hosted at [reservation-bear.de](https://reservation-bear.de).
 
 ## Available Scripts
 
