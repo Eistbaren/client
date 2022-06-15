@@ -20,7 +20,9 @@ import {
   Rating,
   Link,
 } from '@mui/material';
+
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 import '../css/SearchPage.css';
 
@@ -114,10 +116,16 @@ export default function SearchPage() {
             </Grid>
           ))}
 
-          <Grid item xs={12}>
+          <Grid item xs={9.6}>
             <Typography gutterBottom variant='h4' component='div'>
               Results
             </Typography>
+          </Grid>
+
+          <Grid item xs={2.4}>
+            <Button variant='contained' startIcon={<LocationOnIcon />}>
+              View on map
+            </Button>
           </Grid>
 
           {restaurants.map(restaurant => (
