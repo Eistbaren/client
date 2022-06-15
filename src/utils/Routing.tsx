@@ -3,7 +3,7 @@ import Header from '../components/Header';
 import PageTemplate from '../components/PageTemplate';
 
 import Landingpage from '../pages/Landingpage';
-import Restaurants from '../pages/Restaurants';
+import SearchPage from '../pages/SearchPage';
 import RestaurantDetails from '../pages/RestaurantDetails';
 import ReservationDetails from '../pages/ReservationDetails';
 import ReservationApproval from '../pages/ReservationApproval';
@@ -19,7 +19,7 @@ export default function Routing() {
       <PageTemplate>
         <Routes>
           <Route path='/' element={<Landingpage />} />
-          <Route path='restaurants' element={<Restaurants />}>
+          <Route path='search' element={<SearchPage />}>
             <Route path=':restaurantId' element={<RestaurantDetails />} />
           </Route>
           <Route path='reservations' element={<ReservationDetails />} />
