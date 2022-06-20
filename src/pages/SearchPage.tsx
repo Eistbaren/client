@@ -19,12 +19,24 @@ import {
   CardActions,
   Rating,
   Link,
+  Modal,
+  Box,
+  Fade,
 } from '@mui/material';
 
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 import '../css/SearchPage.css';
+import React from 'react';
+import internal from 'stream';
+
+interface Restaurant {
+  id: string;
+  name: string;
+  averageRating: number;
+  website: string;
+}
 
 /**
  * Bootstrap function
@@ -54,7 +66,7 @@ export default function SearchPage() {
     },
   ];
 
-  const restaurants = [
+  const restaurants: Restaurant[] = [
     {
       id: 'bla',
       name: 'Restaurant',
@@ -74,6 +86,21 @@ export default function SearchPage() {
       website: 'https://tum.de',
     },
   ];
+
+  const [detailModalRestaurant, setDetailModalRestaurant] =
+    React.useState<Restaurant>({
+      id: '',
+      name: '',
+      averageRating: 0,
+      website: '',
+    });
+  const [detailModalOpen, setDetailModalOpen] = React.useState(false);
+
+  const openDetailModal = (restaurant: Restaurant) => {
+    setDetailModalRestaurant(restaurant);
+    setDetailModalOpen(true);
+  };
+  const handleDetailModalClose = () => setDetailModalOpen(false);
 
   return (
     <>
@@ -130,7 +157,12 @@ export default function SearchPage() {
 
           {restaurants.map(restaurant => (
             <Grid item xs={2.4} key={restaurant.id}>
-              <Card>
+              <Card
+                onClick={() => {
+                  openDetailModal(restaurant);
+                }}
+                className='restaurant-card'
+              >
                 <CardMedia
                   component='img'
                   height='140'
@@ -147,10 +179,23 @@ export default function SearchPage() {
                     readOnly
                   />
                   <br></br>
-                  <Link href={restaurant.website}>Visit website</Link>
+                  <Link
+                    href={restaurant.website}
+                    target='_blank'
+                    onClick={e => {
+                      e.stopPropagation();
+                    }}
+                  >
+                    Visit website
+                  </Link>
                 </CardContent>
                 <CardActions>
-                  <Button variant='outlined' startIcon={<ChevronRightIcon />}>
+                  <Button
+                    startIcon={<ChevronRightIcon />}
+                    onClick={e => {
+                      e.stopPropagation();
+                    }}
+                  >
                     Reserve
                   </Button>
                 </CardActions>
@@ -159,6 +204,31 @@ export default function SearchPage() {
           ))}
         </Grid>
       </div>
+
+      <Modal
+        open={detailModalOpen}
+        onClose={handleDetailModalClose}
+        aria-labelledby='modal-modal-title'
+        aria-describedby='modal-modal-description'
+      >
+        <Fade in={detailModalOpen}>
+          <Card className='restaurant-detail-modal'>
+            <Grid container spacing={2}>
+              <Grid item xs={8}>
+                <Typography gutterBottom variant='h4' component='div'>
+                  {detailModalRestaurant!.name}
+                </Typography>
+              </Grid>
+
+              <Grid item xs={2}>
+                <Button variant='contained' startIcon={<ChevronRightIcon />}>
+                  Reserve
+                </Button>
+              </Grid>
+            </Grid>
+          </Card>
+        </Fade>
+      </Modal>
     </>
   );
 }
