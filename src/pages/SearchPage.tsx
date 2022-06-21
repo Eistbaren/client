@@ -26,6 +26,7 @@ import {
   Divider,
   ImageListItem,
   ImageListItemBar,
+  Avatar,
 } from '@mui/material';
 
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -300,7 +301,7 @@ export default function SearchPage() {
               </Grid>
 
               <Grid item xs={5}>
-                <Typography gutterBottom>
+                <Typography>
                   Opening hours:{' '}
                   {new Date(
                     detailModalRestaurant.openingHours.from * 1000,
@@ -337,6 +338,43 @@ export default function SearchPage() {
               <Grid item xs={12}>
                 <Divider />
               </Grid>
+
+              <Grid item xs={12}>
+                <Typography gutterBottom variant='h4' component='div'>
+                  Comments
+                </Typography>
+              </Grid>
+
+              {[
+                {
+                  rating: 3,
+                  comment: 'Essen ok, aber zu wenig!',
+                  name: 'Hungry Client',
+                },
+                {
+                  rating: 5,
+                  comment: 'Exzellentes Essen!',
+                  name: 'Exzellenter Mensch',
+                },
+              ].map((comment, commentKey) => (
+                <>
+                  <Grid item xs={1}>
+                    <Avatar
+                      alt={comment.name}
+                      src='/static/images/avatar/1.jpg'
+                    />
+                  </Grid>
+                  <Grid item>{comment.name}</Grid>
+                  <Grid item>
+                    <Rating
+                      name='simple-controlled'
+                      value={comment.rating}
+                      readOnly
+                    />
+                  </Grid>
+                  <Grid xs={12}>{comment.comment}</Grid>
+                </>
+              ))}
             </Grid>
           </Card>
         </Fade>
