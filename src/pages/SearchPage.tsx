@@ -22,6 +22,10 @@ import {
   Modal,
   Box,
   Fade,
+  ImageList,
+  Divider,
+  ImageListItem,
+  ImageListItemBar,
 } from '@mui/material';
 
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -36,6 +40,7 @@ interface Restaurant {
   name: string;
   averageRating: number;
   website: string;
+  images: string[];
 }
 
 /**
@@ -72,18 +77,36 @@ export default function SearchPage() {
       name: 'Restaurant',
       averageRating: 3,
       website: 'https://tum.de',
+      images: [
+        '/images/background_3.jpg',
+        'images/hero.jpg',
+        '/images/background_3.jpg',
+        'images/hero.jpg',
+      ],
     },
     {
       id: 'bla1',
       name: 'Restaurant1',
       averageRating: 2,
       website: 'https://tum.de',
+      images: [
+        '/images/background_3.jpg',
+        'images/hero.jpg',
+        '/images/background_3.jpg',
+        'images/hero.jpg',
+      ],
     },
     {
       id: 'bla2',
       name: 'Restaurant2',
       averageRating: 4,
       website: 'https://tum.de',
+      images: [
+        '/images/background_3.jpg',
+        'images/hero.jpg',
+        '/images/background_3.jpg',
+        'images/hero.jpg',
+      ],
     },
   ];
 
@@ -93,6 +116,7 @@ export default function SearchPage() {
       name: '',
       averageRating: 0,
       website: '',
+      images: [],
     });
   const [detailModalOpen, setDetailModalOpen] = React.useState(false);
 
@@ -149,7 +173,7 @@ export default function SearchPage() {
             </Typography>
           </Grid>
 
-          <Grid item xs={2.4}>
+          <Grid item xs>
             <Button variant='contained' startIcon={<LocationOnIcon />}>
               View on map
             </Button>
@@ -214,16 +238,38 @@ export default function SearchPage() {
         <Fade in={detailModalOpen}>
           <Card className='restaurant-detail-modal'>
             <Grid container spacing={2}>
-              <Grid item xs={8}>
+              <Grid item xs={9}>
                 <Typography gutterBottom variant='h4' component='div'>
-                  {detailModalRestaurant!.name}
+                  {detailModalRestaurant.name}
                 </Typography>
               </Grid>
 
-              <Grid item xs={2}>
+              <Grid item xs>
                 <Button variant='contained' startIcon={<ChevronRightIcon />}>
                   Reserve
                 </Button>
+              </Grid>
+
+              <Grid item xs={12}>
+                <ImageList
+                  sx={{
+                    gridAutoFlow: 'column',
+                    gridTemplateColumns:
+                      'repeat(auto-fill,minmax(160px,1fr)) !important',
+                    gridAutoColumns: 'minmax(160px, 1fr)',
+                  }}
+                >
+                  {detailModalRestaurant.images.map((image, imageKey) => (
+                    <ImageListItem key={`image-${imageKey}`}>
+                      <img src={image} />
+                      <ImageListItemBar title={image} />
+                    </ImageListItem>
+                  ))}
+                </ImageList>
+              </Grid>
+
+              <Grid item xs={12}>
+                <Divider />
               </Grid>
             </Grid>
           </Card>
