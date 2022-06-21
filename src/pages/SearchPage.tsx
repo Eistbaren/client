@@ -30,17 +30,23 @@ import {
 
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 import '../css/SearchPage.css';
 import React from 'react';
 import internal from 'stream';
 
+interface Timeslot {
+  from: number;
+  to: number;
+}
 interface Restaurant {
   id: string;
   name: string;
   averageRating: number;
   website: string;
   images: string[];
+  openingHours: Timeslot;
 }
 
 /**
@@ -83,6 +89,10 @@ export default function SearchPage() {
         '/images/background_3.jpg',
         'images/hero.jpg',
       ],
+      openingHours: {
+        from: 36000, // 11:00
+        to: 72000, // 21:00
+      },
     },
     {
       id: 'bla1',
@@ -95,6 +105,10 @@ export default function SearchPage() {
         '/images/background_3.jpg',
         'images/hero.jpg',
       ],
+      openingHours: {
+        from: 36000, // 11:00
+        to: 75600, // 22:00
+      },
     },
     {
       id: 'bla2',
@@ -107,6 +121,10 @@ export default function SearchPage() {
         '/images/background_3.jpg',
         'images/hero.jpg',
       ],
+      openingHours: {
+        from: 36000, // 11:00
+        to: 79200, // 23:00
+      },
     },
   ];
 
@@ -117,6 +135,10 @@ export default function SearchPage() {
       averageRating: 0,
       website: '',
       images: [],
+      openingHours: {
+        from: 0,
+        to: 0,
+      },
     });
   const [detailModalOpen, setDetailModalOpen] = React.useState(false);
 
@@ -270,6 +292,28 @@ export default function SearchPage() {
 
               <Grid item xs={12}>
                 <Divider />
+              </Grid>
+
+              <Grid item>
+                <AccessTimeIcon></AccessTimeIcon>
+              </Grid>
+              <Grid item>
+                <Typography gutterBottom>
+                  Opening hours:{' '}
+                  {new Date(
+                    detailModalRestaurant.openingHours.from * 1000,
+                  ).toLocaleTimeString('de-DE', {
+                    hour: 'numeric',
+                    minute: 'numeric',
+                  })}
+                  -
+                  {new Date(
+                    detailModalRestaurant.openingHours.to * 1000,
+                  ).toLocaleTimeString('de-DE', {
+                    hour: 'numeric',
+                    minute: 'numeric',
+                  })}
+                </Typography>
               </Grid>
             </Grid>
           </Card>
