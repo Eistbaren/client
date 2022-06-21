@@ -1,12 +1,6 @@
-import { jsx } from '@emotion/react';
 import {
   Button,
   TextField,
-  ToggleButton,
-  ToggleButtonGroup,
-  Stack,
-  Tooltip,
-  IconButton,
   Select,
   MenuItem,
   InputLabel,
@@ -20,12 +14,10 @@ import {
   Rating,
   Link,
   Modal,
-  Box,
   Fade,
   ImageList,
   Divider,
   ImageListItem,
-  ImageListItemBar,
   Avatar,
 } from '@mui/material';
 
@@ -36,7 +28,6 @@ import PublicIcon from '@mui/icons-material/Public';
 
 import '../css/SearchPage.css';
 import React from 'react';
-import internal from 'stream';
 
 interface Timeslot {
   from: number;
@@ -356,7 +347,7 @@ export default function SearchPage() {
                   comment: 'Exzellentes Essen!',
                   name: 'Exzellenter Mensch',
                 },
-              ].map((comment, commentKey) => (
+              ].map(comment => (
                 <>
                   <Grid item xs={1}>
                     <Avatar
