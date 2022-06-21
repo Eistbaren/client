@@ -261,9 +261,9 @@ export default function SearchPage() {
       >
         <Fade in={detailModalOpen}>
           <Card className='restaurant-detail-modal'>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} alignItems='center'>
               <Grid item xs={9}>
-                <Typography gutterBottom variant='h4' component='div'>
+                <Typography variant='h4' component='div'>
                   {detailModalRestaurant.name}
                 </Typography>
               </Grid>
@@ -279,14 +279,14 @@ export default function SearchPage() {
                   sx={{
                     gridAutoFlow: 'column',
                     gridTemplateColumns:
-                      'repeat(auto-fill,minmax(160px,1fr)) !important',
-                    gridAutoColumns: 'minmax(160px, 1fr)',
+                      'repeat(auto-fill,minmax(300px,300px)) !important',
+                    gridAutoColumns: 'minmax(300px, 1fr)',
+                    height: '200px',
                   }}
                 >
                   {detailModalRestaurant.images.map((image, imageKey) => (
                     <ImageListItem key={`image-${imageKey}`}>
                       <img src={image} />
-                      <ImageListItemBar title={image} />
                     </ImageListItem>
                   ))}
                 </ImageList>
@@ -340,7 +340,7 @@ export default function SearchPage() {
               </Grid>
 
               <Grid item xs={12}>
-                <Typography gutterBottom variant='h4' component='div'>
+                <Typography gutterBottom variant='h5' component='div'>
                   Comments
                 </Typography>
               </Grid>
@@ -364,15 +364,24 @@ export default function SearchPage() {
                       src='/static/images/avatar/1.jpg'
                     />
                   </Grid>
-                  <Grid item>{comment.name}</Grid>
-                  <Grid item>
+                  <Grid item xs={8}>
+                    {comment.name}
+                  </Grid>
+                  <Grid item xs={3}>
                     <Rating
                       name='simple-controlled'
                       value={comment.rating}
                       readOnly
                     />
                   </Grid>
-                  <Grid xs={12}>{comment.comment}</Grid>
+                  <Grid item xs={1}></Grid>
+                  <Grid item xs={11}>
+                    {comment.comment}
+                  </Grid>
+                  <Grid item xs={1}></Grid>
+                  <Grid item xs={11}>
+                    <Divider />
+                  </Grid>
                 </>
               ))}
             </Grid>
