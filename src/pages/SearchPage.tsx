@@ -31,6 +31,7 @@ import {
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import PublicIcon from '@mui/icons-material/Public';
 
 import '../css/SearchPage.css';
 import React from 'react';
@@ -294,10 +295,11 @@ export default function SearchPage() {
                 <Divider />
               </Grid>
 
-              <Grid item>
-                <AccessTimeIcon></AccessTimeIcon>
+              <Grid item xs={1}>
+                <AccessTimeIcon />
               </Grid>
-              <Grid item>
+
+              <Grid item xs={5}>
                 <Typography gutterBottom>
                   Opening hours:{' '}
                   {new Date(
@@ -314,6 +316,26 @@ export default function SearchPage() {
                     minute: 'numeric',
                   })}
                 </Typography>
+              </Grid>
+
+              <Grid item xs={1}>
+                <PublicIcon />
+              </Grid>
+
+              <Grid item xs={5}>
+                <Link
+                  href={detailModalRestaurant.website}
+                  target='_blank'
+                  onClick={e => {
+                    e.stopPropagation();
+                  }}
+                >
+                  {detailModalRestaurant.website}
+                </Link>
+              </Grid>
+
+              <Grid item xs={12}>
+                <Divider />
               </Grid>
             </Grid>
           </Card>
