@@ -1,0 +1,30 @@
+.personal-data-container {
+  align-self: center;
+  margin: auto 0;
+  display: grid;
+  grid-template-columns: 35% 55%;
+  gap: 10%;
+  padding: 60px;
+  background-color: #5e81ac5b;
+  border-radius: 5px;
+}
+
+.personal-data-body {
+  color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.personal-data-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  justify-content: center;
+}
+
+.personal-data-image {
+  width: 80%;
+  margin: 0 auto;
+}

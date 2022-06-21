@@ -7,6 +7,7 @@ import Restaurants from '../pages/Restaurants';
 import RestaurantDetails from '../pages/RestaurantDetails';
 import ReservationDetails from '../pages/ReservationDetails';
 import ReservationApproval from '../pages/ReservationApproval';
+import PersonalData from '../pages/PersonalData';
 
 /**
  * Landingpage component
@@ -27,6 +28,7 @@ export default function Routing() {
             path='reservation-approval'
             element={<ReservationApproval />}
           />
+          <Route path='personal-data' element={<PersonalData />} />
         </Routes>
       </PageTemplate>
     </BrowserRouter>
