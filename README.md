@@ -8,8 +8,8 @@
   <a href="https://github.com/Eistbaren/client/actions/workflows/pushToServerRepo.yml">
     <img alt="Push to server repo" src="https://github.com/Eistbaren/client/actions/workflows/pushToServerRepo.yml/badge.svg" />
   </a>
-  <a href="https://github.com/Eistbaren/client/actions/workflows/build-and-deploy.yml">
-    <img alt="Build and deploy" src="https://github.com/Eistbaren/client/actions/workflows/build-and-deploy.yml/badge.svg" />
+  <a href="https://github.com/Eistbaren/client/actions/workflows/build.yml">
+    <img alt="Build" src="https://github.com/Eistbaren/client/actions/workflows/build.yml/badge.svg" />
   </a>
 </p>
 
