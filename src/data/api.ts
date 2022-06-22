@@ -1,4 +1,4 @@
-// / <reference path="./custom.d.ts" />
+/// <reference path="./custom.d.ts" />
 // tslint:disable
 /**
  * Reservation Bear API
@@ -159,10 +159,10 @@ export interface Reservation {
   tables?: Array<string>;
   /**
    *
-   * @type {any}
+   * @type {Timeslot}
    * @memberof Reservation
    */
-  time?: any;
+  time?: Timeslot;
   /**
    *
    * @type {string}
@@ -197,10 +197,10 @@ export interface ReservationCreationRequest {
   tables?: Array<string>;
   /**
    *
-   * @type {any}
+   * @type {Timeslot}
    * @memberof ReservationCreationRequest
    */
-  time?: any;
+  time?: Timeslot;
   /**
    *
    * @type {string}
