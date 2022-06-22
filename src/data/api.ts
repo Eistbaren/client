@@ -82,7 +82,7 @@ export class RequiredError extends Error {
 }
 
 /**
- *
+ * a comment about a restaurant written by a user
  * @export
  * @interface Comment
  */
@@ -105,6 +105,46 @@ export interface Comment {
    * @memberof Comment
    */
   name?: string;
+}
+
+/**
+ * a floorplan consisting of a background image and a size
+ * @export
+ * @interface FloorPlan
+ */
+export interface FloorPlan {
+  /**
+   * image of the floor plan of the restaurant without tables
+   * @type {string}
+   * @memberof FloorPlan
+   */
+  image?: string;
+  /**
+   *
+   * @type {Size}
+   * @memberof FloorPlan
+   */
+  size?: Size;
+}
+
+/**
+ * geographic coordinates
+ * @export
+ * @interface GeographicCoordinates
+ */
+export interface GeographicCoordinates {
+  /**
+   *
+   * @type {number}
+   * @memberof GeographicCoordinates
+   */
+  lat?: number;
+  /**
+   *
+   * @type {number}
+   * @memberof GeographicCoordinates
+   */
+  lon?: number;
 }
 
 /**
@@ -137,6 +177,26 @@ export interface Paginated {
    * @memberof Paginated
    */
   results?: Array<any>;
+}
+
+/**
+ * pixel coordinates on a canvas
+ * @export
+ * @interface PixelCoordinates
+ */
+export interface PixelCoordinates {
+  /**
+   *
+   * @type {number}
+   * @memberof PixelCoordinates
+   */
+  x?: number;
+  /**
+   *
+   * @type {number}
+   * @memberof PixelCoordinates
+   */
+  y?: number;
 }
 
 /**
@@ -265,16 +325,36 @@ export interface Restaurant {
   priceCategory?: number;
   /**
    *
-   * @type {any}
+   * @type {GeographicCoordinates}
    * @memberof Restaurant
    */
-  location?: any;
+  location?: GeographicCoordinates;
   /**
    *
-   * @type {any}
+   * @type {FloorPlan}
    * @memberof Restaurant
    */
-  floorPlan?: any;
+  floorPlan?: FloorPlan;
+}
+
+/**
+ * size in pixels
+ * @export
+ * @interface Size
+ */
+export interface Size {
+  /**
+   *
+   * @type {number}
+   * @memberof Size
+   */
+  width?: number;
+  /**
+   *
+   * @type {number}
+   * @memberof Size
+   */
+  height?: number;
 }
 
 /**
@@ -302,15 +382,41 @@ export interface Table {
    */
   seats?: number;
   /**
-   * position on the floor plan
-   * @type {any}
+   *
+   * @type {TableOnFloorPlan}
    * @memberof Table
    */
-  floorPlan?: any;
+  floorPlan?: TableOnFloorPlan;
 }
 
 /**
- *
+ * the apperance of a table on the floorpan
+ * @export
+ * @interface TableOnFloorPlan
+ */
+export interface TableOnFloorPlan {
+  /**
+   *
+   * @type {PixelCoordinates}
+   * @memberof TableOnFloorPlan
+   */
+  position?: PixelCoordinates;
+  /**
+   *
+   * @type {Size}
+   * @memberof TableOnFloorPlan
+   */
+  size?: Size;
+  /**
+   *
+   * @type {string}
+   * @memberof TableOnFloorPlan
+   */
+  image?: string;
+}
+
+/**
+ * time range between two unix timestamps
  * @export
  * @interface Timeslot
  */
