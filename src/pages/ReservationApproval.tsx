@@ -1,7 +1,5 @@
 import { Button, Stack, TextField } from '@mui/material';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 import { useState } from 'react';
 import '../css/ReservationApproval.css';
@@ -26,56 +24,54 @@ export default function ReservationApproval() {
     <>
       <div className='booking-summary-container'>
         <h3>Reservation summary</h3>
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <div className='booking-summary-date_person-container'>
-            <div>
-              <p className='booking-summary-label'>Date</p>
-              <DatePicker
-                value={value}
-                onChange={e => {
-                  return;
-                }}
-                renderInput={params => (
-                  <TextField {...params} size='small' fullWidth />
-                )}
-              />
-            </div>
-            <div>
-              <p className='booking-summary-label'># of persons</p>
-              <TextField
-                id='outlined-number'
-                type='number'
-                value={numberOfPersons}
-                InputProps={{
-                  readOnly: true,
-                }}
-                size='small'
-              />
-            </div>
+        <div className='booking-summary-date_person-container'>
+          <div>
+            <p className='booking-summary-label'>Date</p>
+            <DatePicker
+              value={value}
+              onChange={e => {
+                return;
+              }}
+              renderInput={params => (
+                <TextField {...params} size='small' fullWidth />
+              )}
+            />
           </div>
+          <div>
+            <p className='booking-summary-label'># of persons</p>
+            <TextField
+              id='outlined-number'
+              type='number'
+              value={numberOfPersons}
+              InputProps={{
+                readOnly: true,
+              }}
+              size='small'
+            />
+          </div>
+        </div>
 
-          <p className='booking-summary-label'>Time</p>
-          <div className='booking-summary-time-picker-container'>
-            <TimePicker
-              onChange={e => {
-                return;
-              }}
-              readOnly
-              value={timePickerFromValue}
-              renderInput={params => <TextField {...params} size='small' />}
-              ampm={false}
-            />
-            <TimePicker
-              value={timePickerToValue}
-              readOnly
-              onChange={e => {
-                return;
-              }}
-              renderInput={params => <TextField {...params} size='small' />}
-              ampm={false}
-            />
-          </div>
-        </LocalizationProvider>
+        <p className='booking-summary-label'>Time</p>
+        <div className='booking-summary-time-picker-container'>
+          <TimePicker
+            onChange={e => {
+              return;
+            }}
+            readOnly
+            value={timePickerFromValue}
+            renderInput={params => <TextField {...params} size='small' />}
+            ampm={false}
+          />
+          <TimePicker
+            value={timePickerToValue}
+            readOnly
+            onChange={e => {
+              return;
+            }}
+            renderInput={params => <TextField {...params} size='small' />}
+            ampm={false}
+          />
+        </div>
 
         <p className='booking-summary-label'>Name</p>
         <TextField

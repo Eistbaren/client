@@ -1,4 +1,6 @@
 import Container from '@mui/material/Container';
+import LocalizationProviderWrapper from '../utils/LocalizationProviderWrapper';
+import ReservationContextWrapper from '../utils/ReservationContextWrapper';
 
 /**
  * Bootstrap function
@@ -9,8 +11,12 @@ export default function PageTemplate(props: { children: JSX.Element }) {
   const { children } = props;
 
   return (
-    <Container className='root-container' maxWidth='lg'>
-      {children}
-    </Container>
+    <ReservationContextWrapper>
+      <LocalizationProviderWrapper>
+        <Container className='root-container' maxWidth='lg'>
+          {children}
+        </Container>
+      </LocalizationProviderWrapper>
+    </ReservationContextWrapper>
   );
 }
