@@ -6,28 +6,14 @@ import {
   InputLabel,
   FormControl,
   Grid,
-  Card,
-  CardMedia,
   Typography,
-  CardContent,
-  CardActions,
-  Rating,
-  Link,
-  Modal,
-  Fade,
-  ImageList,
-  Divider,
-  ImageListItem,
-  Avatar,
 } from '@mui/material';
 
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import PublicIcon from '@mui/icons-material/Public';
-
 import '../css/SearchPage.css';
 import React from 'react';
+import RestaurantCard from '../components/RestaurantCard';
+import RestaurantDetailsModal from '../components/RestaurantDetailsModal';
 
 interface Timeslot {
   from: number;
@@ -196,189 +182,20 @@ export default function SearchPage() {
 
           {restaurants.map(restaurant => (
             <Grid item xs={2.4} key={restaurant.id}>
-              <Card
-                onClick={() => {
-                  openDetailModal(restaurant);
-                }}
-                className='restaurant-card'
-              >
-                <CardMedia
-                  component='img'
-                  height='140'
-                  image='/images/hero.jpg'
-                  alt='green iguana'
-                />
-                <CardContent>
-                  <Typography gutterBottom variant='h5' component='div'>
-                    {restaurant.name}
-                  </Typography>
-                  <Rating
-                    name='simple-controlled'
-                    value={restaurant.averageRating}
-                    readOnly
-                  />
-                  <br></br>
-                  <Link
-                    href={restaurant.website}
-                    target='_blank'
-                    onClick={e => {
-                      e.stopPropagation();
-                    }}
-                  >
-                    Visit website
-                  </Link>
-                </CardContent>
-                <CardActions>
-                  <Button
-                    startIcon={<ChevronRightIcon />}
-                    onClick={e => {
-                      e.stopPropagation();
-                    }}
-                  >
-                    Reserve
-                  </Button>
-                </CardActions>
-              </Card>
+              <RestaurantCard
+                restaurant={restaurant}
+                onClick={() => openDetailModal(restaurant)}
+              ></RestaurantCard>
             </Grid>
           ))}
         </Grid>
       </div>
 
-      <Modal
+      <RestaurantDetailsModal
         open={detailModalOpen}
         onClose={handleDetailModalClose}
-        aria-labelledby='modal-modal-title'
-        aria-describedby='modal-modal-description'
-      >
-        <Fade in={detailModalOpen}>
-          <Card className='restaurant-detail-modal'>
-            <Grid container spacing={2} alignItems='center'>
-              <Grid item xs={9}>
-                <Typography variant='h4' component='div'>
-                  {detailModalRestaurant.name}
-                </Typography>
-              </Grid>
-
-              <Grid item xs>
-                <Button variant='contained' startIcon={<ChevronRightIcon />}>
-                  Reserve
-                </Button>
-              </Grid>
-
-              <Grid item xs={12}>
-                <ImageList
-                  sx={{
-                    gridAutoFlow: 'column',
-                    gridTemplateColumns:
-                      'repeat(auto-fill,minmax(300px,300px)) !important',
-                    gridAutoColumns: 'minmax(300px, 1fr)',
-                    height: '200px',
-                  }}
-                >
-                  {detailModalRestaurant.images.map((image, imageKey) => (
-                    <ImageListItem key={`image-${imageKey}`}>
-                      <img src={image} />
-                    </ImageListItem>
-                  ))}
-                </ImageList>
-              </Grid>
-
-              <Grid item xs={12}>
-                <Divider />
-              </Grid>
-
-              <Grid item xs={1}>
-                <AccessTimeIcon />
-              </Grid>
-
-              <Grid item xs={5}>
-                <Typography>
-                  Opening hours:{' '}
-                  {new Date(
-                    detailModalRestaurant.openingHours.from * 1000,
-                  ).toLocaleTimeString('de-DE', {
-                    hour: 'numeric',
-                    minute: 'numeric',
-                  })}
-                  -
-                  {new Date(
-                    detailModalRestaurant.openingHours.to * 1000,
-                  ).toLocaleTimeString('de-DE', {
-                    hour: 'numeric',
-                    minute: 'numeric',
-                  })}
-                </Typography>
-              </Grid>
-
-              <Grid item xs={1}>
-                <PublicIcon />
-              </Grid>
-
-              <Grid item xs={5}>
-                <Link
-                  href={detailModalRestaurant.website}
-                  target='_blank'
-                  onClick={e => {
-                    e.stopPropagation();
-                  }}
-                >
-                  {detailModalRestaurant.website}
-                </Link>
-              </Grid>
-
-              <Grid item xs={12}>
-                <Divider />
-              </Grid>
-
-              <Grid item xs={12}>
-                <Typography gutterBottom variant='h5' component='div'>
-                  Comments
-                </Typography>
-              </Grid>
-
-              {[
-                {
-                  rating: 3,
-                  comment: 'Essen ok, aber zu wenig!',
-                  name: 'Hungry Client',
-                },
-                {
-                  rating: 5,
-                  comment: 'Exzellentes Essen!',
-                  name: 'Exzellenter Mensch',
-                },
-              ].map(comment => (
-                <>
-                  <Grid item xs={1}>
-                    <Avatar
-                      alt={comment.name}
-                      src='/static/images/avatar/1.jpg'
-                    />
-                  </Grid>
-                  <Grid item xs={8}>
-                    {comment.name}
-                  </Grid>
-                  <Grid item xs={3}>
-                    <Rating
-                      name='simple-controlled'
-                      value={comment.rating}
-                      readOnly
-                    />
-                  </Grid>
-                  <Grid item xs={1}></Grid>
-                  <Grid item xs={11}>
-                    {comment.comment}
-                  </Grid>
-                  <Grid item xs={1}></Grid>
-                  <Grid item xs={11}>
-                    <Divider />
-                  </Grid>
-                </>
-              ))}
-            </Grid>
-          </Card>
-        </Fade>
-      </Modal>
+        restaurant={detailModalRestaurant}
+      ></RestaurantDetailsModal>
     </>
   );
 }
