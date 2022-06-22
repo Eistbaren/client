@@ -81,6 +81,8 @@ export class RequiredError extends Error {
   }
 }
 
+type ModelObject = any;
+
 /**
  * A reservation with all personal data removed
  * @export
