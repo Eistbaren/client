@@ -36,6 +36,17 @@ export default function RestaurantDetailsModal(params: {
 }) {
   const { open, onClose, restaurant } = params;
 
+  const unixTimestampToTimeOfDay = (unixTimestamp?: number) => {
+    if (!unixTimestamp) {
+      return '';
+    }
+
+    return new Date(unixTimestamp * 1000).toLocaleTimeString('de-DE', {
+      hour: 'numeric',
+      minute: 'numeric',
+    });
+  };
+
   return (
     <Modal
       open={open}
@@ -68,7 +79,7 @@ export default function RestaurantDetailsModal(params: {
                   height: '200px',
                 }}
               >
-                {restaurant!.images!.map((image, imageKey) => (
+                {(restaurant?.images || []).map((image, imageKey) => (
                   <ImageListItem key={`image-${imageKey}`}>
                     <img src={image} />
                   </ImageListItem>
@@ -87,19 +98,8 @@ export default function RestaurantDetailsModal(params: {
             <Grid item xs={5}>
               <Typography>
                 Opening hours:{' '}
-                {new Date(
-                  restaurant!.openingHours!.from! * 1000,
-                ).toLocaleTimeString('de-DE', {
-                  hour: 'numeric',
-                  minute: 'numeric',
-                })}
-                -
-                {new Date(
-                  restaurant!.openingHours!.to! * 1000,
-                ).toLocaleTimeString('de-DE', {
-                  hour: 'numeric',
-                  minute: 'numeric',
-                })}
+                {unixTimestampToTimeOfDay(restaurant?.openingHours?.from)}-
+                {unixTimestampToTimeOfDay(restaurant?.openingHours?.to)}
               </Typography>
             </Grid>
 
