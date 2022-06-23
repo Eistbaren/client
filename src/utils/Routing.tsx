@@ -7,6 +7,7 @@ import Restaurants from '../pages/Restaurants';
 import RestaurantDetails from '../pages/RestaurantDetails';
 import ReservationDetails from '../pages/ReservationDetails';
 import ReservationApproval from '../pages/ReservationApproval';
+import TableSelectionPage from '../pages/TableSelectionPage';
 
 /**
  * Landingpage component
@@ -22,6 +23,7 @@ export default function Routing() {
           <Route path='restaurants' element={<Restaurants />}>
             <Route path=':restaurantId' element={<RestaurantDetails />} />
           </Route>
+          <Route path='table' element={<TableSelectionPage />}></Route>
           <Route path='reservations' element={<ReservationDetails />} />
           <Route
             path='reservation-approval'
