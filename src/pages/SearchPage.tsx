@@ -1,13 +1,4 @@
-import {
-  Button,
-  TextField,
-  Select,
-  MenuItem,
-  InputLabel,
-  FormControl,
-  Grid,
-  Typography,
-} from '@mui/material';
+import { Button, TextField, Grid, Typography } from '@mui/material';
 
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import '../css/SearchPage.css';
@@ -15,6 +6,7 @@ import React from 'react';
 import RestaurantCard from '../components/RestaurantCard';
 import RestaurantDetailsModal from '../components/RestaurantDetailsModal';
 import { Restaurant } from '../data/api';
+import ComboBox from '../components/ComboBox';
 
 /**
  * Bootstrap function
@@ -135,24 +127,11 @@ export default function SearchPage() {
 
           {filterFormItems.map((item, filterKey) => (
             <Grid item xs={2.4} key={filterKey}>
-              <FormControl fullWidth>
-                <InputLabel id={`filter-input-${filterKey}-label`}>
-                  {item.label}
-                </InputLabel>
-                <Select
-                  variant='outlined'
-                  labelId={`filter-input-${filterKey}-label`}
-                >
-                  {item.options.map((option, optionKey) => (
-                    <MenuItem
-                      key={`filter-${filterKey}-option-${optionKey}`}
-                      value={optionKey}
-                    >
-                      {option}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <ComboBox
+                id={`${filterKey}`}
+                label={item.label}
+                options={item.options}
+              />
             </Grid>
           ))}
 
