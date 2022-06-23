@@ -10,19 +10,7 @@ import {
 } from '@mui/material';
 
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-
-interface Timeslot {
-  from: number;
-  to: number;
-}
-interface Restaurant {
-  id: string;
-  name: string;
-  averageRating: number;
-  website: string;
-  images: string[];
-  openingHours: Timeslot;
-}
+import { Restaurant } from '../data/api';
 
 /**
  * OnClick callback

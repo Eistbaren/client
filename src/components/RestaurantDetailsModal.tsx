@@ -16,19 +16,7 @@ import {
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PublicIcon from '@mui/icons-material/Public';
-
-interface Timeslot {
-  from: number;
-  to: number;
-}
-interface Restaurant {
-  id: string;
-  name: string;
-  averageRating: number;
-  website: string;
-  images: string[];
-  openingHours: Timeslot;
-}
+import { Restaurant } from '../data/api';
 
 /**
  * OnClose callback
@@ -80,7 +68,7 @@ export default function RestaurantDetailsModal(params: {
                   height: '200px',
                 }}
               >
-                {restaurant.images.map((image, imageKey) => (
+                {restaurant!.images!.map((image, imageKey) => (
                   <ImageListItem key={`image-${imageKey}`}>
                     <img src={image} />
                   </ImageListItem>
@@ -100,19 +88,18 @@ export default function RestaurantDetailsModal(params: {
               <Typography>
                 Opening hours:{' '}
                 {new Date(
-                  restaurant.openingHours.from * 1000,
+                  restaurant!.openingHours!.from! * 1000,
                 ).toLocaleTimeString('de-DE', {
                   hour: 'numeric',
                   minute: 'numeric',
                 })}
                 -
-                {new Date(restaurant.openingHours.to * 1000).toLocaleTimeString(
-                  'de-DE',
-                  {
-                    hour: 'numeric',
-                    minute: 'numeric',
-                  },
-                )}
+                {new Date(
+                  restaurant!.openingHours!.to! * 1000,
+                ).toLocaleTimeString('de-DE', {
+                  hour: 'numeric',
+                  minute: 'numeric',
+                })}
               </Typography>
             </Grid>
 

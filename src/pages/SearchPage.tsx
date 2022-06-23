@@ -14,19 +14,7 @@ import '../css/SearchPage.css';
 import React from 'react';
 import RestaurantCard from '../components/RestaurantCard';
 import RestaurantDetailsModal from '../components/RestaurantDetailsModal';
-
-interface Timeslot {
-  from: number;
-  to: number;
-}
-interface Restaurant {
-  id: string;
-  name: string;
-  averageRating: number;
-  website: string;
-  images: string[];
-  openingHours: Timeslot;
-}
+import { Restaurant } from '../data/api';
 
 /**
  * Bootstrap function
