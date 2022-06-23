@@ -1,17 +1,5 @@
-import {
-  Button,
-  TextField,
-  Select,
-  MenuItem,
-  InputLabel,
-  FormControl,
-  Grid,
-  Typography,
-  Container,
-  Box,
-} from '@mui/material';
+import { TextField, Grid, Typography, Box } from '@mui/material';
 
-import LocationOnIcon from '@mui/icons-material/LocationOn';
 import React from 'react';
 import { FloorPlan, Table } from '../data/api';
 import '../css/TableSelectionPage.css';
