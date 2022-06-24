@@ -2,7 +2,7 @@ import { CssBaseline } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 /**
- * Bootstrap function
+ * Sets a MaterialUi theme for its children
  * @param  {any} props accepts JSX elements to wrap theme in
  * @return {JSX.Element}
  */

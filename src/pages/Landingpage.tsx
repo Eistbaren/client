@@ -1,50 +1,72 @@
-import {
-  Button,
-  TextField,
-  ToggleButton,
-  ToggleButtonGroup,
-  Stack,
-  Tooltip,
-  IconButton,
-} from '@mui/material';
+import { Button, TextField, Stack } from '@mui/material';
 import { CalendarPicker, TimePicker } from '@mui/x-date-pickers';
-import InfoIcon from '@mui/icons-material/Info';
-import BookIcon from '@mui/icons-material/Book';
 
 import { ReservationContext } from '../data/ReservationContext';
 import { useContext, useState } from 'react';
 
+import NumberOfPersonsPicker from '../components/NumberOfPersonsPicker';
+import FloatingSidebar from '../components/FloatingSidebar';
+
 import '../css/Landingpage.css';
-import { ReservationContextType } from '../data/ReservationDataInterface';
-import { Console } from 'console';
+
 /**
- * Landingpage component
+ * Landingpage
  * @return {JSX.Element}
  */
 export default function Landingpage() {
-  const { reservation, setReservation } = useContext(
-    ReservationContext,
-  ) as ReservationContextType;
-
-  const [numberOfPersons, setNumberOfPersons] = useState<string | null>('1');
+  const { reservation, setReservation } = useContext(ReservationContext);
+  const [numberOfPersons, setNumberOfPersons] = useState<number>(2);
 
   /**
+   * Sets the reservation.time.from time to the new time
    * @param  {Date} value
-   * @param {Date} date
    */
-  function handleTimeInput(value: Date | null, date: Date | null) {
-    reservation.time.from?.setHours(value ? date!.getHours() : 0);
-    reservation.time.from?.setMinutes(value ? date!.getMinutes() : 0);
-    console.log(date);
+  function handleTimeFromInput(value: Date | null) {
+    const newDate = new Date(reservation.time.from);
+    newDate.setHours(value ? value!.getHours() : 0);
+    newDate.setMinutes(value ? value!.getMinutes() : 0);
+    setReservation({
+      ...reservation,
+      time: {
+        from: newDate,
+        to: reservation.time.to,
+      },
+    });
   }
 
   /**
+   * Sets the reservation.time.to time to the new time
+   * @param  {Date} value
+   */
+  function handleTimeToInput(value: Date | null) {
+    const newDate = new Date(reservation.time.to);
+    newDate.setHours(value ? value!.getHours() : 0);
+    newDate.setMinutes(value ? value!.getMinutes() : 0);
+    setReservation({
+      ...reservation,
+      time: {
+        from: reservation.time.from,
+        to: newDate,
+      },
+    });
+  }
+
+  /**
+   * Sets the date for both times
    * @param  {Date} value
    */
   function handleDateInput(value: Date) {
-    reservation.time.from?.setDate(value.getDate());
-    reservation.time.to?.setDate(value.getDate());
-    console.log(reservation.time.from);
+    const from = new Date(reservation.time.from);
+    const to = new Date(reservation.time.to);
+    from.setDate(value.getDate());
+    to.setDate(value.getDate());
+    setReservation({
+      ...reservation,
+      time: {
+        from: from,
+        to: to,
+      },
+    });
   }
 
   return (
@@ -79,18 +101,10 @@ export default function Landingpage() {
       </div>
       <div className='hero-image-container'>
         <p className='label'>Number of Persons</p>
-        <ToggleButtonGroup
-          value={numberOfPersons}
-          exclusive
-          onChange={(e, person) => setNumberOfPersons(person)}
-        >
-          <ToggleButton value='1'>1</ToggleButton>
-          <ToggleButton value='2'>2</ToggleButton>
-          <ToggleButton value='3'>3</ToggleButton>
-          <ToggleButton value='4'>4</ToggleButton>
-          <ToggleButton value='5'>5</ToggleButton>
-          <ToggleButton value='6'>6</ToggleButton>
-        </ToggleButtonGroup>
+        <NumberOfPersonsPicker
+          numberOfPersons={numberOfPersons}
+          setNumberOfPersons={setNumberOfPersons}
+        />
         <p className='label'>Pick a date & time</p>
         <CalendarPicker
           openTo='day'
@@ -103,7 +117,7 @@ export default function Landingpage() {
         <div className='time-picker-container'>
           <TimePicker
             value={reservation.time.from}
-            onChange={value => handleTimeInput(value, reservation.time.from)}
+            onChange={value => handleTimeFromInput(value)}
             renderInput={params => <TextField {...params} label='Start time' />}
             minutesStep={30}
             views={['hours', 'minutes']}
@@ -111,7 +125,7 @@ export default function Landingpage() {
           />
           <TimePicker
             value={reservation.time.to}
-            onChange={value => handleTimeInput(value, reservation.time.to)}
+            onChange={value => handleTimeToInput(value)}
             renderInput={params => <TextField {...params} label='End time' />}
             minutesStep={30}
             views={['hours', 'minutes']}
@@ -119,18 +133,7 @@ export default function Landingpage() {
           />
         </div>
         <div className='background-image'></div>
-        <div className='social-icons'>
-          <Tooltip title='Imprint' placement='right' arrow>
-            <IconButton>
-              <InfoIcon fontSize='large' className='social-icon' />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title='Documentation' placement='right' arrow>
-            <IconButton>
-              <BookIcon fontSize='large' className='social-icon' />
-            </IconButton>
-          </Tooltip>
-        </div>
+        <FloatingSidebar />
       </div>
     </div>
   );

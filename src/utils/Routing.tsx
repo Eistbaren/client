@@ -10,7 +10,7 @@ import ReservationApproval from '../pages/ReservationApproval';
 import PersonalData from '../pages/PersonalData';
 
 /**
- * Landingpage component
+ * Adds Routing to the sites and wrapps pages with the PageTemplate component
  * @return {JSX.Element}
  */
 export default function Routing() {

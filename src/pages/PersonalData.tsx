@@ -10,7 +10,7 @@ import { useState } from 'react';
 import '../css/PersonalData.css';
 
 /**
- * Bootstrap function
+ * Personal Data Page
  * @return {JSX.Element}
  */
 export default function PersonalData() {
@@ -19,6 +19,7 @@ export default function PersonalData() {
   const [emailError, setEmailError] = useState<boolean>(false);
   const [submitted, setSubmitted] = useState<boolean>(false);
 
+  // checks if input is submitted and a valid email
   const handleEmailInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (
       submitted &&
@@ -28,10 +29,10 @@ export default function PersonalData() {
     } else {
       setEmailError(false);
     }
-
     setEmail(e.target.value);
   };
 
+  // handles submitting the form
   const handleSubmit = () => {
     if (!submitted) {
       setSubmitted(true);

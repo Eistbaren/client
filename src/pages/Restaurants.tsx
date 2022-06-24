@@ -1,7 +1,7 @@
 import TextField from '@mui/material/TextField';
 
 /**
- * Bootstrap function
+ * Restaurants Page
  * @return {JSX.Element}
  */
 export default function Restaurants() {

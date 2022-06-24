@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Reservation } from '../data/ReservationDataInterface';
 
 /**
+ * Sets a Reservation Context for its children
  * @param  {{ children: JSX.Element }} props
  * @return {JSX.Element}
  */
@@ -11,15 +12,21 @@ export default function ReservationContextWrapper(props: {
 }) {
   const { children } = props;
 
+  const from = new Date();
+  from.setMinutes(from.getMinutes() + 30);
+  from.setMinutes(0);
+  const to = new Date(from);
+  to.setHours(to.getHours() + 1);
+
   const [reservation, setReservation] = useState<Reservation>({
     id: null,
     tables: null,
     time: {
-      from: null,
-      to: null,
+      from: from,
+      to: to,
     },
-    userName: null,
-    userEmail: null,
+    userName: 'John Doe',
+    userEmail: 'j.doe@myspace.com',
     confirmed: false,
   });
 

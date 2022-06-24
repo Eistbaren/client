@@ -3,7 +3,7 @@ import LocalizationProviderWrapper from '../utils/LocalizationProviderWrapper';
 import ReservationContextWrapper from '../utils/ReservationContextWrapper';
 
 /**
- * Bootstrap function
+ * Wrapps the page with all necessary utils
  * @param  {{ children: JSX.Element }} props accepts JSX elements to wrap theme in
  * @return {JSX.Element}
  */
