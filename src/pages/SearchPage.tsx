@@ -4,6 +4,8 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import '../css/SearchPage.css';
 import React from 'react';
 import RestaurantCard from '../components/RestaurantCard';
+import RestaurantMap from '../components/RestaurantMap';
+
 import RestaurantDetailsModal from '../components/RestaurantDetailsModal';
 import { Restaurant } from '../data/api';
 import ComboBox from '../components/ComboBox';
@@ -155,6 +157,12 @@ export default function SearchPage() {
               ></RestaurantCard>
             </Grid>
           ))}
+          <Grid item xs={12}>
+            <RestaurantMap
+              restaurants={restaurants}
+              onClick={restaurant => openDetailModal(restaurant)}
+            ></RestaurantMap>
+          </Grid>
         </Grid>
       </div>
 
