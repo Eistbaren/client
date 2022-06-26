@@ -1,7 +1,7 @@
 import { Button, TextField, Stack } from '@mui/material';
 import { CalendarPicker, TimePicker } from '@mui/x-date-pickers';
 
-import { ReservationContext } from '../data/ReservationContext';
+import { Context } from '../data/Context';
 import { useContext, useState } from 'react';
 
 import NumberOfPersonsPicker from '../components/NumberOfPersonsPicker';
@@ -14,7 +14,7 @@ import '../css/Landingpage.css';
  * @return {JSX.Element}
  */
 export default function Landingpage() {
-  const { reservation, setReservation } = useContext(ReservationContext);
+  const { reservation, setReservation } = useContext(Context);
   const [numberOfPersons, setNumberOfPersons] = useState<number>(2);
 
   /**
