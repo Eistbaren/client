@@ -120,9 +120,9 @@ export default function SearchPage() {
                 <Grid item xs={2.4} key={index}>
                   <Card>
                     <Skeleton variant='rectangular' height={118} />
-                    <Skeleton />
-                    <Skeleton width={'60%'} />
-                    <Skeleton width={'60%'} />
+                    <Skeleton variant='text' />
+                    <Skeleton variant='text' width={'60%'} />
+                    <Skeleton variant='text' width={'60%'} />
                   </Card>
                 </Grid>
               ))}

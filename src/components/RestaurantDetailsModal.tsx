@@ -12,6 +12,7 @@ import {
   ImageListItem,
   Avatar,
   CircularProgress,
+  Skeleton,
 } from '@mui/material';
 
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -43,7 +44,10 @@ export default function RestaurantDetailsModal(params: {
   const [comments, setComments] = React.useState<Comment[] | undefined>();
 
   React.useEffect(() => {
-    if (!restaurant.id || !open) return;
+    if (!restaurant.id || !open) {
+      return;
+    }
+    setComments(undefined);
 
     restaurantApi
       .getRestaurantComments(restaurant.id)
@@ -180,9 +184,27 @@ export default function RestaurantDetailsModal(params: {
                 ))
               )
             ) : (
-              <Grid item xs={12}>
-                <CircularProgress />
-              </Grid>
+              Array.from(new Array(1)).map(_ => (
+                <>
+                  <Grid item xs={1}>
+                    <Skeleton variant='circular' />
+                  </Grid>
+                  <Grid item xs={8}>
+                    <Skeleton variant='text' />
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Skeleton variant='text' />
+                  </Grid>
+                  <Grid item xs={1}></Grid>
+                  <Grid item xs={11}>
+                    <Skeleton variant='text' />
+                  </Grid>
+                  <Grid item xs={1}></Grid>
+                  <Grid item xs={11}>
+                    <Divider />
+                  </Grid>
+                </>
+              ))
             )}
           </Grid>
         </Card>
