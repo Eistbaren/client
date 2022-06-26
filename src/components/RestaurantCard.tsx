@@ -37,7 +37,12 @@ export default function RestaurantCard(params: {
         alt='green iguana'
       />
       <CardContent>
-        <Typography gutterBottom variant='h5' component='div'>
+        <Typography
+          gutterBottom
+          variant='h6'
+          component='div'
+          className='restaurant-card-title'
+        >
           {restaurant.name}
         </Typography>
         <Rating
