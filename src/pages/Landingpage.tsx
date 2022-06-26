@@ -22,14 +22,14 @@ export default function Landingpage() {
    * @param  {Date} value
    */
   function handleTimeFromInput(value: Date | null) {
-    const newDate = new Date(reservation.time.from);
-    newDate.setHours(value ? value!.getHours() : 0);
-    newDate.setMinutes(value ? value!.getMinutes() : 0);
+    const newDate = new Date(reservation.time?.from?.valueOf() ?? 0);
+    newDate.setHours(value?.getHours() ?? 0);
+    newDate.setMinutes(value?.getMinutes() ?? 0);
     setReservation({
       ...reservation,
       time: {
-        from: newDate,
-        to: reservation.time.to,
+        from: newDate.valueOf(),
+        to: reservation.time?.to,
       },
     });
   }
@@ -39,14 +39,14 @@ export default function Landingpage() {
    * @param  {Date} value
    */
   function handleTimeToInput(value: Date | null) {
-    const newDate = new Date(reservation.time.to);
-    newDate.setHours(value ? value!.getHours() : 0);
-    newDate.setMinutes(value ? value!.getMinutes() : 0);
+    const newDate = new Date(reservation.time?.to?.valueOf() ?? 0);
+    newDate.setHours(value?.getHours() ?? 0);
+    newDate.setMinutes(value?.getMinutes() ?? 0);
     setReservation({
       ...reservation,
       time: {
-        from: reservation.time.from,
-        to: newDate,
+        from: reservation.time?.from?.valueOf(),
+        to: newDate.valueOf(),
       },
     });
   }
@@ -56,15 +56,15 @@ export default function Landingpage() {
    * @param  {Date} value
    */
   function handleDateInput(value: Date) {
-    const from = new Date(reservation.time.from);
-    const to = new Date(reservation.time.to);
+    const from = new Date(reservation.time?.from?.valueOf() ?? 0);
+    const to = new Date(reservation.time?.to?.valueOf() ?? 0);
     from.setDate(value.getDate());
     to.setDate(value.getDate());
     setReservation({
       ...reservation,
       time: {
-        from: from,
-        to: to,
+        from: from.valueOf(),
+        to: to.valueOf(),
       },
     });
   }
@@ -108,7 +108,7 @@ export default function Landingpage() {
         <p className='label'>Pick a date & time</p>
         <CalendarPicker
           openTo='day'
-          date={reservation.time.from}
+          date={new Date(reservation.time?.from ?? 0)}
           onChange={value => (value ? handleDateInput(value) : null)}
           disablePast
           views={['day']}
@@ -116,7 +116,7 @@ export default function Landingpage() {
         />
         <div className='time-picker-container'>
           <TimePicker
-            value={reservation.time.from}
+            value={new Date(reservation.time?.from ?? 0)}
             onChange={value => handleTimeFromInput(value)}
             renderInput={params => <TextField {...params} label='Start time' />}
             minutesStep={30}
@@ -124,7 +124,7 @@ export default function Landingpage() {
             ampm={false}
           />
           <TimePicker
-            value={reservation.time.to}
+            value={new Date(reservation.time?.to ?? 0)}
             onChange={value => handleTimeToInput(value)}
             renderInput={params => <TextField {...params} label='End time' />}
             minutesStep={30}

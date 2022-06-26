@@ -1,20 +1,8 @@
 import { createContext } from 'react';
-import {
-  Reservation,
-  ReservationContextType,
-} from './ReservationDataInterface';
+import { ReservationContextType } from './ReservationDataInterface';
+import { Reservation } from './api';
 
-const defaultReservation: Reservation = {
-  id: null,
-  tables: null,
-  time: {
-    from: new Date(),
-    to: new Date(),
-  },
-  userName: null,
-  userEmail: null,
-  confirmed: false,
-};
+const defaultReservation: Reservation = {};
 
 const defaultFunction = () => {
   return;

@@ -1,6 +1,6 @@
 import { ReservationContext } from '../data/ReservationContext';
 import { useState } from 'react';
-import { Reservation } from '../data/ReservationDataInterface';
+import { Reservation } from '../data/api';
 
 /**
  * Sets a Reservation Context for its children
@@ -19,15 +19,10 @@ export default function ReservationContextWrapper(props: {
   to.setHours(to.getHours() + 1);
 
   const [reservation, setReservation] = useState<Reservation>({
-    id: null,
-    tables: null,
     time: {
-      from: from,
-      to: to,
+      from: from.valueOf(),
+      to: to.valueOf(),
     },
-    userName: 'John Doe',
-    userEmail: 'j.doe@myspace.com',
-    confirmed: false,
   });
 
   return (

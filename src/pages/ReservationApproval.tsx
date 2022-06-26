@@ -19,8 +19,8 @@ export default function ReservationApproval() {
         <div>
           <p className='booking-summary-label'>Date</p>
           <DatePicker
-            value={reservation.time.from}
-            onChange={e => {
+            value={reservation.time?.from ?? 0}
+            onChange={() => {
               return;
             }}
             renderInput={params => (
@@ -46,18 +46,18 @@ export default function ReservationApproval() {
       <p className='booking-summary-label'>Time</p>
       <div className='booking-summary-time-picker-container'>
         <TimePicker
-          onChange={e => {
+          onChange={() => {
             return;
           }}
           readOnly
-          value={reservation.time.from}
+          value={reservation.time?.from ?? 0}
           renderInput={params => <TextField {...params} size='small' />}
           ampm={false}
         />
         <TimePicker
-          value={reservation.time.to}
+          value={reservation.time?.to ?? 0}
           readOnly
-          onChange={e => {
+          onChange={() => {
             return;
           }}
           renderInput={params => <TextField {...params} size='small' />}

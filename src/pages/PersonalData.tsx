@@ -1,10 +1,4 @@
-import {
-  TextField,
-  Button,
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-} from '@mui/material';
+import { TextField, Button, Checkbox, FormControlLabel } from '@mui/material';
 import { useState } from 'react';
 
 import '../css/PersonalData.css';
