@@ -16,8 +16,8 @@ export default function TableSelectionPage() {
   const floorPlan: FloorPlan = {
     image: 'https://i.stack.imgur.com/1tl6D.jpg',
     size: {
-      width: 1000,
-      height: 600,
+      width: 1000 * 2,
+      height: 600 * 2,
     },
   };
 
@@ -28,12 +28,12 @@ export default function TableSelectionPage() {
       floorPlan: {
         image: '/images/table4-1.png',
         position: {
-          x: 20,
-          y: 20,
+          x: 20 * 2,
+          y: 20 * 2,
         },
         size: {
-          width: 100,
-          height: 100,
+          width: 100 * 2,
+          height: 100 * 2,
         },
       },
     },
@@ -43,12 +43,12 @@ export default function TableSelectionPage() {
       floorPlan: {
         image: '/images/table4-1.png',
         position: {
-          x: 20,
-          y: 250,
+          x: 20 * 2,
+          y: 250 * 2,
         },
         size: {
-          width: 100,
-          height: 100,
+          width: 100 * 2,
+          height: 100 * 2,
         },
       },
     },
@@ -58,12 +58,12 @@ export default function TableSelectionPage() {
       floorPlan: {
         image: '/images/table8-1.png',
         position: {
-          x: 700,
-          y: 50,
+          x: 700 * 2,
+          y: 50 * 2,
         },
         size: {
-          width: 100,
-          height: 160,
+          width: 100 * 2,
+          height: 160 * 2,
         },
       },
     },
@@ -73,12 +73,12 @@ export default function TableSelectionPage() {
       floorPlan: {
         image: '/images/table4-2.png',
         position: {
-          x: 700,
-          y: 300,
+          x: 700 * 2,
+          y: 300 * 2,
         },
         size: {
-          width: 100,
-          height: 100,
+          width: 100 * 2,
+          height: 100 * 2,
         },
       },
     },
@@ -89,6 +89,26 @@ export default function TableSelectionPage() {
   );
   const [timePickerFromValue, setTimePickerFromValue] =
     React.useState<Date | null>(null);
+  const [sizeFactor, setSizeFactor] = React.useState<number>(1);
+
+  const canvasRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    handleResize();
+  }, []);
+
+  const handleResize = () => {
+    // Scale canvas contents
+    setSizeFactor(
+      (canvasRef.current?.offsetWidth ?? 0) / (floorPlan.size?.width ?? 0),
+    );
+  };
+
+  const fixSize = (originalSize?: number) => {
+    return (originalSize ?? 0) * sizeFactor;
+  };
+
+  window.addEventListener('resize', () => handleResize());
 
   return (
     <div className={'table-selection-container'}>
@@ -133,11 +153,11 @@ export default function TableSelectionPage() {
         </Grid>
 
         <Grid item xs={12}>
-          <div className='floorPlan-canvas'>
+          <div className='floorPlan-canvas' ref={canvasRef}>
             <img
               style={{
-                width: floorPlan.size?.width,
-                height: floorPlan.size?.height,
+                width: fixSize(floorPlan.size?.width),
+                height: fixSize(floorPlan.size?.height),
               }}
               src={floorPlan.image}
             />
@@ -147,10 +167,10 @@ export default function TableSelectionPage() {
                 <Box
                   sx={{
                     position: 'absolute',
-                    left: table.floorPlan?.position?.x,
-                    top: table.floorPlan?.position?.y,
-                    width: table.floorPlan?.size?.width,
-                    height: table.floorPlan?.size?.height,
+                    left: fixSize(table.floorPlan?.position?.x),
+                    top: fixSize(table.floorPlan?.position?.y),
+                    width: fixSize(table.floorPlan?.size?.width),
+                    height: fixSize(table.floorPlan?.size?.height),
                   }}
                   key={tableKey}
                   onClick={() => alert(`Picked table ${table.id}`)}
