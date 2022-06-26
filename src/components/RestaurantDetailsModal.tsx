@@ -11,12 +11,15 @@ import {
   Divider,
   ImageListItem,
   Avatar,
+  CircularProgress,
 } from '@mui/material';
 
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PublicIcon from '@mui/icons-material/Public';
-import { Restaurant } from '../data/api';
+import { Comment, Restaurant } from '../data/api';
+import React from 'react';
+import { Context } from '../data/Context';
 
 /**
  * OnClose callback
@@ -35,6 +38,18 @@ export default function RestaurantDetailsModal(params: {
   restaurant: Restaurant;
 }) {
   const { open, onClose, restaurant } = params;
+  const { restaurantApi } = React.useContext(Context);
+
+  const [comments, setComments] = React.useState<Comment[] | undefined>();
+
+  React.useEffect(() => {
+    if (!restaurant.id || !open) return;
+
+    restaurantApi
+      .getRestaurantComments(restaurant.id)
+      .then(paginated => paginated.results)
+      .then(result => setComments(result ?? []));
+  }, [restaurant, open]);
 
   const unixTimestampToTimeOfDay = (unixTimestamp?: number) => {
     if (!unixTimestamp) {
@@ -129,45 +144,46 @@ export default function RestaurantDetailsModal(params: {
               </Typography>
             </Grid>
 
-            {[
-              {
-                rating: 3,
-                comment: 'Essen ok, aber zu wenig!',
-                name: 'Hungry Client',
-              },
-              {
-                rating: 5,
-                comment: 'Exzellentes Essen!',
-                name: 'Exzellenter Mensch',
-              },
-            ].map(comment => (
-              <>
-                <Grid item xs={1}>
-                  <Avatar
-                    alt={comment.name}
-                    src='/static/images/avatar/1.jpg'
-                  />
+            {comments ? (
+              comments.length === 0 ? (
+                <Grid item xs={12}>
+                  No comments yet.
                 </Grid>
-                <Grid item xs={8}>
-                  {comment.name}
-                </Grid>
-                <Grid item xs={3}>
-                  <Rating
-                    name='simple-controlled'
-                    value={comment.rating}
-                    readOnly
-                  />
-                </Grid>
-                <Grid item xs={1}></Grid>
-                <Grid item xs={11}>
-                  {comment.comment}
-                </Grid>
-                <Grid item xs={1}></Grid>
-                <Grid item xs={11}>
-                  <Divider />
-                </Grid>
-              </>
-            ))}
+              ) : (
+                comments.map(comment => (
+                  <>
+                    <Grid item xs={1}>
+                      <Avatar
+                        alt={comment.name}
+                        src='/static/images/avatar/1.jpg'
+                      />
+                    </Grid>
+                    <Grid item xs={8}>
+                      {comment.name}
+                    </Grid>
+                    <Grid item xs={3}>
+                      <Rating
+                        name='simple-controlled'
+                        value={comment.rating}
+                        readOnly
+                      />
+                    </Grid>
+                    <Grid item xs={1}></Grid>
+                    <Grid item xs={11}>
+                      {comment.comment}
+                    </Grid>
+                    <Grid item xs={1}></Grid>
+                    <Grid item xs={11}>
+                      <Divider />
+                    </Grid>
+                  </>
+                ))
+              )
+            ) : (
+              <Grid item xs={12}>
+                <CircularProgress />
+              </Grid>
+            )}
           </Grid>
         </Card>
       </Fade>

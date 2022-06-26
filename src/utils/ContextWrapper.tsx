@@ -1,7 +1,7 @@
 import { Context } from '../data/Context';
 import { useState } from 'react';
-import { Reservation } from '../data/api';
-import { Configuration } from '../data';
+import { Reservation, RestaurantApi } from '../data/api';
+import { Configuration, ConfigurationParameters } from '../data';
 
 /**
  * Sets Context for its children
@@ -24,10 +24,20 @@ export default function ContextWrapper(props: { children: JSX.Element }) {
     },
   });
 
-  const configuration: Configuration = {};
+  const parameters: ConfigurationParameters = {};
+
+  if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+    parameters.basePath = 'https://reservation-bear.de/api';
+  }
+
+  const configuration = new Configuration(parameters);
+
+  const restaurantApi = new RestaurantApi(configuration);
 
   return (
-    <Context.Provider value={{ reservation, setReservation, configuration }}>
+    <Context.Provider
+      value={{ reservation, setReservation, configuration, restaurantApi }}
+    >
       {children}
     </Context.Provider>
   );

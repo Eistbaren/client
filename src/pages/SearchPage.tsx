@@ -1,4 +1,11 @@
-import { Button, TextField, Grid, Typography } from '@mui/material';
+import {
+  Button,
+  TextField,
+  Grid,
+  Typography,
+  Skeleton,
+  Card,
+} from '@mui/material';
 
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import '../css/SearchPage.css';
@@ -7,12 +14,15 @@ import RestaurantCard from '../components/RestaurantCard';
 import RestaurantDetailsModal from '../components/RestaurantDetailsModal';
 import { Restaurant } from '../data/api';
 import ComboBox from '../components/ComboBox';
+import { Context } from '../data/Context';
 
 /**
  * Bootstrap function
  * @return {JSX.Element}
  */
 export default function SearchPage() {
+  const { restaurantApi } = React.useContext(Context);
+
   const filterFormItems = [
     {
       label: 'Type',
@@ -36,70 +46,20 @@ export default function SearchPage() {
     },
   ];
 
-  const restaurants: Restaurant[] = [
-    {
-      id: 'bla',
-      name: 'Restaurant',
-      averageRating: 3,
-      website: 'https://tum.de',
-      images: [
-        '/images/background_3.jpg',
-        'images/hero.jpg',
-        '/images/background_3.jpg',
-        'images/hero.jpg',
-      ],
-      openingHours: {
-        from: 36000, // 11:00
-        to: 72000, // 21:00
-      },
-    },
-    {
-      id: 'bla1',
-      name: 'Restaurant1',
-      averageRating: 2,
-      website: 'https://tum.de',
-      images: [
-        '/images/background_3.jpg',
-        'images/hero.jpg',
-        '/images/background_3.jpg',
-        'images/hero.jpg',
-      ],
-      openingHours: {
-        from: 36000, // 11:00
-        to: 75600, // 22:00
-      },
-    },
-    {
-      id: 'bla2',
-      name: 'Restaurant2',
-      averageRating: 4,
-      website: 'https://tum.de',
-      images: [
-        '/images/background_3.jpg',
-        'images/hero.jpg',
-        '/images/background_3.jpg',
-        'images/hero.jpg',
-      ],
-      openingHours: {
-        from: 36000, // 11:00
-        to: 79200, // 23:00
-      },
-    },
-  ];
+  const [restaurants, setRestaurants] = React.useState<
+    Restaurant[] | undefined
+  >(undefined);
 
   const [detailModalRestaurant, setDetailModalRestaurant] =
-    React.useState<Restaurant>({
-      id: '',
-      name: '',
-      averageRating: 0,
-      website: '',
-      images: [],
-      openingHours: {
-        from: 0,
-        to: 0,
-      },
-    });
+    React.useState<Restaurant>({});
   const [detailModalOpen, setDetailModalOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    restaurantApi
+      .getRestaurants()
+      .then(paginated => paginated.results)
+      .then(result => setRestaurants(result ?? []));
+  }, []);
 
   const openDetailModal = (restaurant: Restaurant) => {
     setDetailModalRestaurant(restaurant);
@@ -147,14 +107,25 @@ export default function SearchPage() {
             </Button>
           </Grid>
 
-          {restaurants.map(restaurant => (
-            <Grid item xs={2.4} key={restaurant.id}>
-              <RestaurantCard
-                restaurant={restaurant}
-                onClick={() => openDetailModal(restaurant)}
-              ></RestaurantCard>
-            </Grid>
-          ))}
+          {restaurants
+            ? restaurants.map(restaurant => (
+                <Grid item xs={2.4} key={restaurant.id}>
+                  <RestaurantCard
+                    restaurant={restaurant}
+                    onClick={() => openDetailModal(restaurant)}
+                  ></RestaurantCard>
+                </Grid>
+              ))
+            : Array.from(new Array(10)).map((item, index) => (
+                <Grid item xs={2.4} key={index}>
+                  <Card>
+                    <Skeleton variant='rectangular' height={118} />
+                    <Skeleton />
+                    <Skeleton width={'60%'} />
+                    <Skeleton width={'60%'} />
+                  </Card>
+                </Grid>
+              ))}
         </Grid>
       </div>
 
