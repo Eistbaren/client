@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 
 /**
- * Bootstrap function
+ * Creates a Header Component that displays the reservation steps
  * @return {JSX.Element}
  */
 export default function Header() {

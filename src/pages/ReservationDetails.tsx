@@ -1,5 +1,5 @@
 /**
- * Bootstrap function
+ * Reservation Detail page
  * @return {JSX.Element}
  */
 export default function ReservationDetails() {
