@@ -12,9 +12,10 @@ import '../css/SearchPage.css';
 import React from 'react';
 import RestaurantCard from '../components/RestaurantCard';
 import RestaurantDetailsModal from '../components/RestaurantDetailsModal';
-import { Paginated, Restaurant } from '../data/api';
+import { Restaurant } from '../data/api';
 import ComboBox from '../components/ComboBox';
 import { Context } from '../data/Context';
+import PaginatedApi from '../data/PaginatedApi';
 
 /**
  * Bootstrap function
@@ -46,56 +47,24 @@ export default function SearchPage() {
     },
   ];
 
-  const [restaurants, setRestaurants] = React.useState<Restaurant[]>([]);
-  const [pagination, setPagination] = React.useState<Paginated>({
-    currentPage: 0,
-    pageSize: 30,
-  });
-  const [isLoading, setIsLoading] = React.useState(true);
+  const restaurantApiHelp = new PaginatedApi<Restaurant>(10, pagination =>
+    restaurantApi
+      .getRestaurants([], pagination.currentPage, pagination.pageSize)
+      .then(result => [result, result.results ?? []]),
+  );
+  const restaurants = restaurantApiHelp.data();
+  const isLoading = restaurantApiHelp.isLoading();
+  const pagination = restaurantApiHelp.pagination();
 
   const [detailModalRestaurant, setDetailModalRestaurant] =
     React.useState<Restaurant>({});
   const [detailModalOpen, setDetailModalOpen] = React.useState(false);
-
-  React.useEffect(() => {
-    pagination.currentPage = 0;
-    setRestaurants([]);
-    loadCurrentPage();
-  }, []);
 
   const openDetailModal = (restaurant: Restaurant) => {
     setDetailModalRestaurant(restaurant);
     setDetailModalOpen(true);
   };
   const handleDetailModalClose = () => setDetailModalOpen(false);
-
-  const loadCurrentPage = () => {
-    setIsLoading(true);
-    restaurantApi
-      .getRestaurants([], pagination.currentPage, pagination.pageSize)
-      .then(paginated => {
-        setPagination(paginated);
-        setIsLoading(false);
-        setRestaurants(restaurants.concat(paginated.results ?? []));
-      });
-  };
-
-  const loadMoreItems = () => {
-    if (
-      pagination === undefined ||
-      pagination.currentPage === undefined ||
-      pagination.totalPages === undefined
-    )
-      return;
-    if (pagination.currentPage >= pagination.totalPages) return;
-
-    pagination.currentPage++;
-    loadCurrentPage();
-  };
-
-  const atLastPage = (p?: Paginated) => {
-    return (p?.currentPage ?? 0) === (p?.totalPages ?? 0) - 1;
-  };
 
   return (
     <>
@@ -171,8 +140,13 @@ export default function SearchPage() {
 
           <Grid item xs={5}></Grid>
           <Grid item xs={2}>
-            <Button onClick={loadMoreItems} disabled={atLastPage(pagination)}>
-              {atLastPage(pagination) ? "That's all!" : 'Load more'}
+            <Button
+              onClick={() => {
+                restaurantApiHelp.loadNextPage();
+              }}
+              disabled={restaurantApiHelp.atLastPage()}
+            >
+              {restaurantApiHelp.atLastPage() ? "That's all!" : 'Load more'}
             </Button>
           </Grid>
 
