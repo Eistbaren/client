@@ -1,5 +1,5 @@
 /**
- * Bootstrap function
+ * Restaurant Detail Page
  * @return {JSX.Element}
  */
 export default function RestaurantDetails() {

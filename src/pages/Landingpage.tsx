@@ -1,33 +1,73 @@
-import {
-  Button,
-  TextField,
-  ToggleButton,
-  ToggleButtonGroup,
-  Stack,
-  Tooltip,
-  IconButton,
-} from '@mui/material';
+import { Button, TextField, Stack } from '@mui/material';
 import { CalendarPicker, TimePicker } from '@mui/x-date-pickers';
-import InfoIcon from '@mui/icons-material/Info';
-import BookIcon from '@mui/icons-material/Book';
 
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { ReservationContext } from '../data/ReservationContext';
+import { useContext, useState } from 'react';
 
-import { useState } from 'react';
+import NumberOfPersonsPicker from '../components/NumberOfPersonsPicker';
+import FloatingSidebar from '../components/FloatingSidebar';
 
 import '../css/Landingpage.css';
+
 /**
- * Landingpage component
+ * Landingpage
  * @return {JSX.Element}
  */
 export default function Landingpage() {
-  const [value, setValue] = useState<Date | null>(new Date());
-  const [timePickerFromValue, setTimePickerFromValue] = useState<Date | null>(
-    null,
-  );
-  const [timePickerToValue, setTimePickerToValue] = useState<Date | null>(null);
-  const [numberOfPersons, setNumberOfPersons] = useState<string | null>('1');
+  const { reservation, setReservation } = useContext(ReservationContext);
+  const [numberOfPersons, setNumberOfPersons] = useState<number>(2);
+
+  /**
+   * Sets the reservation.time.from time to the new time
+   * @param  {Date} value
+   */
+  function handleTimeFromInput(value: Date | null) {
+    const newDate = new Date(reservation.time?.from?.valueOf() ?? 0);
+    newDate.setHours(value?.getHours() ?? 0);
+    newDate.setMinutes(value?.getMinutes() ?? 0);
+    setReservation({
+      ...reservation,
+      time: {
+        from: newDate.valueOf(),
+        to: reservation.time?.to,
+      },
+    });
+  }
+
+  /**
+   * Sets the reservation.time.to time to the new time
+   * @param  {Date} value
+   */
+  function handleTimeToInput(value: Date | null) {
+    const newDate = new Date(reservation.time?.to?.valueOf() ?? 0);
+    newDate.setHours(value?.getHours() ?? 0);
+    newDate.setMinutes(value?.getMinutes() ?? 0);
+    setReservation({
+      ...reservation,
+      time: {
+        from: reservation.time?.from?.valueOf(),
+        to: newDate.valueOf(),
+      },
+    });
+  }
+
+  /**
+   * Sets the date for both times
+   * @param  {Date} value
+   */
+  function handleDateInput(value: Date) {
+    const from = new Date(reservation.time?.from?.valueOf() ?? 0);
+    const to = new Date(reservation.time?.to?.valueOf() ?? 0);
+    from.setDate(value.getDate());
+    to.setDate(value.getDate());
+    setReservation({
+      ...reservation,
+      time: {
+        from: from.valueOf(),
+        to: to.valueOf(),
+      },
+    });
+  }
 
   return (
     <div className='hero-container'>
@@ -61,62 +101,39 @@ export default function Landingpage() {
       </div>
       <div className='hero-image-container'>
         <p className='label'>Number of Persons</p>
-        <ToggleButtonGroup
-          value={numberOfPersons}
-          exclusive
-          onChange={(e, person) => setNumberOfPersons(person)}
-        >
-          <ToggleButton value='1'>1</ToggleButton>
-          <ToggleButton value='2'>2</ToggleButton>
-          <ToggleButton value='3'>3</ToggleButton>
-          <ToggleButton value='4'>4</ToggleButton>
-          <ToggleButton value='5'>5</ToggleButton>
-          <ToggleButton value='6'>6</ToggleButton>
-        </ToggleButtonGroup>
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <p className='label'>Pick a date & time</p>
-          <CalendarPicker
-            openTo='day'
-            date={value}
-            onChange={value => setValue(value)}
-            disablePast
-            views={['day']}
-            className='calendar-picker'
+        <NumberOfPersonsPicker
+          numberOfPersons={numberOfPersons}
+          setNumberOfPersons={setNumberOfPersons}
+        />
+        <p className='label'>Pick a date & time</p>
+        <CalendarPicker
+          openTo='day'
+          date={new Date(reservation.time?.from ?? 0)}
+          onChange={value => (value ? handleDateInput(value) : null)}
+          disablePast
+          views={['day']}
+          className='calendar-picker'
+        />
+        <div className='time-picker-container'>
+          <TimePicker
+            value={new Date(reservation.time?.from ?? 0)}
+            onChange={value => handleTimeFromInput(value)}
+            renderInput={params => <TextField {...params} label='Start time' />}
+            minutesStep={30}
+            views={['hours', 'minutes']}
+            ampm={false}
           />
-          <div className='time-picker-container'>
-            <TimePicker
-              value={timePickerFromValue}
-              onChange={value => setTimePickerFromValue(value)}
-              renderInput={params => (
-                <TextField {...params} label='Start time' />
-              )}
-              minutesStep={30}
-              views={['hours', 'minutes']}
-              ampm={false}
-            />
-            <TimePicker
-              value={timePickerToValue}
-              onChange={value => setTimePickerToValue(value)}
-              renderInput={params => <TextField {...params} label='End time' />}
-              minutesStep={30}
-              views={['hours', 'minutes']}
-              ampm={false}
-            />
-          </div>
-        </LocalizationProvider>
-        <div className='background-image'></div>
-        <div className='social-icons'>
-          <Tooltip title='Imprint' placement='right' arrow>
-            <IconButton>
-              <InfoIcon fontSize='large' className='social-icon' />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title='Documentation' placement='right' arrow>
-            <IconButton>
-              <BookIcon fontSize='large' className='social-icon' />
-            </IconButton>
-          </Tooltip>
+          <TimePicker
+            value={new Date(reservation.time?.to ?? 0)}
+            onChange={value => handleTimeToInput(value)}
+            renderInput={params => <TextField {...params} label='End time' />}
+            minutesStep={30}
+            views={['hours', 'minutes']}
+            ampm={false}
+          />
         </div>
+        <div className='background-image'></div>
+        <FloatingSidebar />
       </div>
     </div>
   );

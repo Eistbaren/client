@@ -2,8 +2,7 @@
   display: grid;
   grid-template-columns: 55% 45%;
   align-items: center;
-  margin: auto;
-  align-self: center;
+  margin: auto 0;
 }
 
 .hero-content {
