@@ -12,7 +12,7 @@ import '../css/SearchPage.css';
 import React from 'react';
 import RestaurantCard from '../components/RestaurantCard';
 import RestaurantDetailsModal from '../components/RestaurantDetailsModal';
-import { Restaurant } from '../data/api';
+import { Paginated, Restaurant } from '../data/api';
 import ComboBox from '../components/ComboBox';
 import { Context } from '../data/Context';
 
@@ -46,19 +46,21 @@ export default function SearchPage() {
     },
   ];
 
-  const [restaurants, setRestaurants] = React.useState<
-    Restaurant[] | undefined
-  >(undefined);
+  const [restaurants, setRestaurants] = React.useState<Restaurant[]>([]);
+  const [pagination, setPagination] = React.useState<Paginated>({
+    currentPage: 0,
+    pageSize: 30,
+  });
+  const [isLoading, setIsLoading] = React.useState(true);
 
   const [detailModalRestaurant, setDetailModalRestaurant] =
     React.useState<Restaurant>({});
   const [detailModalOpen, setDetailModalOpen] = React.useState(false);
 
   React.useEffect(() => {
-    restaurantApi
-      .getRestaurants()
-      .then(paginated => paginated.results)
-      .then(result => setRestaurants(result ?? []));
+    pagination.currentPage = 0;
+    setRestaurants([]);
+    loadCurrentPage();
   }, []);
 
   const openDetailModal = (restaurant: Restaurant) => {
@@ -66,6 +68,34 @@ export default function SearchPage() {
     setDetailModalOpen(true);
   };
   const handleDetailModalClose = () => setDetailModalOpen(false);
+
+  const loadCurrentPage = () => {
+    setIsLoading(true);
+    restaurantApi
+      .getRestaurants([], pagination.currentPage, pagination.pageSize)
+      .then(paginated => {
+        setPagination(paginated);
+        setIsLoading(false);
+        setRestaurants(restaurants.concat(paginated.results ?? []));
+      });
+  };
+
+  const loadMoreItems = () => {
+    if (
+      pagination === undefined ||
+      pagination.currentPage === undefined ||
+      pagination.totalPages === undefined
+    )
+      return;
+    if (pagination.currentPage >= pagination.totalPages) return;
+
+    pagination.currentPage++;
+    loadCurrentPage();
+  };
+
+  const atLastPage = (p?: Paginated) => {
+    return (p?.currentPage ?? 0) === (p?.totalPages ?? 0) - 1;
+  };
 
   return (
     <>
@@ -107,8 +137,13 @@ export default function SearchPage() {
             </Button>
           </Grid>
 
-          {restaurants
-            ? restaurants.map(restaurant => (
+          {restaurants ? (
+            restaurants.length === 0 ? (
+              <Grid item xs={12}>
+                No restaurants found. {isLoading}
+              </Grid>
+            ) : (
+              restaurants.map(restaurant => (
                 <Grid item xs={2.4} key={restaurant.id}>
                   <RestaurantCard
                     restaurant={restaurant}
@@ -116,16 +151,32 @@ export default function SearchPage() {
                   ></RestaurantCard>
                 </Grid>
               ))
-            : Array.from(new Array(10)).map((item, index) => (
-                <Grid item xs={2.4} key={index}>
-                  <Card>
-                    <Skeleton variant='rectangular' height={118} />
-                    <Skeleton variant='text' />
-                    <Skeleton variant='text' width={'60%'} />
-                    <Skeleton variant='text' width={'60%'} />
-                  </Card>
-                </Grid>
-              ))}
+            )
+          ) : (
+            <></>
+          )}
+
+          {Array.from(new Array(isLoading ? pagination.pageSize : 0)).map(
+            (_, index) => (
+              <Grid item xs={2.4} key={index}>
+                <Card>
+                  <Skeleton variant='rectangular' height={118} />
+                  <Skeleton variant='text' />
+                  <Skeleton variant='text' width={'60%'} />
+                  <Skeleton variant='text' width={'60%'} />
+                </Card>
+              </Grid>
+            ),
+          )}
+
+          <Grid item xs={5}></Grid>
+          <Grid item xs={2}>
+            <Button onClick={loadMoreItems} disabled={atLastPage(pagination)}>
+              {atLastPage(pagination) ? "That's all!" : 'Load more'}
+            </Button>
+          </Grid>
+
+          <Grid item xs={12}></Grid>
         </Grid>
       </div>
 

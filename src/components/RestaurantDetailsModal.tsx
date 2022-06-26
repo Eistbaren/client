@@ -11,7 +11,6 @@ import {
   Divider,
   ImageListItem,
   Avatar,
-  CircularProgress,
   Skeleton,
 } from '@mui/material';
 
@@ -184,7 +183,7 @@ export default function RestaurantDetailsModal(params: {
                 ))
               )
             ) : (
-              Array.from(new Array(1)).map(_ => (
+              Array.from(new Array(1)).map(() => (
                 <>
                   <Grid item xs={1}>
                     <Skeleton variant='circular' />
