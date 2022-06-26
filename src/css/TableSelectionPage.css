@@ -1,0 +1,10 @@
+.table-selection-container {
+  width: 100%;
+  padding-top: 16px;
+}
+
+.floorPlan-canvas {
+  position: relative;
+  top: 0;
+  left: 0;
+}

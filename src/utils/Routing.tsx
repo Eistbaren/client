@@ -7,6 +7,7 @@ import SearchPage from '../pages/SearchPage';
 import RestaurantDetails from '../pages/RestaurantDetails';
 import ReservationDetails from '../pages/ReservationDetails';
 import ReservationApproval from '../pages/ReservationApproval';
+import TableSelectionPage from '../pages/TableSelectionPage';
 import PersonalData from '../pages/PersonalData';
 
 /**
@@ -23,6 +24,7 @@ export default function Routing() {
           <Route path='search' element={<SearchPage />}>
             <Route path=':restaurantId' element={<RestaurantDetails />} />
           </Route>
+          <Route path='table' element={<TableSelectionPage />}></Route>
           <Route path='reservations' element={<ReservationDetails />} />
           <Route
             path='reservation-approval'
