@@ -5,9 +5,6 @@ import { FloorPlan, Table } from '../data/api';
 import '../css/TableSelectionPage.css';
 import { TimePicker } from '@mui/x-date-pickers';
 
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-
 /**
  * TableSelection page
  * @return {JSX.Element}
@@ -119,32 +116,30 @@ export default function TableSelectionPage() {
           </Typography>
         </Grid>
 
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <Grid item xs={4}>
-            <TimePicker
-              value={timePickerFromValue}
-              onChange={value => setTimePickerFromValue(value)}
-              renderInput={params => (
-                <TextField {...params} fullWidth label='Start time' />
-              )}
-              minutesStep={30}
-              views={['hours', 'minutes']}
-              ampm={false}
-            />
-          </Grid>
-          <Grid item xs={4}>
-            <TimePicker
-              value={timePickerToValue}
-              onChange={value => setTimePickerToValue(value)}
-              renderInput={params => (
-                <TextField {...params} fullWidth label='End time' />
-              )}
-              minutesStep={30}
-              views={['hours', 'minutes']}
-              ampm={false}
-            />
-          </Grid>
-        </LocalizationProvider>
+        <Grid item xs={4}>
+          <TimePicker
+            value={timePickerFromValue}
+            onChange={value => setTimePickerFromValue(value)}
+            renderInput={params => (
+              <TextField {...params} fullWidth label='Start time' />
+            )}
+            minutesStep={30}
+            views={['hours', 'minutes']}
+            ampm={false}
+          />
+        </Grid>
+        <Grid item xs={4}>
+          <TimePicker
+            value={timePickerToValue}
+            onChange={value => setTimePickerToValue(value)}
+            renderInput={params => (
+              <TextField {...params} fullWidth label='End time' />
+            )}
+            minutesStep={30}
+            views={['hours', 'minutes']}
+            ampm={false}
+          />
+        </Grid>
 
         <Grid item xs={12}>
           <Typography variant='h4' component='div'>
