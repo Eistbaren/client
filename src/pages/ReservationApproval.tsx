@@ -3,14 +3,14 @@ import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 
 import { useContext } from 'react';
 import '../css/ReservationApproval.css';
-import { ReservationContext } from '../data/ReservationContext';
+import { Context } from '../data/Context';
 
 /**
  * Reservation Approval Page
  * @return {JSX.Element}
  */
 export default function ReservationApproval() {
-  const { reservation } = useContext(ReservationContext);
+  const { reservation } = useContext(Context);
 
   return (
     <div className='booking-summary-container'>

@@ -1,15 +1,14 @@
-import { ReservationContext } from '../data/ReservationContext';
+import { Context } from '../data/Context';
 import { useState } from 'react';
 import { Reservation } from '../data/api';
+import { Configuration } from '../data';
 
 /**
- * Sets a Reservation Context for its children
+ * Sets Context for its children
  * @param  {{ children: JSX.Element }} props
  * @return {JSX.Element}
  */
-export default function ReservationContextWrapper(props: {
-  children: JSX.Element;
-}) {
+export default function ContextWrapper(props: { children: JSX.Element }) {
   const { children } = props;
 
   const from = new Date();
@@ -25,9 +24,11 @@ export default function ReservationContextWrapper(props: {
     },
   });
 
+  const configuration: Configuration = {};
+
   return (
-    <ReservationContext.Provider value={{ reservation, setReservation }}>
+    <Context.Provider value={{ reservation, setReservation, configuration }}>
       {children}
-    </ReservationContext.Provider>
+    </Context.Provider>
   );
 }
