@@ -31,6 +31,7 @@ export default function Routing() {
             element={<ReservationApproval />}
           />
           <Route path='personal-data' element={<PersonalData />} />
+          <Route path='*' element={<Landingpage />} />
         </Routes>
       </PageTemplate>
     </BrowserRouter>
