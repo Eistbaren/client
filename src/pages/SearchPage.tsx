@@ -160,9 +160,13 @@ export default function SearchPage() {
               onClick={() => {
                 restaurantApiHelp.loadNextPage();
               }}
-              disabled={restaurantApiHelp.atLastPage()}
+              disabled={restaurantApiHelp.atLastPage() || isLoading}
             >
-              {restaurantApiHelp.atLastPage() ? "That's all!" : 'Load more'}
+              {restaurantApiHelp.atLastPage()
+                ? "That's all!"
+                : isLoading
+                ? 'Loading...'
+                : 'Load more'}
             </Button>
           </Grid>
 
