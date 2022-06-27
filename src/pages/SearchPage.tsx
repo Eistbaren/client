@@ -5,12 +5,16 @@ import {
   Typography,
   Skeleton,
   Card,
+  Box,
 } from '@mui/material';
 
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import GridViewIcon from '@mui/icons-material/GridView';
 import '../css/SearchPage.css';
 import React from 'react';
 import RestaurantCard from '../components/RestaurantCard';
+import RestaurantMap from '../components/RestaurantMap';
+
 import RestaurantDetailsModal from '../components/RestaurantDetailsModal';
 import { Restaurant } from '../data/api';
 import ComboBox from '../components/ComboBox';
@@ -64,6 +68,9 @@ export default function SearchPage() {
   };
   const handleDetailModalClose = () => setDetailModalOpen(false);
 
+  const [showMap, setShowMap] = React.useState(false);
+  const toggleMap = () => setShowMap(!showMap);
+
   return (
     <>
       <div className='search-container'>
@@ -99,18 +106,23 @@ export default function SearchPage() {
           </Grid>
 
           <Grid item xs>
-            <Button
-              variant='contained'
-              startIcon={<LocationOnIcon />}
-              sx={{ width: '100%' }}
-            >
-              View on map
-            </Button>
+            <Box display='flex' justifyContent='flex-end'>
+              <Button
+                variant='contained'
+                startIcon={showMap ? <GridViewIcon /> : <LocationOnIcon />}
+                onClick={toggleMap}
+              >
+                {showMap ? 'Show grid' : 'Show map'}
+              </Button>
+            </Box>
           </Grid>
 
-          {restaurants.length === 0 && !isLoading ? (
+          {showMap ? (
             <Grid item xs={12}>
-              No restaurants found.
+              <RestaurantMap
+                restaurants={restaurants}
+                onClick={restaurant => openDetailModal(restaurant)}
+              ></RestaurantMap>
             </Grid>
           ) : (
             restaurants.map(restaurant => (

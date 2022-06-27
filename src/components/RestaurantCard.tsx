@@ -28,8 +28,9 @@ import { Context } from '../data/Context';
 export default function RestaurantCard(params: {
   restaurant: Restaurant;
   onClick: () => void;
+  dontShowImages?: boolean;
 }) {
-  const { restaurant, onClick } = params;
+  const { restaurant, onClick, dontShowImages } = params;
   const { configuration } = React.useContext(Context);
 
   const image: string =
@@ -37,12 +38,14 @@ export default function RestaurantCard(params: {
 
   return (
     <Card onClick={onClick} className='restaurant-card'>
-      <CardMedia
-        component='img'
-        height='140'
-        image={`${configuration.basePath}/image/${image}`}
-        alt='green iguana'
-      />
+      {!dontShowImages ? (
+        <CardMedia
+          component='img'
+          height='140'
+          image={`${configuration.basePath}/image/${image}`}
+          alt='green iguana'
+        />
+      ) : null}
       <CardContent>
         <Typography
           gutterBottom
