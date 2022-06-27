@@ -1,6 +1,7 @@
-import { Button, TextField, Grid, Typography } from '@mui/material';
+import { Button, TextField, Grid, Typography, Box } from '@mui/material';
 
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import GridViewIcon from '@mui/icons-material/GridView';
 import '../css/SearchPage.css';
 import React from 'react';
 import RestaurantCard from '../components/RestaurantCard';
@@ -109,6 +110,9 @@ export default function SearchPage() {
   };
   const handleDetailModalClose = () => setDetailModalOpen(false);
 
+  const [showMap, setShowMap] = React.useState(false);
+  const toggleMap = () => setShowMap(!showMap);
+
   return (
     <>
       <div className='search-container'>
@@ -144,25 +148,34 @@ export default function SearchPage() {
           </Grid>
 
           <Grid item xs>
-            <Button variant='contained' startIcon={<LocationOnIcon />}>
-              View on map
-            </Button>
+            <Box display='flex' justifyContent='flex-end'>
+              <Button
+                variant='contained'
+                startIcon={showMap ? <GridViewIcon /> : <LocationOnIcon />}
+                onClick={toggleMap}
+              >
+                {showMap ? 'Show grid' : 'View on map'}
+              </Button>
+            </Box>
           </Grid>
 
-          {restaurants.map(restaurant => (
-            <Grid item xs={2.4} key={restaurant.id}>
-              <RestaurantCard
-                restaurant={restaurant}
-                onClick={() => openDetailModal(restaurant)}
-              ></RestaurantCard>
+          {showMap ? (
+            <Grid item xs={12}>
+              <RestaurantMap
+                restaurants={restaurants}
+                onClick={restaurant => openDetailModal(restaurant)}
+              ></RestaurantMap>
             </Grid>
-          ))}
-          <Grid item xs={12}>
-            <RestaurantMap
-              restaurants={restaurants}
-              onClick={restaurant => openDetailModal(restaurant)}
-            ></RestaurantMap>
-          </Grid>
+          ) : (
+            restaurants.map(restaurant => (
+              <Grid item xs={2.4} key={restaurant.id}>
+                <RestaurantCard
+                  restaurant={restaurant}
+                  onClick={() => openDetailModal(restaurant)}
+                ></RestaurantCard>
+              </Grid>
+            ))
+          )}
         </Grid>
       </div>
 
