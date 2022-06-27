@@ -106,23 +106,19 @@ export default function SearchPage() {
             </Button>
           </Grid>
 
-          {restaurants ? (
-            restaurants.length === 0 ? (
-              <Grid item xs={12}>
-                No restaurants found. {isLoading}
-              </Grid>
-            ) : (
-              restaurants.map(restaurant => (
-                <Grid item xs={2.4} key={restaurant.id}>
-                  <RestaurantCard
-                    restaurant={restaurant}
-                    onClick={() => openDetailModal(restaurant)}
-                  ></RestaurantCard>
-                </Grid>
-              ))
-            )
+          {restaurants.length === 0 && !isLoading ? (
+            <Grid item xs={12}>
+              No restaurants found.
+            </Grid>
           ) : (
-            <></>
+            restaurants.map(restaurant => (
+              <Grid item xs={2.4} key={restaurant.id}>
+                <RestaurantCard
+                  restaurant={restaurant}
+                  onClick={() => openDetailModal(restaurant)}
+                ></RestaurantCard>
+              </Grid>
+            ))
           )}
 
           {Array.from(new Array(isLoading ? pagination.pageSize : 0)).map(

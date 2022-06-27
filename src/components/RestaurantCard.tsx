@@ -11,6 +11,8 @@ import {
 
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { Restaurant } from '../data/api';
+import React from 'react';
+import { Context } from '../data/Context';
 
 /**
  * OnClick callback
@@ -28,12 +30,17 @@ export default function RestaurantCard(params: {
   onClick: () => void;
 }) {
   const { restaurant, onClick } = params;
+  const { configuration } = React.useContext(Context);
+
+  const image: string =
+    restaurant.images?.at(0) ?? '069f72db-2157-43de-8e88-21661b518100';
+
   return (
     <Card onClick={onClick} className='restaurant-card'>
       <CardMedia
         component='img'
         height='140'
-        image='/images/hero.jpg'
+        image={`${configuration.basePath}/image/${image}`}
         alt='green iguana'
       />
       <CardContent>

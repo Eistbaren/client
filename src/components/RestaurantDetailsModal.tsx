@@ -38,7 +38,7 @@ export default function RestaurantDetailsModal(params: {
   restaurant: Restaurant;
 }) {
   const { open, onClose, restaurant } = params;
-  const { restaurantApi } = React.useContext(Context);
+  const { configuration, restaurantApi } = React.useContext(Context);
 
   const [comments, setComments] = React.useState<Comment[] | undefined>();
 
@@ -94,14 +94,21 @@ export default function RestaurantDetailsModal(params: {
                   gridTemplateColumns:
                     'repeat(auto-fill,minmax(300px,300px)) !important',
                   gridAutoColumns: 'minmax(300px, 1fr)',
-                  height: '200px',
+                  height:
+                    (restaurant?.images?.length ?? 0) > 0 ? '200px' : '30px',
                 }}
               >
-                {(restaurant?.images || []).map((image, imageKey) => (
-                  <ImageListItem key={`image-${imageKey}`}>
-                    <img src={image} />
-                  </ImageListItem>
-                ))}
+                {(restaurant?.images?.length ?? 0) > 0 ? (
+                  (restaurant?.images || []).map((image, imageKey) => (
+                    <ImageListItem key={`image-${imageKey}`}>
+                      <img src={`${configuration.basePath}/image/${image}`} />
+                    </ImageListItem>
+                  ))
+                ) : (
+                  <Grid item xs={12}>
+                    No images found.
+                  </Grid>
+                )}
               </ImageList>
             </Grid>
 
