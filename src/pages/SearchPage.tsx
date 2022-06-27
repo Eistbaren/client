@@ -122,6 +122,7 @@ export default function SearchPage() {
               <RestaurantMap
                 restaurants={restaurants}
                 onClick={restaurant => openDetailModal(restaurant)}
+                isLoading={isLoading}
               ></RestaurantMap>
             </Grid>
           ) : (
