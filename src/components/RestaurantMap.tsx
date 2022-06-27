@@ -8,6 +8,7 @@ import { RStyle, RIcon } from 'rlayers/style';
 
 import '../css/RestaurantMap.css';
 import RestaurantCard from '../components/RestaurantCard';
+/* import locationIcon from '../../public/images/location.svg'; */
 
 /**
  * OnClick callback
@@ -27,8 +28,6 @@ export default function RestaurantMap(params: {
 }) {
   const { restaurants, onClick } = params;
   const center = fromLonLat([11.574231, 48.139244]);
-  const locationIcon =
-    'https://cdn.jsdelivr.net/npm/rlayers/examples/./svg/location.svg';
 
   return (
     <RMap className='restaurant-map' initial={{ center: center, zoom: 12 }}>
@@ -50,7 +49,7 @@ export default function RestaurantMap(params: {
               key={restaurant.id}
             >
               <RStyle>
-                <RIcon src={locationIcon} anchor={[0.5, 0.8]} />
+                <RIcon src='/images/location.svg' anchor={[0.5, 0.8]} />
               </RStyle>
               <RPopup trigger={'click'} className='restaurant-overlay'>
                 <RestaurantCard
