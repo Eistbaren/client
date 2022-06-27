@@ -16,3 +16,8 @@
   display: flex !important;
   flex-direction: column;
 }
+
+.center-children {
+  display: flex;
+  justify-content: center;
+}

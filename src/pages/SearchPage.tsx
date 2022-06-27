@@ -67,9 +67,9 @@ export default function SearchPage() {
   return (
     <>
       <div className='search-container'>
-        <Grid container spacing={2}>
+        <Grid container spacing={2} alignItems='center'>
           <Grid item xs={12}>
-            <Typography gutterBottom variant='h4' component='div'>
+            <Typography variant='h4' component='div'>
               Search
             </Typography>
           </Grid>
@@ -93,13 +93,17 @@ export default function SearchPage() {
           ))}
 
           <Grid item xs={9.6}>
-            <Typography gutterBottom variant='h4' component='div'>
+            <Typography variant='h4' component='div'>
               Results
             </Typography>
           </Grid>
 
           <Grid item xs>
-            <Button variant='contained' startIcon={<LocationOnIcon />}>
+            <Button
+              variant='contained'
+              startIcon={<LocationOnIcon />}
+              sx={{ width: '100%' }}
+            >
               View on map
             </Button>
           </Grid>
@@ -132,8 +136,7 @@ export default function SearchPage() {
             ),
           )}
 
-          <Grid item xs={5}></Grid>
-          <Grid item xs={2}>
+          <Grid item xs={12} className='center-children'>
             <Button
               onClick={() => {
                 restaurantApiHelp.loadNextPage();

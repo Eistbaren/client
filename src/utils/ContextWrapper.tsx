@@ -26,7 +26,11 @@ export default function ContextWrapper(props: { children: JSX.Element }) {
 
   const parameters: ConfigurationParameters = {};
 
-  if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+  if (
+    !process.env.NODE_ENV ||
+    process.env.NODE_ENV === 'development' ||
+    location.hostname.endsWith('pages.dev')
+  ) {
     parameters.basePath = 'https://reservation-bear.de/api';
   }
 

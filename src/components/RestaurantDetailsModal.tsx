@@ -208,8 +208,7 @@ export default function RestaurantDetailsModal(params: {
               ),
             )}
 
-            <Grid item xs={5}></Grid>
-            <Grid item xs={2}>
+            <Grid item xs={12} className='center-children'>
               <Button
                 onClick={() => {
                   restaurantApiHelp.loadNextPage();

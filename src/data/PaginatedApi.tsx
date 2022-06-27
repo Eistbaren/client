@@ -126,11 +126,16 @@ export default class PaginatedApi<T> {
    */
   private _loadCurrentPage() {
     this._setIsLoading(true);
-    this._loadFunction(this._currentPagination).then(result => {
-      const [pagination, data] = result;
-      this._setCurrentPagination(pagination);
-      this._setCurrentData(this._currentData.concat(data));
-      this._setIsLoading(false);
-    });
+    this._loadFunction(this._currentPagination)
+      .then(result => {
+        const [pagination, data] = result;
+        this._setCurrentPagination(pagination);
+        this._setCurrentData(this._currentData.concat(data));
+        this._setIsLoading(false);
+      })
+      .catch(() => {
+        console.log('Error loading data!');
+        this._setIsLoading(false);
+      });
   }
 }
