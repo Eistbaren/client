@@ -1,5 +1,6 @@
 import { TextField, Button, Checkbox, FormControlLabel } from '@mui/material';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import '../css/PersonalData.css';
 
@@ -12,6 +13,7 @@ export default function PersonalData() {
   const [email, setEmail] = useState<string>('');
   const [emailError, setEmailError] = useState<boolean>(false);
   const [submitted, setSubmitted] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   // checks if input is submitted and a valid email
   const handleEmailInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,7 +36,8 @@ export default function PersonalData() {
     if (!email.match(/^([a-z]|-|\.)+@([a-z]|-)+\.[a-z]+$/g)) {
       setEmailError(true);
     } else {
-      // call api call
+      // await call api call
+      navigate('/reservation-approval');
     }
   };
 

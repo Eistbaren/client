@@ -7,6 +7,7 @@ import {
   Box,
   Container,
 } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 /**
  * Creates a Header Component that displays the reservation steps
@@ -23,7 +24,9 @@ export default function Header() {
     <AppBar position='sticky'>
       <Container maxWidth='lg'>
         <Toolbar>
-          <h3>Reservation bear</h3>
+          <Link to='/' style={{ textDecoration: 'none', color: 'inherit' }}>
+            <h3>Reservation bear</h3>
+          </Link>
           <Box sx={{ width: '80%', flexGrow: 1 }}>
             <Stepper activeStep={0}>
               {steps.map(label => (
