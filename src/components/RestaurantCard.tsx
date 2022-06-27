@@ -43,7 +43,6 @@ export default function RestaurantCard(params: {
           component='img'
           height='140'
           image={`${configuration.basePath}/image/${image}`}
-          alt='green iguana'
         />
       ) : null}
       <CardContent>
