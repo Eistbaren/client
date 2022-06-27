@@ -20,6 +20,7 @@ import PublicIcon from '@mui/icons-material/Public';
 import { Comment, Restaurant } from '../data/api';
 import React from 'react';
 import { Context } from '../data/Context';
+import PaginatedApi from '../data/PaginatedApi';
 
 /**
  * OnClose callback
@@ -40,19 +41,16 @@ export default function RestaurantDetailsModal(params: {
   const { open, onClose, restaurant } = params;
   const { configuration, restaurantApi } = React.useContext(Context);
 
-  const [comments, setComments] = React.useState<Comment[] | undefined>();
-
-  React.useEffect(() => {
-    if (!restaurant.id || !open) {
-      return;
-    }
-    setComments(undefined);
-
+  const restaurantApiHelp = new PaginatedApi<Comment>(10, pagination =>
     restaurantApi
-      .getRestaurantComments(restaurant.id)
-      .then(paginated => paginated.results)
-      .then(result => setComments(result ?? []));
-  }, [restaurant, open]);
+      .getRestaurantComments(
+        restaurant.id ?? '',
+        pagination.currentPage,
+        pagination.pageSize,
+      )
+      .then(result => [result, result.results ?? []]),
+  );
+  const [isLoading, comments, pagination] = restaurantApiHelp.state();
 
   const unixTimestampToTimeOfDay = (unixTimestamp?: number) => {
     if (!unixTimestamp) {
@@ -154,43 +152,43 @@ export default function RestaurantDetailsModal(params: {
               </Typography>
             </Grid>
 
-            {comments ? (
-              comments.length === 0 ? (
-                <Grid item xs={12}>
-                  No comments yet.
-                </Grid>
-              ) : (
-                comments.map(comment => (
-                  <>
-                    <Grid item xs={1}>
-                      <Avatar
-                        alt={comment.name}
-                        src='/static/images/avatar/1.jpg'
-                      />
-                    </Grid>
-                    <Grid item xs={8}>
-                      {comment.name}
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Rating
-                        name='simple-controlled'
-                        value={comment.rating}
-                        readOnly
-                      />
-                    </Grid>
-                    <Grid item xs={1}></Grid>
-                    <Grid item xs={11}>
-                      {comment.comment}
-                    </Grid>
-                    <Grid item xs={1}></Grid>
-                    <Grid item xs={11}>
-                      <Divider />
-                    </Grid>
-                  </>
-                ))
-              )
+            {comments.length === 0 && !isLoading ? (
+              <Grid item xs={12}>
+                No comments yet.
+              </Grid>
             ) : (
-              Array.from(new Array(1)).map(() => (
+              comments.map(comment => (
+                <>
+                  <Grid item xs={1}>
+                    <Avatar
+                      alt={comment.name}
+                      src='/static/images/avatar/1.jpg'
+                    />
+                  </Grid>
+                  <Grid item xs={8}>
+                    {comment.name}
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Rating
+                      name='simple-controlled'
+                      value={comment.rating}
+                      readOnly
+                    />
+                  </Grid>
+                  <Grid item xs={1}></Grid>
+                  <Grid item xs={11}>
+                    {comment.comment}
+                  </Grid>
+                  <Grid item xs={1}></Grid>
+                  <Grid item xs={11}>
+                    <Divider />
+                  </Grid>
+                </>
+              ))
+            )}
+
+            {Array.from(new Array(isLoading ? pagination.pageSize : 0)).map(
+              () => (
                 <>
                   <Grid item xs={1}>
                     <Skeleton variant='circular' />
@@ -210,8 +208,20 @@ export default function RestaurantDetailsModal(params: {
                     <Divider />
                   </Grid>
                 </>
-              ))
+              ),
             )}
+
+            <Grid item xs={5}></Grid>
+            <Grid item xs={2}>
+              <Button
+                onClick={() => {
+                  restaurantApiHelp.loadNextPage();
+                }}
+                disabled={restaurantApiHelp.atLastPage()}
+              >
+                {restaurantApiHelp.atLastPage() ? "That's all!" : 'Load more'}
+              </Button>
+            </Grid>
           </Grid>
         </Card>
       </Fade>
