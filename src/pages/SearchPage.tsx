@@ -55,6 +55,10 @@ export default function SearchPage() {
         from: 36000, // 11:00
         to: 72000, // 21:00
       },
+      location: {
+        lat: 48.15397,
+        lon: 11.566238,
+      },
     },
     {
       id: 'bla1',
@@ -71,6 +75,10 @@ export default function SearchPage() {
         from: 36000, // 11:00
         to: 75600, // 22:00
       },
+      location: {
+        lat: 48.131213,
+        lon: 11.549255,
+      },
     },
     {
       id: 'bla2',
@@ -86,6 +94,10 @@ export default function SearchPage() {
       openingHours: {
         from: 36000, // 11:00
         to: 79200, // 23:00
+      },
+      location: {
+        lat: 48.132953,
+        lon: 11.592368,
       },
     },
   ];
@@ -154,7 +166,7 @@ export default function SearchPage() {
                 startIcon={showMap ? <GridViewIcon /> : <LocationOnIcon />}
                 onClick={toggleMap}
               >
-                {showMap ? 'Show grid' : 'View on map'}
+                {showMap ? 'Show grid' : 'Show map'}
               </Button>
             </Box>
           </Grid>

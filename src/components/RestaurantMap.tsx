@@ -1,8 +1,13 @@
 import { Restaurant } from '../data/api';
-import { useState, useEffect, useRef } from 'react';
-import { Map, View } from 'ol';
-import TileLayer from 'ol/layer/Tile';
-import OSM from 'ol/source/OSM';
+import { fromLonLat } from 'ol/proj';
+import { Point } from 'ol/geom';
+import 'ol/ol.css';
+
+import { RMap, ROSM, RLayerVector, RFeature, RPopup } from 'rlayers';
+import { RStyle, RIcon } from 'rlayers/style';
+
+import '../css/RestaurantMap.css';
+import RestaurantCard from '../components/RestaurantCard';
 
 /**
  * OnClick callback
@@ -21,33 +26,43 @@ export default function RestaurantMap(params: {
   onClick: (restaurant: Restaurant) => void;
 }) {
   const { restaurants, onClick } = params;
-  const [map, setMap] = useState<Map>();
-  const mapElement = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<Map>();
-  mapRef.current = map;
-
-  useEffect(() => {
-    const initialMap = new Map({
-      target: mapElement.current!,
-      layers: [
-        new TileLayer({
-          source: new OSM(),
-        }),
-      ],
-      view: new View({
-        center: [0, 0],
-        zoom: 0,
-      }),
-      controls: [],
-    });
-    setMap(initialMap);
-  }, []);
+  const center = fromLonLat([11.574231, 48.139244]);
+  const locationIcon =
+    'https://cdn.jsdelivr.net/npm/rlayers/examples/./svg/location.svg';
 
   return (
-    <div
-      style={{ height: '100vh', width: '100%' }}
-      ref={mapElement}
-      className='map-container'
-    />
+    <RMap className='restaurant-map' initial={{ center: center, zoom: 12 }}>
+      <ROSM />
+      <RLayerVector zIndex={10}>
+        {restaurants.map(restaurant =>
+          restaurant.location &&
+          restaurant.location.lat &&
+          restaurant.location.lon ? (
+            <RFeature
+              geometry={
+                new Point(
+                  fromLonLat([
+                    restaurant.location.lon,
+                    restaurant.location.lat,
+                  ]),
+                )
+              }
+              key={restaurant.id}
+            >
+              <RStyle>
+                <RIcon src={locationIcon} anchor={[0.5, 0.8]} />
+              </RStyle>
+              <RPopup trigger={'click'} className='restaurant-overlay'>
+                <RestaurantCard
+                  restaurant={restaurant}
+                  onClick={() => onClick(restaurant)}
+                  dontShowImages={true}
+                ></RestaurantCard>
+              </RPopup>
+            </RFeature>
+          ) : null,
+        )}
+      </RLayerVector>
+    </RMap>
   );
 }
