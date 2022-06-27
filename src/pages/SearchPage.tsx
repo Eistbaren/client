@@ -125,27 +125,34 @@ export default function SearchPage() {
               ></RestaurantMap>
             </Grid>
           ) : (
-            restaurants.map(restaurant => (
-              <Grid item xs={2.4} key={restaurant.id}>
-                <RestaurantCard
-                  restaurant={restaurant}
-                  onClick={() => openDetailModal(restaurant)}
-                ></RestaurantCard>
-              </Grid>
-            ))
-          )}
-
-          {Array.from(new Array(isLoading ? pagination.pageSize : 0)).map(
-            (_, index) => (
-              <Grid item xs={2.4} key={index}>
-                <Card>
-                  <Skeleton variant='rectangular' height={118} />
-                  <Skeleton variant='text' />
-                  <Skeleton variant='text' width={'60%'} />
-                  <Skeleton variant='text' width={'60%'} />
-                </Card>
-              </Grid>
-            ),
+            <>
+              {restaurants.length === 0 && !isLoading ? (
+                <Grid item xs={12} className='center-children'>
+                  No restaurant found
+                </Grid>
+              ) : (
+                restaurants.map(restaurant => (
+                  <Grid item xs={2.4} key={restaurant.id}>
+                    <RestaurantCard
+                      restaurant={restaurant}
+                      onClick={() => openDetailModal(restaurant)}
+                    ></RestaurantCard>
+                  </Grid>
+                ))
+              )}
+              {Array.from(new Array(isLoading ? pagination.pageSize : 0)).map(
+                (_, index) => (
+                  <Grid item xs={2.4} key={index}>
+                    <Card>
+                      <Skeleton variant='rectangular' height={118} />
+                      <Skeleton variant='text' />
+                      <Skeleton variant='text' width={'60%'} />
+                      <Skeleton variant='text' width={'60%'} />
+                    </Card>
+                  </Grid>
+                ),
+              )}
+            </>
           )}
 
           <Grid item xs={12} className='center-children'>
