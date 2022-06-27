@@ -1,17 +1,5 @@
-import {
-  Button,
-  Card,
-  CardMedia,
-  Typography,
-  CardContent,
-  CardActions,
-  Rating,
-  Link,
-} from '@mui/material';
-
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { Restaurant } from '../data/api';
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
