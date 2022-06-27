@@ -52,9 +52,7 @@ export default function SearchPage() {
       .getRestaurants([], pagination.currentPage, pagination.pageSize)
       .then(result => [result, result.results ?? []]),
   );
-  const restaurants = restaurantApiHelp.data();
-  const isLoading = restaurantApiHelp.isLoading();
-  const pagination = restaurantApiHelp.pagination();
+  const [isLoading, restaurants, pagination] = restaurantApiHelp.state();
 
   const [detailModalRestaurant, setDetailModalRestaurant] =
     React.useState<Restaurant>({});

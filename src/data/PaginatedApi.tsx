@@ -27,7 +27,7 @@ export default class PaginatedApi<T> {
    */
 
   /**
-   *
+   * Constructor
    * @param {number} pageSize the pageSize to use
    * @param {LoadFunctionCallback} loadFunction the function to call for loading data
    */
@@ -67,7 +67,7 @@ export default class PaginatedApi<T> {
   }
 
   /**
-   *
+   * Get the pagination state
    * @return {Paginated} the current pagination
    */
   public pagination() {
@@ -94,7 +94,7 @@ export default class PaginatedApi<T> {
   }
 
   /**
-   *
+   * Check whether we are at the last page
    * @return {boolean} whether we are at the last page yet
    */
   public atLastPage() {
@@ -102,6 +102,14 @@ export default class PaginatedApi<T> {
       (this._currentPagination.currentPage ?? 0) ===
       (this._currentPagination.totalPages ?? 0) - 1
     );
+  }
+
+  /**
+   * Get all states
+   * @return {[boolean, T[], Paginated]} all state variables
+   */
+  public state(): [boolean, T[], Paginated] {
+    return [this._isLoading, this._currentData, this._currentPagination];
   }
 
   /**
