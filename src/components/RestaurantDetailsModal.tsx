@@ -98,7 +98,7 @@ export default function RestaurantDetailsModal(params: {
               >
                 {(restaurant?.images?.length ?? 0) > 0 ? (
                   (restaurant?.images || []).map((image, imageKey) => (
-                    <ImageListItem key={`image-${imageKey}`}>
+                    <ImageListItem key={`${restaurant.id}-image-${imageKey}`}>
                       <img src={`${configuration.basePath}/image/${image}`} />
                     </ImageListItem>
                   ))
