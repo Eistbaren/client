@@ -160,10 +160,7 @@ export default function RestaurantDetailsModal(params: {
               comments.map(comment => (
                 <>
                   <Grid item xs={1}>
-                    <Avatar
-                      alt={comment.name}
-                      src='/static/images/avatar/1.jpg'
-                    />
+                    <Avatar alt={comment.name} />
                   </Grid>
                   <Grid item xs={8}>
                     {comment.name}
