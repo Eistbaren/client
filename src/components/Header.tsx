@@ -8,6 +8,8 @@ import {
   Container,
 } from '@mui/material';
 
+import '../css/Header.css';
+
 /**
  * Creates a Header Component that displays the reservation steps
  * @return {JSX.Element}
@@ -23,7 +25,7 @@ export default function Header() {
     <AppBar position='sticky'>
       <Container maxWidth='lg'>
         <Toolbar>
-          <h3>Reservation bear</h3>
+          <img src='/logo192.png' className='header-icon'></img>
           <Box sx={{ width: '80%', flexGrow: 1 }}>
             <Stepper activeStep={0}>
               {steps.map(label => (
