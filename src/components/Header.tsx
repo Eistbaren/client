@@ -20,7 +20,6 @@ export default function Header() {
   const routes = ['/', '/search', '/table', '/personal-data'];
 
   useEffect(() => {
-    console.log(location.pathname);
     const index = routes.indexOf(location.pathname);
     setStep(index >= 0 ? index : 0);
   }, [location]);
