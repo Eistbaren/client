@@ -1,0 +1,20 @@
+.restaurant-map p,
+.jumbotron p {
+  margin: 0;
+  padding: 0;
+}
+.restaurant-map {
+  width: 100%;
+  height: 70vh;
+  margin-bottom: 1em;
+}
+
+.no-interaction {
+  user-select: none;
+  pointer-events: none;
+}
+
+.restaurant-control {
+  top: 2.5em;
+  right: 0.5em;
+}
