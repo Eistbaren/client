@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { Reservation } from './api';
+import { Reservation, RestaurantApi } from './api';
 import { Configuration } from './configuration';
 
 /**
@@ -10,11 +10,14 @@ export const Context = createContext<{
   reservation: Reservation;
   setReservation: (reservation: Reservation) => void;
 
+  // api
   configuration: Configuration;
+  restaurantApi: RestaurantApi;
 }>({
   reservation: {},
   setReservation: () => {
     return;
   },
   configuration: {},
+  restaurantApi: new RestaurantApi(),
 });

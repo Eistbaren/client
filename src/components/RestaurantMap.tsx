@@ -25,12 +25,16 @@ import RestaurantCard from '../components/RestaurantCard';
 export default function RestaurantMap(params: {
   restaurants: Array<Restaurant>;
   onClick: (restaurant: Restaurant) => void;
+  isLoading: boolean;
 }) {
-  const { restaurants, onClick } = params;
+  const { restaurants, onClick, isLoading } = params;
   const center = fromLonLat([11.574231, 48.139244]);
 
   return (
-    <RMap className='restaurant-map' initial={{ center: center, zoom: 12 }}>
+    <RMap
+      className={'restaurant-map ' + (isLoading ? 'loading' : '')}
+      initial={{ center: center, zoom: 12 }}
+    >
       <ROSM />
       <RLayerVector zIndex={10}>
         {restaurants.map(restaurant =>

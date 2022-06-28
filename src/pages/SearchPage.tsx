@@ -1,4 +1,12 @@
-import { Button, TextField, Grid, Typography, Box } from '@mui/material';
+import {
+  Button,
+  TextField,
+  Grid,
+  Typography,
+  Skeleton,
+  Card,
+  Box,
+} from '@mui/material';
 
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import GridViewIcon from '@mui/icons-material/GridView';
@@ -10,12 +18,16 @@ import RestaurantMap from '../components/RestaurantMap';
 import RestaurantDetailsModal from '../components/RestaurantDetailsModal';
 import { Restaurant } from '../data/api';
 import ComboBox from '../components/ComboBox';
+import { Context } from '../data/Context';
+import PaginatedApi from '../data/PaginatedApi';
 
 /**
  * Bootstrap function
  * @return {JSX.Element}
  */
 export default function SearchPage() {
+  const { restaurantApi } = React.useContext(Context);
+
   const filterFormItems = [
     {
       label: 'Type',
@@ -39,81 +51,15 @@ export default function SearchPage() {
     },
   ];
 
-  const restaurants: Restaurant[] = [
-    {
-      id: 'bla',
-      name: 'Restaurant',
-      averageRating: 3,
-      website: 'https://tum.de',
-      images: [
-        '/images/background_3.jpg',
-        'images/hero.jpg',
-        '/images/background_3.jpg',
-        'images/hero.jpg',
-      ],
-      openingHours: {
-        from: 36000, // 11:00
-        to: 72000, // 21:00
-      },
-      location: {
-        lat: 48.15397,
-        lon: 11.566238,
-      },
-    },
-    {
-      id: 'bla1',
-      name: 'Restaurant1',
-      averageRating: 2,
-      website: 'https://tum.de',
-      images: [
-        '/images/background_3.jpg',
-        'images/hero.jpg',
-        '/images/background_3.jpg',
-        'images/hero.jpg',
-      ],
-      openingHours: {
-        from: 36000, // 11:00
-        to: 75600, // 22:00
-      },
-      location: {
-        lat: 48.131213,
-        lon: 11.549255,
-      },
-    },
-    {
-      id: 'bla2',
-      name: 'Restaurant2',
-      averageRating: 4,
-      website: 'https://tum.de',
-      images: [
-        '/images/background_3.jpg',
-        'images/hero.jpg',
-        '/images/background_3.jpg',
-        'images/hero.jpg',
-      ],
-      openingHours: {
-        from: 36000, // 11:00
-        to: 79200, // 23:00
-      },
-      location: {
-        lat: 48.132953,
-        lon: 11.592368,
-      },
-    },
-  ];
+  const restaurantApiHelp = new PaginatedApi<Restaurant>(10, pagination =>
+    restaurantApi
+      .getRestaurants([], pagination.currentPage, pagination.pageSize)
+      .then(result => [result, result.results ?? []]),
+  );
+  const [isLoading, restaurants, pagination] = restaurantApiHelp.state();
 
   const [detailModalRestaurant, setDetailModalRestaurant] =
-    React.useState<Restaurant>({
-      id: '',
-      name: '',
-      averageRating: 0,
-      website: '',
-      images: [],
-      openingHours: {
-        from: 0,
-        to: 0,
-      },
-    });
+    React.useState<Restaurant>({});
   const [detailModalOpen, setDetailModalOpen] = React.useState(false);
 
   const openDetailModal = (restaurant: Restaurant) => {
@@ -128,9 +74,9 @@ export default function SearchPage() {
   return (
     <>
       <div className='search-container'>
-        <Grid container spacing={2}>
+        <Grid container spacing={2} alignItems='center'>
           <Grid item xs={12}>
-            <Typography gutterBottom variant='h4' component='div'>
+            <Typography variant='h4' component='div'>
               Search
             </Typography>
           </Grid>
@@ -154,7 +100,7 @@ export default function SearchPage() {
           ))}
 
           <Grid item xs={9.6}>
-            <Typography gutterBottom variant='h4' component='div'>
+            <Typography variant='h4' component='div'>
               Results
             </Typography>
           </Grid>
@@ -176,18 +122,56 @@ export default function SearchPage() {
               <RestaurantMap
                 restaurants={restaurants}
                 onClick={restaurant => openDetailModal(restaurant)}
+                isLoading={isLoading}
               ></RestaurantMap>
             </Grid>
           ) : (
-            restaurants.map(restaurant => (
-              <Grid item xs={2.4} key={restaurant.id}>
-                <RestaurantCard
-                  restaurant={restaurant}
-                  onClick={() => openDetailModal(restaurant)}
-                ></RestaurantCard>
-              </Grid>
-            ))
+            <>
+              {restaurants.length === 0 && !isLoading ? (
+                <Grid item xs={12} className='center-children'>
+                  No restaurant found
+                </Grid>
+              ) : (
+                restaurants.map(restaurant => (
+                  <Grid item xs={2.4} key={restaurant.id}>
+                    <RestaurantCard
+                      restaurant={restaurant}
+                      onClick={() => openDetailModal(restaurant)}
+                    ></RestaurantCard>
+                  </Grid>
+                ))
+              )}
+              {Array.from(new Array(isLoading ? pagination.pageSize : 0)).map(
+                (_, index) => (
+                  <Grid item xs={2.4} key={index}>
+                    <Card>
+                      <Skeleton variant='rectangular' height={118} />
+                      <Skeleton variant='text' />
+                      <Skeleton variant='text' width={'60%'} />
+                      <Skeleton variant='text' width={'60%'} />
+                    </Card>
+                  </Grid>
+                ),
+              )}
+            </>
           )}
+
+          <Grid item xs={12} className='center-children'>
+            <Button
+              onClick={() => {
+                restaurantApiHelp.loadNextPage();
+              }}
+              disabled={restaurantApiHelp.atLastPage() || isLoading}
+            >
+              {restaurantApiHelp.atLastPage()
+                ? "That's all!"
+                : isLoading
+                ? 'Loading...'
+                : 'Load more'}
+            </Button>
+          </Grid>
+
+          <Grid item xs={12}></Grid>
         </Grid>
       </div>
 
