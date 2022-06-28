@@ -11,7 +11,7 @@
   margin-bottom: 1em;
 }
 
-.restaurant-map.loading:after {
+.restaurant-map.loading::after {
   content: '\A';
   position: absolute;
   width: 100%;
