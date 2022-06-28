@@ -1,6 +1,6 @@
 import { Button, Stack, TextField } from '@mui/material';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
-import { time } from 'console';
+import { useParams } from 'react-router-dom';
 
 import { useContext } from 'react';
 import '../css/ReservationApproval.css';
@@ -12,6 +12,8 @@ import { Context } from '../data/Context';
  */
 export default function ReservationApproval() {
   const { reservation } = useContext(Context);
+  // gets reservationId from the URL params
+  const { reservationId } = useParams();
 
   /**
    * Checks if the given timestamp is tommorrow
@@ -19,7 +21,6 @@ export default function ReservationApproval() {
    * @return {boolean}
    */
   function isIn24Hours(timestamp: number): boolean {
-    console.log(new Date(timestamp));
     const now = new Date();
     const difference = (timestamp - now.getTime()) * 60 * 60 * 1000;
     if (difference > 0 && difference <= 24) {
