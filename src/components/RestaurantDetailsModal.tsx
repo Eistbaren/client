@@ -11,12 +11,16 @@ import {
   Divider,
   ImageListItem,
   Avatar,
+  Skeleton,
 } from '@mui/material';
 
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PublicIcon from '@mui/icons-material/Public';
-import { Restaurant } from '../data/api';
+import { Comment, Restaurant } from '../data/api';
+import React from 'react';
+import { Context } from '../data/Context';
+import PaginatedApi from '../data/PaginatedApi';
 
 /**
  * OnClose callback
@@ -35,6 +39,18 @@ export default function RestaurantDetailsModal(params: {
   restaurant: Restaurant;
 }) {
   const { open, onClose, restaurant } = params;
+  const { configuration, restaurantApi } = React.useContext(Context);
+
+  const restaurantApiHelp = new PaginatedApi<Comment>(10, pagination =>
+    restaurantApi
+      .getRestaurantComments(
+        restaurant.id ?? '',
+        pagination.currentPage,
+        pagination.pageSize,
+      )
+      .then(result => [result, result.results ?? []]),
+  );
+  const [isLoading, comments, pagination] = restaurantApiHelp.state();
 
   const unixTimestampToTimeOfDay = (unixTimestamp?: number) => {
     if (!unixTimestamp) {
@@ -76,14 +92,21 @@ export default function RestaurantDetailsModal(params: {
                   gridTemplateColumns:
                     'repeat(auto-fill,minmax(300px,300px)) !important',
                   gridAutoColumns: 'minmax(300px, 1fr)',
-                  height: '200px',
+                  height:
+                    (restaurant?.images?.length ?? 0) > 0 ? '200px' : '30px',
                 }}
               >
-                {(restaurant?.images || []).map((image, imageKey) => (
-                  <ImageListItem key={`image-${imageKey}`}>
-                    <img src={image} />
-                  </ImageListItem>
-                ))}
+                {(restaurant?.images?.length ?? 0) > 0 ? (
+                  (restaurant?.images || []).map((image, imageKey) => (
+                    <ImageListItem key={`${restaurant.id}-image-${imageKey}`}>
+                      <img src={`${configuration.basePath}/image/${image}`} />
+                    </ImageListItem>
+                  ))
+                ) : (
+                  <Grid item xs={12}>
+                    No images found.
+                  </Grid>
+                )}
               </ImageList>
             </Grid>
 
@@ -129,45 +152,72 @@ export default function RestaurantDetailsModal(params: {
               </Typography>
             </Grid>
 
-            {[
-              {
-                rating: 3,
-                comment: 'Essen ok, aber zu wenig!',
-                name: 'Hungry Client',
-              },
-              {
-                rating: 5,
-                comment: 'Exzellentes Essen!',
-                name: 'Exzellenter Mensch',
-              },
-            ].map(comment => (
-              <>
-                <Grid item xs={1}>
-                  <Avatar
-                    alt={comment.name}
-                    src='/static/images/avatar/1.jpg'
-                  />
-                </Grid>
-                <Grid item xs={8}>
-                  {comment.name}
-                </Grid>
-                <Grid item xs={3}>
-                  <Rating
-                    name='simple-controlled'
-                    value={comment.rating}
-                    readOnly
-                  />
-                </Grid>
-                <Grid item xs={1}></Grid>
-                <Grid item xs={11}>
-                  {comment.comment}
-                </Grid>
-                <Grid item xs={1}></Grid>
-                <Grid item xs={11}>
-                  <Divider />
-                </Grid>
-              </>
-            ))}
+            {comments.length === 0 && !isLoading ? (
+              <Grid item xs={12}>
+                No comments yet.
+              </Grid>
+            ) : (
+              comments.map(comment => (
+                <>
+                  <Grid item xs={1}>
+                    <Avatar alt={comment.name} />
+                  </Grid>
+                  <Grid item xs={8}>
+                    {comment.name}
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Rating
+                      name='simple-controlled'
+                      value={comment.rating}
+                      readOnly
+                    />
+                  </Grid>
+                  <Grid item xs={1}></Grid>
+                  <Grid item xs={11}>
+                    {comment.comment}
+                  </Grid>
+                  <Grid item xs={1}></Grid>
+                  <Grid item xs={11}>
+                    <Divider />
+                  </Grid>
+                </>
+              ))
+            )}
+
+            {Array.from(new Array(isLoading ? pagination.pageSize : 0)).map(
+              () => (
+                <>
+                  <Grid item xs={1}>
+                    <Skeleton variant='circular' />
+                  </Grid>
+                  <Grid item xs={8}>
+                    <Skeleton variant='text' />
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Skeleton variant='text' />
+                  </Grid>
+                  <Grid item xs={1}></Grid>
+                  <Grid item xs={11}>
+                    <Skeleton variant='text' />
+                  </Grid>
+                  <Grid item xs={1}></Grid>
+                  <Grid item xs={11}>
+                    <Divider />
+                  </Grid>
+                </>
+              ),
+            )}
+
+            <Grid item xs={12} className='center-children'>
+              <Button
+                onClick={() => {
+                  restaurantApiHelp.loadNextPage();
+                }}
+                disabled={restaurantApiHelp.atLastPage()}
+              >
+                {restaurantApiHelp.atLastPage() ? "That's all!" : 'Load more'}
+              </Button>
+            </Grid>
           </Grid>
         </Card>
       </Fade>
