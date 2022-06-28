@@ -4,6 +4,7 @@ import React from 'react';
 import { FloorPlan, Table } from '../data/api';
 import '../css/TableSelectionPage.css';
 import { TimePicker } from '@mui/x-date-pickers';
+import { Link } from 'react-router-dom';
 
 /**
  * TableSelection page
@@ -168,12 +169,20 @@ export default function TableSelectionPage() {
                     height: fixSize(table.floorPlan?.size?.height),
                   }}
                   key={tableKey}
-                  onClick={() => alert(`Picked table ${table.id}`)}
                 >
-                  <img
-                    style={{ width: '100%', height: '100%', cursor: 'pointer' }}
-                    src={table.floorPlan?.image}
-                  />
+                  <Link
+                    to='/personal-data'
+                    style={{ textDecoration: 'none', color: 'inherit' }}
+                  >
+                    <img
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        cursor: 'pointer',
+                      }}
+                      src={table.floorPlan?.image}
+                    />
+                  </Link>
                 </Box>
               );
             })}

@@ -7,6 +7,8 @@ import {
   Box,
   Container,
 } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 import '../css/Header.css';
 
@@ -15,6 +17,15 @@ import '../css/Header.css';
  * @return {JSX.Element}
  */
 export default function Header() {
+  const location = useLocation();
+  const [step, setStep] = useState(0);
+  const routes = ['/', '/search', '/table', '/personal-data'];
+
+  useEffect(() => {
+    const index = routes.indexOf(location.pathname);
+    setStep(index >= 0 ? index : 0);
+  }, [location]);
+
   const steps = [
     'People and date',
     'Find a place to eat',
@@ -25,9 +36,11 @@ export default function Header() {
     <AppBar position='sticky'>
       <Container maxWidth='lg'>
         <Toolbar>
-          <img src='/logo192.png' className='header-icon'></img>
+          <Link to='/' style={{ textDecoration: 'none', color: 'inherit' }}>
+            <img src='/logo192.png' className='header-icon'></img>
+          </Link>
           <Box sx={{ width: '80%', flexGrow: 1 }}>
-            <Stepper activeStep={0}>
+            <Stepper activeStep={step}>
               {steps.map(label => (
                 <Step key={label}>
                   <StepLabel>{label}</StepLabel>

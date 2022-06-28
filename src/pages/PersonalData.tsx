@@ -1,17 +1,19 @@
 import { TextField, Button, Checkbox, FormControlLabel } from '@mui/material';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import '../css/PersonalData.css';
+import { Context } from '../data/Context';
 
 /**
  * Personal Data Page
  * @return {JSX.Element}
  */
 export default function PersonalData() {
-  const [name, setName] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
+  const { reservation, setReservation } = useContext(Context);
   const [emailError, setEmailError] = useState<boolean>(false);
   const [submitted, setSubmitted] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   // checks if input is submitted and a valid email
   const handleEmailInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,7 +25,10 @@ export default function PersonalData() {
     } else {
       setEmailError(false);
     }
-    setEmail(e.target.value);
+    setReservation({
+      ...reservation,
+      userEmail: e.target.value,
+    });
   };
 
   // handles submitting the form
@@ -31,10 +36,11 @@ export default function PersonalData() {
     if (!submitted) {
       setSubmitted(true);
     }
-    if (!email.match(/^([a-z]|-|\.)+@([a-z]|-)+\.[a-z]+$/g)) {
+    if (!reservation.userEmail?.match(/^([a-z]|-|\.)+@([a-z]|-)+\.[a-z]+$/g)) {
       setEmailError(true);
     } else {
-      // call api call
+      // await call api call
+      navigate(`/reservation-approval/${reservation.id}`);
     }
   };
 
@@ -52,18 +58,20 @@ export default function PersonalData() {
       <form className='personal-data-form'>
         <TextField
           id='nameInput'
-          value={name}
-          onChange={e => setName(e.target.value)}
+          value={reservation.userName ?? ''}
+          onChange={e =>
+            setReservation({ ...reservation, userName: e.target.value })
+          }
           type='text'
           label='Name'
         />
         <TextField
           id='emailInput'
-          value={email}
+          value={reservation.userEmail ?? ''}
           onChange={handleEmailInput}
           type='email'
           error={emailError}
-          helperText={emailError ? 'There is a mistake' : ''}
+          helperText={emailError ? 'Email adress not valid' : ''}
           label='Email'
         />
         <FormControlLabel

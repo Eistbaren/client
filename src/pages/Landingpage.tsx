@@ -8,6 +8,7 @@ import NumberOfPersonsPicker from '../components/NumberOfPersonsPicker';
 import FloatingSidebar from '../components/FloatingSidebar';
 
 import '../css/Landingpage.css';
+import { Link } from 'react-router-dom';
 
 /**
  * Landingpage
@@ -87,7 +88,15 @@ export default function Landingpage() {
             size='large'
             sx={{ boxShadow: 3 }}
           >
-            Book a table
+            <Link
+              to={{
+                pathname: '/search',
+                search: `?from=${reservation.time?.from}&to=${reservation.time?.to}&number=${numberOfPersons}`,
+              }}
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
+              Book a table
+            </Link>
           </Button>
           <Button
             variant='outlined'
@@ -95,7 +104,12 @@ export default function Landingpage() {
             size='large'
             sx={{ boxShadow: 14 }}
           >
-            Start browsing
+            <Link
+              to='/search'
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
+              Start browsing
+            </Link>
           </Button>
         </Stack>
       </div>

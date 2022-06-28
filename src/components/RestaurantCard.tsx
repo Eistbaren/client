@@ -8,6 +8,7 @@ import {
   Rating,
   Link,
 } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
 
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { Restaurant } from '../data/api';
@@ -77,7 +78,15 @@ export default function RestaurantCard(params: {
             e.stopPropagation();
           }}
         >
-          Reserve
+          <RouterLink
+            to={{
+              pathname: '/table',
+              search: `?id=${restaurant.id}`,
+            }}
+            style={{ textDecoration: 'none', color: 'inherit' }}
+          >
+            Reserve
+          </RouterLink>
         </Button>
       </CardActions>
     </Card>
