@@ -27,15 +27,15 @@ export default function Header() {
   }, [location]);
 
   const steps = [
-    'People and date',
-    'Find a place to eat',
-    'Select a timeslot and table',
-    'Reserve your table',
+    'Set the time',
+    'Find the perfect place',
+    'Choose a table',
+    'Make your reservation',
   ];
   return (
     <AppBar position='sticky'>
       <Container maxWidth='lg'>
-        <Toolbar>
+        <Toolbar className='header-container'>
           <Link to='/' style={{ textDecoration: 'none', color: 'inherit' }}>
             <img src='/logo192.png' className='header-icon'></img>
           </Link>
