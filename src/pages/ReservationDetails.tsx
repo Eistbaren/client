@@ -15,6 +15,7 @@ export default function ReservationApproval() {
   // gets reservationId from the URL params
   const { reservationId } = useParams();
   const [searchParams] = useSearchParams();
+  console.log(reservationId);
 
   /**
    * Checks if the given timestamp is tommorrow
