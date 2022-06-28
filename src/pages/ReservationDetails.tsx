@@ -1,6 +1,6 @@
 import { Button, Stack, TextField } from '@mui/material';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 import { useContext } from 'react';
 import '../css/ReservationDetails.css';
@@ -14,17 +14,17 @@ export default function ReservationApproval() {
   const { reservation } = useContext(Context);
   // gets reservationId from the URL params
   const { reservationId } = useParams();
-  console.log(reservationId);
+  const [searchParams] = useSearchParams();
 
   /**
    * Checks if the given timestamp is tommorrow
    * @param {number} timestamp the unix timestamp from reservation.time.from
    * @return {boolean}
    */
-  function isIn24Hours(timestamp: number): boolean {
+  function isIn12Hours(timestamp: number): boolean {
     const now = new Date();
     const difference = (timestamp - now.getTime()) * 60 * 60 * 1000;
-    if (difference > 0 && difference <= 24) {
+    if (difference > 0 && difference <= 12) {
       return true;
     }
     return false;
@@ -42,7 +42,7 @@ export default function ReservationApproval() {
               return;
             }}
             renderInput={params => (
-              <TextField {...params} size='small' fullWidth />
+              <TextField {...params} size='small' fullWidth disabled />
             )}
           />
         </div>
@@ -57,6 +57,7 @@ export default function ReservationApproval() {
               readOnly: true,
             }}
             size='small'
+            disabled
           />
         </div>
       </div>
@@ -69,7 +70,9 @@ export default function ReservationApproval() {
           }}
           readOnly
           value={reservation.time?.from ?? 0}
-          renderInput={params => <TextField {...params} size='small' />}
+          renderInput={params => (
+            <TextField {...params} size='small' disabled />
+          )}
           ampm={false}
         />
         <TimePicker
@@ -78,7 +81,9 @@ export default function ReservationApproval() {
           onChange={() => {
             return;
           }}
-          renderInput={params => <TextField {...params} size='small' />}
+          renderInput={params => (
+            <TextField {...params} size='small' disabled />
+          )}
           ampm={false}
         />
       </div>
@@ -92,6 +97,7 @@ export default function ReservationApproval() {
           readOnly: true,
         }}
         size='small'
+        disabled
       >
         Jakob Mayerhofer
       </TextField>
@@ -105,6 +111,7 @@ export default function ReservationApproval() {
           readOnly: true,
         }}
         size='small'
+        disabled
       />
 
       <Stack
@@ -112,7 +119,7 @@ export default function ReservationApproval() {
         spacing={2}
         className='booking-summary-cta-container'
       >
-        {isIn24Hours(reservation.time?.from ?? 0) && (
+        {!reservation.confirmed && searchParams.get('confirmationToken') && (
           <Button
             variant='contained'
             color='success'
@@ -122,14 +129,17 @@ export default function ReservationApproval() {
             Accept Reservation
           </Button>
         )}
-        <Button
-          variant='contained'
-          color='error'
-          size='large'
-          sx={{ boxShadow: 3, color: 'white' }}
-        >
-          Cancel Reservation
-        </Button>
+        {!reservation.confirmed && !isIn12Hours(reservation.time?.from ?? 0) && (
+          <Button
+            variant='contained'
+            color='error'
+            size='large'
+            sx={{ boxShadow: 3, color: 'white' }}
+          >
+            Cancel Reservation
+          </Button>
+        )}
+
         <Button
           LinkComponent='a'
           href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'

@@ -21,7 +21,7 @@ export default function Routing() {
           <Route path='/' element={<Landingpage />} />
           <Route path='search' element={<SearchPage />} />
           <Route path='table' element={<TableSelectionPage />}></Route>
-          <Route path='reservation-details'>
+          <Route path='reservation-details' element={<ReservationDetails />}>
             <Route path=':reservationId' element={<ReservationDetails />} />
           </Route>
           <Route path='personal-data' element={<PersonalData />} />
