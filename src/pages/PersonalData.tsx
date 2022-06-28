@@ -54,7 +54,7 @@ export default function PersonalData() {
           information. This data will only be used for reference and approval of
           the reservation.
         </p>
-        <img src='images/dish.png' className='personal-data-image' />
+        <img src='/logo-big.png' className='personal-data-image' />
       </div>
       <form className='personal-data-form'>
         <TextField

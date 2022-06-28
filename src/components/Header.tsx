@@ -10,6 +10,8 @@ import {
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
+import '../css/Header.css';
+
 /**
  * Creates a Header Component that displays the reservation steps
  * @return {JSX.Element}
@@ -35,7 +37,7 @@ export default function Header() {
       <Container maxWidth='lg'>
         <Toolbar>
           <Link to='/' style={{ textDecoration: 'none', color: 'inherit' }}>
-            <h3>Reservation bear</h3>
+            <img src='/logo192.png' className='header-icon'></img>
           </Link>
           <Box sx={{ width: '80%', flexGrow: 1 }}>
             <Stepper activeStep={step}>
