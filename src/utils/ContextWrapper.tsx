@@ -1,6 +1,6 @@
 import { Context } from '../data/Context';
 import { useState } from 'react';
-import { Reservation, RestaurantApi } from '../data/api';
+import { Reservation, RestaurantApi, BASE_PATH } from '../data/api';
 import { Configuration, ConfigurationParameters } from '../data';
 
 /**
@@ -32,6 +32,8 @@ export default function ContextWrapper(props: { children: JSX.Element }) {
     location.hostname.endsWith('pages.dev')
   ) {
     parameters.basePath = 'https://reservation-bear.de/api';
+  } else {
+    parameters.basePath = BASE_PATH;
   }
 
   const configuration = new Configuration(parameters);
