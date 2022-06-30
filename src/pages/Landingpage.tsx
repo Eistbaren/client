@@ -60,7 +60,9 @@ export default function Landingpage() {
     const from = new Date(reservation.time?.from?.valueOf() ?? 0);
     const to = new Date(reservation.time?.to?.valueOf() ?? 0);
     from.setDate(value.getDate());
+    from.setMonth(value.getMonth());
     to.setDate(value.getDate());
+    to.setMonth(value.getMonth());
     setReservation({
       ...reservation,
       time: {
@@ -89,10 +91,7 @@ export default function Landingpage() {
             sx={{ boxShadow: 3 }}
           >
             <Link
-              to={{
-                pathname: '/search',
-                search: `?from=${reservation.time?.from}&to=${reservation.time?.to}&number=${numberOfPersons}`,
-              }}
+              to='/search'
               style={{ textDecoration: 'none', color: 'inherit' }}
             >
               Book a table
