@@ -176,11 +176,13 @@ export default function RestaurantDetailsModal(params: {
               ))
             )}
 
-            {Array.from(new Array(10)).map((_, key) => (
-              <RestaurantCommentSkeleton
-                key={`${restaurant.id}-commentSkeleton-${key}`}
-              ></RestaurantCommentSkeleton>
-            ))}
+            {Array.from(new Array(isLoading ? pagination.pageSize : 0)).map(
+              (_, key) => (
+                <RestaurantCommentSkeleton
+                  key={`${restaurant.id}-commentSkeleton-${key}`}
+                ></RestaurantCommentSkeleton>
+              ),
+            )}
 
             <Grid item xs={12} className='center-children'>
               <Button

@@ -105,7 +105,7 @@ export default class PaginatedApi<T> {
    */
   public atLastPage() {
     return (
-      (this._currentPagination.currentPage ?? 0) ===
+      (this._currentPagination.currentPage ?? 0) >=
       (this._currentPagination.totalPages ?? 0) - 1
     );
   }
@@ -164,7 +164,10 @@ export default class PaginatedApi<T> {
           const [pagination, data] = result;
           this._setCurrentPagination(pagination);
           this._setCurrentData(this._currentData.concat(data));
-          if (pagination.currentPage === (pagination.totalPages ?? 0) - 1) {
+          if (
+            (pagination.currentPage ?? 0) >=
+            (pagination.totalPages ?? 0) - 1
+          ) {
             this._setIsLoading(false);
           } else {
             loadNextPage();

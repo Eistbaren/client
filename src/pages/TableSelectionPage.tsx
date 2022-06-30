@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import { Context } from '../data/Context';
 import React from 'react';
-import { FloorPlan, Restaurant, Table } from '../data/api';
+import { Table } from '../data/api';
 import '../css/TableSelectionPage.css';
 import { TimePicker } from '@mui/x-date-pickers';
 import { Link } from 'react-router-dom';
@@ -34,14 +34,6 @@ export default function TableSelectionPage() {
   );
   const [isLoading, tables] = restaurantApiHelp.state();
 
-  const floorPlan: FloorPlan = {
-    image: 'https://i.stack.imgur.com/1tl6D.jpg',
-    size: {
-      width: 1000 * 2,
-      height: 600 * 2,
-    },
-  };
-
   const [timePickerToValue, setTimePickerToValue] = React.useState<Date | null>(
     null,
   );
@@ -53,12 +45,13 @@ export default function TableSelectionPage() {
 
   React.useEffect(() => {
     handleResize();
-  }, [floorPlan]);
+  }, [restaurant]);
 
   const handleResize = () => {
     // Scale canvas contents
     setSizeFactor(
-      (canvasRef.current?.offsetWidth ?? 0) / (floorPlan.size?.width ?? 0),
+      (canvasRef.current?.offsetWidth ?? 0) /
+        (restaurant.floorPlan?.size?.width ?? 0),
     );
   };
 
@@ -130,10 +123,10 @@ export default function TableSelectionPage() {
             <div className='floorPlan-canvas' ref={canvasRef}>
               <img
                 style={{
-                  width: fixSize(floorPlan.size?.width),
-                  height: fixSize(floorPlan.size?.height),
+                  width: fixSize(restaurant.floorPlan?.size?.width),
+                  height: fixSize(restaurant.floorPlan?.size?.height),
                 }}
-                src={floorPlan.image}
+                src={restaurant.floorPlan?.image}
               />
 
               {tables.map((table, tableKey) => {
@@ -151,6 +144,9 @@ export default function TableSelectionPage() {
                     <Link
                       to='/personal-data'
                       style={{ textDecoration: 'none', color: 'inherit' }}
+                      onClick={() => {
+                        reservation.tables = [table.id ?? ''];
+                      }}
                     >
                       <img
                         style={{
