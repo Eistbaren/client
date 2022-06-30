@@ -13,6 +13,7 @@ import {
   Avatar,
   Skeleton,
 } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
 
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -39,7 +40,8 @@ export default function RestaurantDetailsModal(params: {
   restaurant: Restaurant;
 }) {
   const { open, onClose, restaurant } = params;
-  const { configuration, restaurantApi } = React.useContext(Context);
+  const { configuration, restaurantApi, setRestaurant } =
+    React.useContext(Context);
 
   const restaurantApiHelp = new PaginatedApi<Comment>(10, pagination =>
     restaurantApi
@@ -81,7 +83,18 @@ export default function RestaurantDetailsModal(params: {
 
             <Grid item xs>
               <Button variant='contained' startIcon={<ChevronRightIcon />}>
-                Reserve
+                <RouterLink
+                  to={{
+                    pathname: '/table',
+                    search: `?id=${restaurant.id}`,
+                  }}
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  onClick={() => {
+                    setRestaurant(restaurant);
+                  }}
+                >
+                  Reserve
+                </RouterLink>
               </Button>
             </Grid>
 

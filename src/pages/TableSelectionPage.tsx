@@ -1,16 +1,30 @@
 import { TextField, Grid, Typography, Box } from '@mui/material';
-
+import { Context } from '../data/Context';
 import React from 'react';
-import { FloorPlan, Table } from '../data/api';
+import { FloorPlan, Restaurant, Table } from '../data/api';
 import '../css/TableSelectionPage.css';
 import { TimePicker } from '@mui/x-date-pickers';
 import { Link } from 'react-router-dom';
+import PaginatedApi from '../data/PaginatedApi';
 
 /**
  * TableSelection page
  * @return {JSX.Element}
  */
 export default function TableSelectionPage() {
+  const { reservation, restaurantApi, restaurant } = React.useContext(Context);
+
+  const restaurantApiHelp = new PaginatedApi<Table>(10, pagination =>
+    restaurantApi
+      .getRestaurantTables(
+        restaurant.id ?? '',
+        pagination.currentPage,
+        pagination.pageSize,
+      )
+      .then(result => [result, result.results ?? []]),
+  );
+  const [isLoading, tables, pagination] = restaurantApiHelp.state();
+
   const floorPlan: FloorPlan = {
     image: 'https://i.stack.imgur.com/1tl6D.jpg',
     size: {
@@ -18,69 +32,6 @@ export default function TableSelectionPage() {
       height: 600 * 2,
     },
   };
-
-  const tables: Table[] = [
-    {
-      id: '1',
-      seats: 4,
-      floorPlan: {
-        image: '/images/table4-1.png',
-        position: {
-          x: 20 * 2,
-          y: 20 * 2,
-        },
-        size: {
-          width: 100 * 2,
-          height: 100 * 2,
-        },
-      },
-    },
-    {
-      id: '2',
-      seats: 4,
-      floorPlan: {
-        image: '/images/table4-1.png',
-        position: {
-          x: 20 * 2,
-          y: 250 * 2,
-        },
-        size: {
-          width: 100 * 2,
-          height: 100 * 2,
-        },
-      },
-    },
-    {
-      id: '3',
-      seats: 8,
-      floorPlan: {
-        image: '/images/table8-1.png',
-        position: {
-          x: 700 * 2,
-          y: 50 * 2,
-        },
-        size: {
-          width: 100 * 2,
-          height: 160 * 2,
-        },
-      },
-    },
-    {
-      id: '4',
-      seats: 4,
-      floorPlan: {
-        image: '/images/table4-2.png',
-        position: {
-          x: 700 * 2,
-          y: 300 * 2,
-        },
-        size: {
-          width: 100 * 2,
-          height: 100 * 2,
-        },
-      },
-    },
-  ];
 
   const [timePickerToValue, setTimePickerToValue] = React.useState<Date | null>(
     null,
@@ -92,6 +43,7 @@ export default function TableSelectionPage() {
   const canvasRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
+    restaurantApiHelp.loadAllPages();
     handleResize();
   }, []);
 
@@ -113,6 +65,18 @@ export default function TableSelectionPage() {
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Typography variant='h4' component='div'>
+            {restaurant.name}
+          </Typography>
+        </Grid>
+
+        <Grid item xs={12}>
+          <Typography component='div'>
+            Pleaase select the time and table.
+          </Typography>
+        </Grid>
+
+        <Grid item xs={12}>
+          <Typography variant='h6' component='div'>
             When do you want to come?
           </Typography>
         </Grid>
@@ -137,13 +101,14 @@ export default function TableSelectionPage() {
               <TextField {...params} fullWidth label='End time' />
             )}
             minutesStep={30}
+            minTime={new Date(restaurant.openingHours?.from ?? 0)}
             views={['hours', 'minutes']}
             ampm={false}
           />
         </Grid>
 
         <Grid item xs={12}>
-          <Typography variant='h4' component='div'>
+          <Typography variant='h6' component='div'>
             Where do you want to sit?
           </Typography>
         </Grid>

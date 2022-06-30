@@ -1,6 +1,6 @@
 import { Context } from '../data/Context';
 import { useState } from 'react';
-import { Reservation, RestaurantApi, BASE_PATH } from '../data/api';
+import { Reservation, RestaurantApi, BASE_PATH, Restaurant } from '../data/api';
 import { Configuration, ConfigurationParameters } from '../data';
 
 /**
@@ -24,6 +24,8 @@ export default function ContextWrapper(props: { children: JSX.Element }) {
     },
   });
 
+  const [restaurant, setRestaurant] = useState<Restaurant>({});
+
   const parameters: ConfigurationParameters = {};
 
   if (
@@ -42,7 +44,14 @@ export default function ContextWrapper(props: { children: JSX.Element }) {
 
   return (
     <Context.Provider
-      value={{ reservation, setReservation, configuration, restaurantApi }}
+      value={{
+        reservation,
+        setReservation,
+        restaurant,
+        setRestaurant,
+        configuration,
+        restaurantApi,
+      }}
     >
       {children}
     </Context.Provider>

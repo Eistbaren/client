@@ -94,6 +94,36 @@ export default class PaginatedApi<T> {
   }
 
   /**
+   * Load all pages
+   * @return {void}
+   */
+  public loadAllPages() {
+    this._setIsLoading(true);
+
+    // Recoursively load all pages
+    // there shouln't be any stack issues, as the function just starts the request and returns after that
+    const loadNextPage = () => {
+      this._loadFunction(this._currentPagination)
+        .then(result => {
+          const [pagination, data] = result;
+          this._setCurrentPagination(pagination);
+          this._setCurrentData(this._currentData.concat(data));
+          if (this.atLastPage()) {
+            this._setIsLoading(false);
+          } else {
+            loadNextPage();
+          }
+        })
+        .catch(() => {
+          console.log('Error loading data!');
+          this._setIsLoading(false);
+        });
+    };
+
+    loadNextPage();
+  }
+
+  /**
    * Check whether we are at the last page
    * @return {boolean} whether we are at the last page yet
    */
