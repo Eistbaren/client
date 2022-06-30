@@ -5,6 +5,7 @@ import { Configuration, ConfigurationParameters } from '../data';
 
 interface StoredContext {
   reservation: Reservation;
+  restaurant: Restaurant;
 }
 
 /**
@@ -29,17 +30,22 @@ export default function ContextWrapper(props: { children: JSX.Element }) {
         to: to.valueOf(),
       },
     },
+    restaurant: {},
   };
 
   // load old values from localstorage
   const storedContextJSON = localStorage.getItem('de.reservation-bear.context');
   if (storedContextJSON !== null) {
-    storedContext = JSON.parse(storedContextJSON);
+    storedContext = {
+      ...storedContext,
+      ...JSON.parse(storedContextJSON),
+    };
   }
 
   const [reservation, setReservation] = useState(storedContext.reservation);
-
-  const [restaurant, setRestaurant] = useState<Restaurant>({});
+  const [restaurant, setRestaurant] = useState<Restaurant>(
+    storedContext.restaurant,
+  );
 
   const parameters: ConfigurationParameters = {};
 
@@ -62,20 +68,18 @@ export default function ContextWrapper(props: { children: JSX.Element }) {
       'de.reservation-bear.context',
       JSON.stringify({
         reservation: reservation,
+        restaurant: restaurant,
       }),
     );
-  }, [reservation]);
+  }, [reservation, restaurant]);
 
   return (
     <Context.Provider
       value={{
         reservation,
         setReservation,
-<<<<<<< HEAD
         restaurant,
         setRestaurant,
-=======
->>>>>>> 18edbf699f27ea97d5066c539dcf345b30a58cd9
         configuration,
         restaurantApi,
       }}
