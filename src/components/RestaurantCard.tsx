@@ -79,10 +79,7 @@ export default function RestaurantCard(params: {
           }}
         >
           <RouterLink
-            to={{
-              pathname: '/table',
-              search: `?id=${restaurant.id}`,
-            }}
+            to='/table'
             style={{ textDecoration: 'none', color: 'inherit' }}
             onClick={() => {
               setRestaurant(restaurant);

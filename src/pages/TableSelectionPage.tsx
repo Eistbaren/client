@@ -1,4 +1,10 @@
-import { TextField, Grid, Typography, Box } from '@mui/material';
+import {
+  TextField,
+  Grid,
+  Typography,
+  Box,
+  CircularProgress,
+} from '@mui/material';
 import { Context } from '../data/Context';
 import React from 'react';
 import { FloorPlan, Restaurant, Table } from '../data/api';
@@ -14,16 +20,19 @@ import PaginatedApi from '../data/PaginatedApi';
 export default function TableSelectionPage() {
   const { reservation, restaurantApi, restaurant } = React.useContext(Context);
 
-  const restaurantApiHelp = new PaginatedApi<Table>(10, pagination =>
-    restaurantApi
-      .getRestaurantTables(
-        restaurant.id ?? '',
-        pagination.currentPage,
-        pagination.pageSize,
-      )
-      .then(result => [result, result.results ?? []]),
+  const restaurantApiHelp = new PaginatedApi<Table>(
+    10,
+    pagination =>
+      restaurantApi
+        .getRestaurantTables(
+          restaurant.id ?? '',
+          pagination.currentPage,
+          pagination.pageSize,
+        )
+        .then(result => [result, result.results ?? []]),
+    true,
   );
-  const [isLoading, tables, pagination] = restaurantApiHelp.state();
+  const [isLoading, tables] = restaurantApiHelp.state();
 
   const floorPlan: FloorPlan = {
     image: 'https://i.stack.imgur.com/1tl6D.jpg',
@@ -43,9 +52,8 @@ export default function TableSelectionPage() {
   const canvasRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    restaurantApiHelp.loadAllPages();
     handleResize();
-  }, []);
+  }, [floorPlan]);
 
   const handleResize = () => {
     // Scale canvas contents
@@ -113,46 +121,52 @@ export default function TableSelectionPage() {
           </Typography>
         </Grid>
 
-        <Grid item xs={12}>
-          <div className='floorPlan-canvas' ref={canvasRef}>
-            <img
-              style={{
-                width: fixSize(floorPlan.size?.width),
-                height: fixSize(floorPlan.size?.height),
-              }}
-              src={floorPlan.image}
-            />
+        {isLoading ? (
+          <Grid item xs={12}>
+            <CircularProgress />
+          </Grid>
+        ) : (
+          <Grid item xs={12}>
+            <div className='floorPlan-canvas' ref={canvasRef}>
+              <img
+                style={{
+                  width: fixSize(floorPlan.size?.width),
+                  height: fixSize(floorPlan.size?.height),
+                }}
+                src={floorPlan.image}
+              />
 
-            {tables.map((table, tableKey) => {
-              return (
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    left: fixSize(table.floorPlan?.position?.x),
-                    top: fixSize(table.floorPlan?.position?.y),
-                    width: fixSize(table.floorPlan?.size?.width),
-                    height: fixSize(table.floorPlan?.size?.height),
-                  }}
-                  key={tableKey}
-                >
-                  <Link
-                    to='/personal-data'
-                    style={{ textDecoration: 'none', color: 'inherit' }}
+              {tables.map((table, tableKey) => {
+                return (
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      left: fixSize(table.floorPlan?.position?.x),
+                      top: fixSize(table.floorPlan?.position?.y),
+                      width: fixSize(table.floorPlan?.size?.width),
+                      height: fixSize(table.floorPlan?.size?.height),
+                    }}
+                    key={tableKey}
                   >
-                    <img
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        cursor: 'pointer',
-                      }}
-                      src={table.floorPlan?.image}
-                    />
-                  </Link>
-                </Box>
-              );
-            })}
-          </div>
-        </Grid>
+                    <Link
+                      to='/personal-data'
+                      style={{ textDecoration: 'none', color: 'inherit' }}
+                    >
+                      <img
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          cursor: 'pointer',
+                        }}
+                        src={table.floorPlan?.image}
+                      />
+                    </Link>
+                  </Box>
+                );
+              })}
+            </div>
+          </Grid>
+        )}
       </Grid>
     </div>
   );

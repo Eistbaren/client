@@ -3,15 +3,12 @@ import {
   Grid,
   Card,
   Typography,
-  Rating,
   Link,
   Modal,
   Fade,
   ImageList,
   Divider,
   ImageListItem,
-  Avatar,
-  Skeleton,
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -22,6 +19,10 @@ import { Comment, Restaurant } from '../data/api';
 import React from 'react';
 import { Context } from '../data/Context';
 import PaginatedApi from '../data/PaginatedApi';
+import {
+  RestaurantComment,
+  RestaurantCommentSkeleton,
+} from '../components/RestaurantComment';
 
 /**
  * OnClose callback
@@ -84,10 +85,7 @@ export default function RestaurantDetailsModal(params: {
             <Grid item xs>
               <Button variant='contained' startIcon={<ChevronRightIcon />}>
                 <RouterLink
-                  to={{
-                    pathname: '/table',
-                    search: `?id=${restaurant.id}`,
-                  }}
+                  to='/table'
                   style={{ textDecoration: 'none', color: 'inherit' }}
                   onClick={() => {
                     setRestaurant(restaurant);
@@ -170,54 +168,19 @@ export default function RestaurantDetailsModal(params: {
                 No comments yet.
               </Grid>
             ) : (
-              comments.map(comment => (
-                <>
-                  <Grid item xs={1}>
-                    <Avatar alt={comment.name} />
-                  </Grid>
-                  <Grid item xs={8}>
-                    {comment.name}
-                  </Grid>
-                  <Grid item xs={3}>
-                    <Rating
-                      name='simple-controlled'
-                      value={comment.rating}
-                      readOnly
-                    />
-                  </Grid>
-                  <Grid item xs={1}></Grid>
-                  <Grid item xs={11}>
-                    {comment.comment}
-                  </Grid>
-                  <Grid item xs={1}></Grid>
-                  <Grid item xs={11}>
-                    <Divider />
-                  </Grid>
-                </>
+              comments.map((comment, commentKey) => (
+                <RestaurantComment
+                  key={`${restaurant.id}-comment-${commentKey}`}
+                  comment={comment}
+                ></RestaurantComment>
               ))
             )}
 
             {Array.from(new Array(isLoading ? pagination.pageSize : 0)).map(
-              () => (
-                <>
-                  <Grid item xs={1}>
-                    <Skeleton variant='circular' />
-                  </Grid>
-                  <Grid item xs={8}>
-                    <Skeleton variant='text' />
-                  </Grid>
-                  <Grid item xs={3}>
-                    <Skeleton variant='text' />
-                  </Grid>
-                  <Grid item xs={1}></Grid>
-                  <Grid item xs={11}>
-                    <Skeleton variant='text' />
-                  </Grid>
-                  <Grid item xs={1}></Grid>
-                  <Grid item xs={11}>
-                    <Divider />
-                  </Grid>
-                </>
+              index => (
+                <RestaurantCommentSkeleton
+                  key={`${restaurant.id}-commentSkeleton-${index}`}
+                ></RestaurantCommentSkeleton>
               ),
             )}
 
