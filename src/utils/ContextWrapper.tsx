@@ -1,7 +1,11 @@
 import { Context } from '../data/Context';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Reservation, RestaurantApi, BASE_PATH, Restaurant } from '../data/api';
 import { Configuration, ConfigurationParameters } from '../data';
+
+interface StoredContext {
+  reservation: Reservation;
+}
 
 /**
  * Sets Context for its children
@@ -11,18 +15,29 @@ import { Configuration, ConfigurationParameters } from '../data';
 export default function ContextWrapper(props: { children: JSX.Element }) {
   const { children } = props;
 
+  // default values
   const from = new Date();
   from.setMinutes(from.getMinutes() + 30);
   from.setMinutes(0);
   const to = new Date(from);
   to.setHours(to.getHours() + 1);
 
-  const [reservation, setReservation] = useState<Reservation>({
-    time: {
-      from: from.valueOf(),
-      to: to.valueOf(),
+  let storedContext: StoredContext = {
+    reservation: {
+      time: {
+        from: from.valueOf(),
+        to: to.valueOf(),
+      },
     },
-  });
+  };
+
+  // load old values from localstorage
+  const storedContextJSON = localStorage.getItem('de.reservation-bear.context');
+  if (storedContextJSON !== null) {
+    storedContext = JSON.parse(storedContextJSON);
+  }
+
+  const [reservation, setReservation] = useState(storedContext.reservation);
 
   const [restaurant, setRestaurant] = useState<Restaurant>({});
 
@@ -42,13 +57,25 @@ export default function ContextWrapper(props: { children: JSX.Element }) {
 
   const restaurantApi = new RestaurantApi(configuration);
 
+  useEffect(() => {
+    localStorage.setItem(
+      'de.reservation-bear.context',
+      JSON.stringify({
+        reservation: reservation,
+      }),
+    );
+  }, [reservation]);
+
   return (
     <Context.Provider
       value={{
         reservation,
         setReservation,
+<<<<<<< HEAD
         restaurant,
         setRestaurant,
+=======
+>>>>>>> 18edbf699f27ea97d5066c539dcf345b30a58cd9
         configuration,
         restaurantApi,
       }}
