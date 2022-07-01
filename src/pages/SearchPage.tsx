@@ -51,13 +51,10 @@ export default function SearchPage() {
     },
   ];
 
-  const restaurantApiHelp = new PaginatedApi<Restaurant>(
-    10,
-    pagination =>
-      restaurantApi
-        .getRestaurants([], pagination.currentPage, pagination.pageSize)
-        .then(result => [result, result.results ?? []]),
-    React.useState<Restaurant[]>([]),
+  const restaurantApiHelp = new PaginatedApi<Restaurant>(10, pagination =>
+    restaurantApi
+      .getRestaurants([], pagination.currentPage, pagination.pageSize)
+      .then(result => [result, result.results ?? []]),
   );
   const [isLoading, restaurants, pagination] = restaurantApiHelp.state();
 

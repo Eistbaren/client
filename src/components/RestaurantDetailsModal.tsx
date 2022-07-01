@@ -15,7 +15,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PublicIcon from '@mui/icons-material/Public';
-import { Comment, Paginated, Restaurant } from '../data/api';
+import { Comment, Restaurant } from '../data/api';
 import React from 'react';
 import { Context } from '../data/Context';
 import PaginatedApi from '../data/PaginatedApi';
@@ -49,29 +49,20 @@ export default function RestaurantDetailsModal(params: {
   const { configuration, restaurantApi, setRestaurant } =
     React.useContext(Context);
 
-  console.log(`Opening details of restaurant ${restaurant.id}`);
-  const [comments, setComments] = React.useState<Comment[]>([]);
-  setComments([]);
-  console.log(comments);
-
-  const restaurantApiHelp = new PaginatedApi<Comment>(
-    10,
-    pagination =>
-      restaurantApi
-        .getRestaurantComments(
-          restaurant.id === undefined ? '' : restaurant.id,
-          pagination.currentPage,
-          pagination.pageSize,
-        )
-        .then(result => [result, result.results ?? []]),
-    [comments, setComments],
+  const restaurantApiHelp = new PaginatedApi<Comment>(10, pagination =>
+    restaurantApi
+      .getRestaurantComments(
+        restaurant.id === undefined ? '' : restaurant.id,
+        pagination.currentPage,
+        pagination.pageSize,
+      )
+      .then(result => [result, result.results ?? []]),
   );
-  let [isLoading, _, pagination] = restaurantApiHelp.state();
+  const [isLoading, comments, pagination] = restaurantApiHelp.state();
 
   React.useEffect(() => {
     restaurantApiHelp.initialLoad();
-    [isLoading, _, pagination] = restaurantApiHelp.state();
-  }, [restaurant]);
+  }, [params]);
 
   return (
     <Modal
@@ -80,7 +71,12 @@ export default function RestaurantDetailsModal(params: {
       aria-labelledby='modal-modal-title'
       aria-describedby='modal-modal-description'
     >
-      <Fade in={open}>
+      <Fade
+        in={open}
+        onAnimationEnd={() => {
+          restaurantApiHelp.reset();
+        }}
+      >
         <Card className='restaurant-detail-modal'>
           <Grid container spacing={2} alignItems='center'>
             <Grid item xs={9}>
