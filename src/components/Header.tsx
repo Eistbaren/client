@@ -19,23 +19,32 @@ import '../css/Header.css';
 export default function Header() {
   const location = useLocation();
   const [step, setStep] = useState(0);
-  const routes = ['/', '/search', '/table', '/personal-data'];
+  const routes = [
+    '/',
+    '/search',
+    '/table',
+    '/personal-data',
+    '/reservation-approval',
+  ];
 
   useEffect(() => {
-    const index = routes.indexOf(location.pathname);
+    const index = routes.indexOf(
+      routes.filter(el => location.pathname.includes(el)).at(-1) ?? '',
+    );
+
     setStep(index >= 0 ? index : 0);
   }, [location]);
 
   const steps = [
-    'People and date',
-    'Find a place to eat',
-    'Select a timeslot and table',
-    'Reserve your table',
+    'Select a time',
+    'Find a location',
+    'Choose a table',
+    'Send your reservation',
   ];
   return (
     <AppBar position='sticky'>
       <Container maxWidth='lg'>
-        <Toolbar>
+        <Toolbar className='header-container'>
           <Link to='/' style={{ textDecoration: 'none', color: 'inherit' }}>
             <img src='/logo192.png' className='header-icon'></img>
           </Link>
