@@ -22,7 +22,10 @@ export default function Header() {
   const routes = ['/', '/search', '/table', '/personal-data'];
 
   useEffect(() => {
-    const index = routes.indexOf(location.pathname);
+    let index = routes.indexOf(location.pathname);
+    if (location.pathname.includes('/reservation-approval')) {
+      index = 4;
+    }
     setStep(index >= 0 ? index : 0);
   }, [location]);
 
