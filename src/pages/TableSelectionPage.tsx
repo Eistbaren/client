@@ -1,15 +1,8 @@
-import {
-  TextField,
-  Grid,
-  Typography,
-  Box,
-  CircularProgress,
-} from '@mui/material';
+import { Grid, Typography, Box, CircularProgress } from '@mui/material';
 import { Context } from '../data/Context';
 import React from 'react';
 import { Table } from '../data/api';
 import '../css/TableSelectionPage.css';
-import { TimePicker } from '@mui/x-date-pickers';
 import { Link } from 'react-router-dom';
 import PaginatedApi from '../data/PaginatedApi';
 import ReservationTimeslotTimePicker from '../components/ReservationTimeslotTimePicker';
@@ -36,12 +29,6 @@ export default function TableSelectionPage() {
     true,
   );
   const [isLoading, tables] = restaurantApiHelp.state();
-
-  const [timePickerToValue, setTimePickerToValue] = React.useState<Date | null>(
-    null,
-  );
-  const [timePickerFromValue, setTimePickerFromValue] =
-    React.useState<Date | null>(null);
   const [sizeFactor, setSizeFactor] = React.useState<number>(1);
 
   const canvasRef = React.useRef<HTMLDivElement>(null);

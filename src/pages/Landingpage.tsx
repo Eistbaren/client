@@ -1,5 +1,5 @@
-import { Button, TextField, Stack } from '@mui/material';
-import { CalendarPicker, TimePicker } from '@mui/x-date-pickers';
+import { Button, Stack } from '@mui/material';
+import { CalendarPicker } from '@mui/x-date-pickers';
 
 import { Context } from '../data/Context';
 import { useContext, useState } from 'react';
@@ -18,40 +18,6 @@ import ReservationTimeslotTimePicker from '../components/ReservationTimeslotTime
 export default function Landingpage() {
   const { reservation, setReservation } = useContext(Context);
   const [numberOfPersons, setNumberOfPersons] = useState<number>(2);
-
-  /**
-   * Sets the reservation.time.from time to the new time
-   * @param  {Date} value
-   */
-  function handleTimeFromInput(value: Date | null) {
-    const newDate = new Date(reservation.time?.from?.valueOf() ?? 0);
-    newDate.setHours(value?.getHours() ?? 0);
-    newDate.setMinutes(value?.getMinutes() ?? 0);
-    setReservation({
-      ...reservation,
-      time: {
-        from: newDate.valueOf(),
-        to: reservation.time?.to,
-      },
-    });
-  }
-
-  /**
-   * Sets the reservation.time.to time to the new time
-   * @param  {Date} value
-   */
-  function handleTimeToInput(value: Date | null) {
-    const newDate = new Date(reservation.time?.to?.valueOf() ?? 0);
-    newDate.setHours(value?.getHours() ?? 0);
-    newDate.setMinutes(value?.getMinutes() ?? 0);
-    setReservation({
-      ...reservation,
-      time: {
-        from: reservation.time?.from?.valueOf(),
-        to: newDate.valueOf(),
-      },
-    });
-  }
 
   /**
    * Sets the date for both times
