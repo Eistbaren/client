@@ -36,10 +36,10 @@ export default function Header() {
   }, [location]);
 
   const steps = [
-    'Set the time',
-    'Find the perfect place',
+    'Select a time',
+    'Find a location',
     'Choose a table',
-    'Make your reservation',
+    'Send your reservation',
   ];
   return (
     <AppBar position='sticky'>
