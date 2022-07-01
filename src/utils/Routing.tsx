@@ -4,9 +4,7 @@ import PageTemplate from '../components/PageTemplate';
 
 import Landingpage from '../pages/Landingpage';
 import SearchPage from '../pages/SearchPage';
-import RestaurantDetails from '../pages/RestaurantDetails';
 import ReservationDetails from '../pages/ReservationDetails';
-import ReservationApproval from '../pages/ReservationApproval';
 import TableSelectionPage from '../pages/TableSelectionPage';
 import PersonalData from '../pages/PersonalData';
 
@@ -21,13 +19,10 @@ export default function Routing() {
       <PageTemplate>
         <Routes>
           <Route path='/' element={<Landingpage />} />
-          <Route path='search' element={<SearchPage />}>
-            <Route path=':restaurantId' element={<RestaurantDetails />} />
-          </Route>
+          <Route path='search' element={<SearchPage />} />
           <Route path='table' element={<TableSelectionPage />}></Route>
-          <Route path='reservations' element={<ReservationDetails />} />
-          <Route path='reservation-approval'>
-            <Route path=':reservationId' element={<ReservationApproval />} />
+          <Route path='reservation-details' element={<ReservationDetails />}>
+            <Route path=':reservationId' element={<ReservationDetails />} />
           </Route>
           <Route path='personal-data' element={<PersonalData />} />
           <Route path='*' element={<Landingpage />} />

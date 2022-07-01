@@ -40,7 +40,7 @@ export default function PersonalData() {
       setEmailError(true);
     } else {
       // await call api call
-      navigate(`/reservation-approval/${reservation.id}`);
+      navigate(`/reservation-details/${reservation.id}`);
     }
   };
 
