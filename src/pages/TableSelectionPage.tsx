@@ -13,8 +13,13 @@ import TimeslotText from '../components/TimeslotText';
  * @return {JSX.Element}
  */
 export default function TableSelectionPage() {
-  const { reservation, setReservation, restaurantApi, restaurant } =
-    React.useContext(Context);
+  const {
+    reservation,
+    setReservation,
+    restaurantApi,
+    restaurant,
+    configuration,
+  } = React.useContext(Context);
 
   if (
     restaurant.openingHours?.from === undefined ||
@@ -146,7 +151,7 @@ export default function TableSelectionPage() {
                   width: fixSize(restaurant.floorPlan?.size?.width),
                   height: fixSize(restaurant.floorPlan?.size?.height),
                 }}
-                src={restaurant.floorPlan?.image}
+                src={`${configuration.basePath}/image/${restaurant.floorPlan?.image}`}
               />
 
               {tables.map((table, tableKey) => {
@@ -186,7 +191,7 @@ export default function TableSelectionPage() {
                           height: '100%',
                           cursor: 'pointer',
                         }}
-                        src={table.floorPlan?.image}
+                        src={`${configuration.basePath}/image/${table.floorPlan?.image}`}
                       />
                     </Link>
                   </Box>
