@@ -15,7 +15,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PublicIcon from '@mui/icons-material/Public';
-import { Comment, Restaurant } from '../data/api';
+import { Comment, Paginated, Restaurant } from '../data/api';
 import React from 'react';
 import { Context } from '../data/Context';
 import PaginatedApi from '../data/PaginatedApi';
@@ -23,6 +23,7 @@ import {
   RestaurantComment,
   RestaurantCommentSkeleton,
 } from '../components/RestaurantComment';
+import TimeslotText from './TimeslotText';
 
 /**
  * OnClose callback
@@ -41,30 +42,36 @@ export default function RestaurantDetailsModal(params: {
   restaurant: Restaurant;
 }) {
   const { open, onClose, restaurant } = params;
+  if (restaurant.id === undefined) {
+    return <></>;
+  }
+
   const { configuration, restaurantApi, setRestaurant } =
     React.useContext(Context);
 
-  const restaurantApiHelp = new PaginatedApi<Comment>(10, pagination =>
-    restaurantApi
-      .getRestaurantComments(
-        restaurant.id ?? '',
-        pagination.currentPage,
-        pagination.pageSize,
-      )
-      .then(result => [result, result.results ?? []]),
+  console.log(`Opening details of restaurant ${restaurant.id}`);
+  const [comments, setComments] = React.useState<Comment[]>([]);
+  setComments([]);
+  console.log(comments);
+
+  const restaurantApiHelp = new PaginatedApi<Comment>(
+    10,
+    pagination =>
+      restaurantApi
+        .getRestaurantComments(
+          restaurant.id === undefined ? '' : restaurant.id,
+          pagination.currentPage,
+          pagination.pageSize,
+        )
+        .then(result => [result, result.results ?? []]),
+    [comments, setComments],
   );
-  const [isLoading, comments, pagination] = restaurantApiHelp.state();
+  let [isLoading, _, pagination] = restaurantApiHelp.state();
 
-  const unixTimestampToTimeOfDay = (unixTimestamp?: number) => {
-    if (!unixTimestamp) {
-      return '';
-    }
-
-    return new Date(unixTimestamp * 1000).toLocaleTimeString('de-DE', {
-      hour: 'numeric',
-      minute: 'numeric',
-    });
-  };
+  React.useEffect(() => {
+    restaurantApiHelp.initialLoad();
+    [isLoading, _, pagination] = restaurantApiHelp.state();
+  }, [restaurant]);
 
   return (
     <Modal
@@ -130,11 +137,7 @@ export default function RestaurantDetailsModal(params: {
             </Grid>
 
             <Grid item xs={5}>
-              <Typography>
-                Opening hours:{' '}
-                {unixTimestampToTimeOfDay(restaurant?.openingHours?.from)}-
-                {unixTimestampToTimeOfDay(restaurant?.openingHours?.to)}
-              </Typography>
+              Opening hours: <TimeslotText timeslot={restaurant.openingHours} />
             </Grid>
 
             <Grid item xs={1}>

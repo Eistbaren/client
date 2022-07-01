@@ -12,13 +12,16 @@ import '../css/TableSelectionPage.css';
 import { TimePicker } from '@mui/x-date-pickers';
 import { Link } from 'react-router-dom';
 import PaginatedApi from '../data/PaginatedApi';
+import ReservationTimeslotTimePicker from '../components/ReservationTimeslotTimePicker';
+import TimeslotText from '../components/TimeslotText';
 
 /**
  * TableSelection page
  * @return {JSX.Element}
  */
 export default function TableSelectionPage() {
-  const { reservation, restaurantApi, restaurant } = React.useContext(Context);
+  const { reservation, setReservation, restaurantApi, restaurant } =
+    React.useContext(Context);
 
   const restaurantApiHelp = new PaginatedApi<Table>(
     10,
@@ -71,9 +74,8 @@ export default function TableSelectionPage() {
         </Grid>
 
         <Grid item xs={12}>
-          <Typography component='div'>
-            Pleaase select the time and table.
-          </Typography>
+          Opening hours: <TimeslotText timeslot={restaurant.openingHours} />
+          Pleaase select the time and table.
         </Grid>
 
         <Grid item xs={12}>
@@ -83,28 +85,24 @@ export default function TableSelectionPage() {
         </Grid>
 
         <Grid item xs={4}>
-          <TimePicker
-            value={timePickerFromValue}
-            onChange={value => setTimePickerFromValue(value)}
-            renderInput={params => (
-              <TextField {...params} fullWidth label='Start time' />
-            )}
-            minutesStep={30}
-            views={['hours', 'minutes']}
-            ampm={false}
+          <ReservationTimeslotTimePicker
+            reservation={reservation}
+            setReservation={setReservation}
+            label='Start time'
+            timestampToChoose='from'
+            minTime={restaurant.openingHours?.from}
+            maxTime={reservation.time?.to}
           />
         </Grid>
+
         <Grid item xs={4}>
-          <TimePicker
-            value={timePickerToValue}
-            onChange={value => setTimePickerToValue(value)}
-            renderInput={params => (
-              <TextField {...params} fullWidth label='End time' />
-            )}
-            minutesStep={30}
-            minTime={new Date(restaurant.openingHours?.from ?? 0)}
-            views={['hours', 'minutes']}
-            ampm={false}
+          <ReservationTimeslotTimePicker
+            reservation={reservation}
+            setReservation={setReservation}
+            label='End time'
+            timestampToChoose='to'
+            minTime={(reservation.time?.from ?? 0) + 60 * 30}
+            maxTime={restaurant.openingHours?.to}
           />
         </Grid>
 

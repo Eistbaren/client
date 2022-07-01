@@ -32,15 +32,17 @@ export default class PaginatedApi<T> {
    * Constructor
    * @param {number} pageSize the pageSize to use
    * @param {LoadFunctionCallback} loadFunction the function to call for loading data
+   * @param {[T[], React.Dispatch<React.SetStateAction<T[]>>]} currentData
    * @param {boolean} loadAllPages if set to true, all pages will be loaded on initialization
    */
   constructor(
     pageSize: number,
     loadFunction: (pagination: Paginated) => Promise<[Paginated, T[]]>,
+    currentData: [T[], React.Dispatch<React.SetStateAction<T[]>>],
     loadAllPages = false,
   ) {
     [this._isLoading, this._setIsLoading] = React.useState<boolean>(true);
-    [this._currentData, this._setCurrentData] = React.useState<T[]>([]);
+    [this._currentData, this._setCurrentData] = currentData;
     [this._currentPagination, this._setCurrentPagination] =
       React.useState<Paginated>({
         currentPage: 0,
@@ -49,10 +51,6 @@ export default class PaginatedApi<T> {
 
     this._loadFunction = loadFunction;
     this._shouldLoadAllPages = loadAllPages;
-
-    React.useEffect(() => {
-      this._initialLoad();
-    }, []);
   }
 
   /**
@@ -121,9 +119,12 @@ export default class PaginatedApi<T> {
   /**
    * Initially load the data
    */
-  private _initialLoad() {
+  public initialLoad() {
     this._currentPagination.currentPage = 0;
+    console.log('initial load');
+    console.log(JSON.stringify(this._currentData));
     this._setCurrentData([]);
+    console.log(JSON.stringify(this._currentData));
 
     if (this._shouldLoadAllPages) {
       this._loadAllPages();

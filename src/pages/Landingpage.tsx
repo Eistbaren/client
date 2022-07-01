@@ -9,6 +9,7 @@ import FloatingSidebar from '../components/FloatingSidebar';
 
 import '../css/Landingpage.css';
 import { Link } from 'react-router-dom';
+import ReservationTimeslotTimePicker from '../components/ReservationTimeslotTimePicker';
 
 /**
  * Landingpage
@@ -128,21 +129,19 @@ export default function Landingpage() {
           className='calendar-picker'
         />
         <div className='time-picker-container'>
-          <TimePicker
-            value={new Date(reservation.time?.from ?? 0)}
-            onChange={value => handleTimeFromInput(value)}
-            renderInput={params => <TextField {...params} label='Start time' />}
-            minutesStep={30}
-            views={['hours', 'minutes']}
-            ampm={false}
+          <ReservationTimeslotTimePicker
+            reservation={reservation}
+            setReservation={setReservation}
+            label='Start time'
+            timestampToChoose='from'
+            maxTime={reservation.time?.to}
           />
-          <TimePicker
-            value={new Date(reservation.time?.to ?? 0)}
-            onChange={value => handleTimeToInput(value)}
-            renderInput={params => <TextField {...params} label='End time' />}
-            minutesStep={30}
-            views={['hours', 'minutes']}
-            ampm={false}
+          <ReservationTimeslotTimePicker
+            reservation={reservation}
+            setReservation={setReservation}
+            label='End time'
+            timestampToChoose='to'
+            minTime={(reservation.time?.from ?? 0) + 60 * 30}
           />
         </div>
         <div className='background-image'></div>
