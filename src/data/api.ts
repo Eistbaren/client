@@ -16,7 +16,7 @@ import * as url from 'url';
 import * as isomorphicFetch from 'isomorphic-fetch';
 import { Configuration } from './configuration';
 
-const BASE_PATH = '/api/'.replace(/\/+$/, '');
+export const BASE_PATH = '/api/'.replace(/\/+$/, '');
 
 /**
  *
