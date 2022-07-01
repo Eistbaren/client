@@ -19,13 +19,19 @@ import '../css/Header.css';
 export default function Header() {
   const location = useLocation();
   const [step, setStep] = useState(0);
-  const routes = ['/', '/search', '/table', '/personal-data'];
+  const routes = [
+    '/',
+    '/search',
+    '/table',
+    '/personal-data',
+    '/reservation-approval',
+  ];
 
   useEffect(() => {
-    let index = routes.indexOf(location.pathname);
-    if (location.pathname.includes('/reservation-approval')) {
-      index = 4;
-    }
+    const index = routes.indexOf(
+      routes.filter(el => location.pathname.includes(el)).at(-1) ?? '',
+    );
+
     setStep(index >= 0 ? index : 0);
   }, [location]);
 
