@@ -100,14 +100,13 @@ export default function Landingpage() {
             setReservation={setReservation}
             label='Start time'
             timestampToChoose='from'
-            maxTime={reservation.time?.to}
           />
           <ReservationTimeslotTimePicker
             reservation={reservation}
             setReservation={setReservation}
             label='End time'
             timestampToChoose='to'
-            minTime={(reservation.time?.from ?? 0) + 60 * 30}
+            minTime={(reservation.time?.from ?? 0) + 60 * 30000}
           />
         </div>
         <div className='background-image'></div>

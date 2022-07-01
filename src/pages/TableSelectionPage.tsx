@@ -16,6 +16,12 @@ export default function TableSelectionPage() {
   const { reservation, setReservation, restaurantApi, restaurant } =
     React.useContext(Context);
 
+  if (
+    restaurant.openingHours?.from === undefined ||
+    restaurant.openingHours.to === undefined
+  )
+    return <>ERROR</>;
+
   const tableApi = new PaginatedApi<Table>(
     10,
     pagination =>
@@ -105,8 +111,8 @@ export default function TableSelectionPage() {
             setReservation={setReservation}
             label='Start time'
             timestampToChoose='from'
-            minTime={restaurant.openingHours?.from}
-            maxTime={reservation.time?.to}
+            minTime={restaurant.openingHours.from * 1000}
+            maxTime={(restaurant.openingHours.to - 60 * 30) * 1000}
           />
         </Grid>
 
@@ -116,8 +122,9 @@ export default function TableSelectionPage() {
             setReservation={setReservation}
             label='End time'
             timestampToChoose='to'
-            minTime={(reservation.time?.from ?? 0) + 60 * 30}
-            maxTime={restaurant.openingHours?.to}
+            minTime={(reservation.time?.from ?? 0) + 60 * 30 * 1000}
+            // include 15 minutes buffer, it does not work otherwise \(*~*)/
+            maxTime={(restaurant.openingHours.to + 60 * 15) * 1000}
           />
         </Grid>
 

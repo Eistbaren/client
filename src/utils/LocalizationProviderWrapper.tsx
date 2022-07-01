@@ -1,5 +1,6 @@
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import deLocale from 'date-fns/locale/de';
 
 /**
  * Sets a Localization Context for TimeInputs
@@ -12,7 +13,7 @@ export default function LocalizationProviderWrapper(props: {
   const { children } = props;
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
+    <LocalizationProvider adapterLocale={deLocale} dateAdapter={AdapterDateFns}>
       {children}
     </LocalizationProvider>
   );
