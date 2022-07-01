@@ -1,7 +1,7 @@
 import { Grid, Typography, Box, CircularProgress } from '@mui/material';
 import { Context } from '../data/Context';
 import React from 'react';
-import { Table } from '../data/api';
+import { AnonymousReservation, Table } from '../data/api';
 import '../css/TableSelectionPage.css';
 import { Link } from 'react-router-dom';
 import PaginatedApi from '../data/PaginatedApi';
@@ -16,7 +16,7 @@ export default function TableSelectionPage() {
   const { reservation, setReservation, restaurantApi, restaurant } =
     React.useContext(Context);
 
-  const restaurantApiHelp = new PaginatedApi<Table>(
+  const tableApi = new PaginatedApi<Table>(
     10,
     pagination =>
       restaurantApi
@@ -28,14 +28,42 @@ export default function TableSelectionPage() {
         .then(result => [result, result.results ?? []]),
     true,
   );
-  const [isLoading, tables] = restaurantApiHelp.state();
+  const [tablesLoading, tables] = tableApi.state();
+
+  const reservationApi = new PaginatedApi<AnonymousReservation>(
+    10,
+    pagination =>
+      restaurantApi
+        .getRestaurantReservations(
+          restaurant.id ?? '',
+          reservation.time?.from ?? 0,
+          reservation.time?.to ?? 0,
+          pagination.currentPage,
+          pagination.pageSize,
+        )
+        .then(result => [result, result.results ?? []]),
+    true,
+  );
+  const [reservationsLoading, existingReservations] = reservationApi.state();
+
   const [sizeFactor, setSizeFactor] = React.useState<number>(1);
 
   const canvasRef = React.useRef<HTMLDivElement>(null);
+  const reservedTables = existingReservations
+    .map(reservation => reservation.tables ?? [])
+    .flat()
+    .filter(function (item, index, self) {
+      return self.indexOf(item) == index;
+    });
 
   React.useEffect(() => {
+    tableApi.initialLoad();
     handleResize();
   }, [restaurant]);
+
+  React.useEffect(() => {
+    reservationApi.initialLoad();
+  }, [reservation]);
 
   const handleResize = () => {
     // Scale canvas contents
@@ -62,7 +90,7 @@ export default function TableSelectionPage() {
 
         <Grid item xs={12}>
           Opening hours: <TimeslotText timeslot={restaurant.openingHours} />
-          Pleaase select the time and table.
+          Please select the time and table.
         </Grid>
 
         <Grid item xs={12}>
@@ -99,7 +127,7 @@ export default function TableSelectionPage() {
           </Typography>
         </Grid>
 
-        {isLoading ? (
+        {tablesLoading ? (
           <Grid item xs={12}>
             <CircularProgress />
           </Grid>
@@ -129,8 +157,20 @@ export default function TableSelectionPage() {
                     <Link
                       to='/personal-data'
                       style={{ textDecoration: 'none', color: 'inherit' }}
-                      onClick={() => {
-                        reservation.tables = [table.id ?? ''];
+                      onClick={e => {
+                        if (table?.id === undefined) return;
+                        if (reservationsLoading) {
+                          e.preventDefault();
+                          return;
+                        }
+                        if (reservedTables.indexOf(table.id)) {
+                          e.preventDefault();
+                          alert('this table is already reserved');
+                          // TODO: create popover which shows when this table is reserved!
+                          return;
+                        }
+
+                        reservation.tables = [table.id];
                       }}
                     >
                       <img
