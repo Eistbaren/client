@@ -116,8 +116,9 @@ export default function TableSelectionPage() {
             setReservation={setReservation}
             label='Start time'
             timestampToChoose='from'
+            // include 15 minutes buffer, it does not work otherwise \(*~*)/
             minTime={restaurant.openingHours.from * 1000}
-            maxTime={(restaurant.openingHours.to - 60 * 30) * 1000}
+            maxTime={(restaurant.openingHours.to - 60 * 15) * 1000}
           />
         </Grid>
 
