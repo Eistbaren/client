@@ -69,12 +69,15 @@ export default function TableSelectionPage() {
 
   React.useEffect(() => {
     tableApi.initialLoad();
-    handleResize();
   }, [restaurant]);
 
   React.useEffect(() => {
     reservationApi.initialLoad();
   }, [reservation]);
+
+  React.useEffect(() => {
+    handleResize();
+  }, [tables]);
 
   const handleResize = () => {
     // Scale canvas contents
@@ -176,7 +179,7 @@ export default function TableSelectionPage() {
                           e.preventDefault();
                           return;
                         }
-                        if (reservedTables.indexOf(table.id)) {
+                        if (reservedTables.indexOf(table.id) >= 0) {
                           e.preventDefault();
                           alert('this table is already reserved');
                           // TODO: create popover which shows when this table is reserved!
