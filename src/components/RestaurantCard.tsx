@@ -32,7 +32,7 @@ export default function RestaurantCard(params: {
   dontShowImages?: boolean;
 }) {
   const { restaurant, onClick, dontShowImages } = params;
-  const { configuration } = React.useContext(Context);
+  const { configuration, setRestaurant } = React.useContext(Context);
 
   const image: string =
     restaurant.images?.at(0) ?? '069f72db-2157-43de-8e88-21661b518100';
@@ -79,11 +79,11 @@ export default function RestaurantCard(params: {
           }}
         >
           <RouterLink
-            to={{
-              pathname: '/table',
-              search: `?id=${restaurant.id}`,
-            }}
+            to='/table'
             style={{ textDecoration: 'none', color: 'inherit' }}
+            onClick={() => {
+              setRestaurant(restaurant);
+            }}
           >
             Reserve
           </RouterLink>

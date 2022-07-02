@@ -58,6 +58,10 @@ export default function SearchPage() {
   );
   const [isLoading, restaurants, pagination] = restaurantApiHelp.state();
 
+  React.useEffect(() => {
+    restaurantApiHelp.initialLoad();
+  }, []);
+
   const [detailModalRestaurant, setDetailModalRestaurant] =
     React.useState<Restaurant>({});
   const [detailModalOpen, setDetailModalOpen] = React.useState(false);

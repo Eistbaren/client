@@ -3,16 +3,14 @@ import {
   Grid,
   Card,
   Typography,
-  Rating,
   Link,
   Modal,
   Fade,
   ImageList,
   Divider,
   ImageListItem,
-  Avatar,
-  Skeleton,
 } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
 
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -21,6 +19,11 @@ import { Comment, Restaurant } from '../data/api';
 import React from 'react';
 import { Context } from '../data/Context';
 import PaginatedApi from '../data/PaginatedApi';
+import {
+  RestaurantComment,
+  RestaurantCommentSkeleton,
+} from '../components/RestaurantComment';
+import TimeslotText from './TimeslotText';
 
 /**
  * OnClose callback
@@ -39,12 +42,17 @@ export default function RestaurantDetailsModal(params: {
   restaurant: Restaurant;
 }) {
   const { open, onClose, restaurant } = params;
-  const { configuration, restaurantApi } = React.useContext(Context);
+  if (restaurant.id === undefined) {
+    return <></>;
+  }
+
+  const { configuration, restaurantApi, setRestaurant } =
+    React.useContext(Context);
 
   const restaurantApiHelp = new PaginatedApi<Comment>(10, pagination =>
     restaurantApi
       .getRestaurantComments(
-        restaurant.id ?? '',
+        restaurant.id === undefined ? '' : restaurant.id,
         pagination.currentPage,
         pagination.pageSize,
       )
@@ -52,16 +60,9 @@ export default function RestaurantDetailsModal(params: {
   );
   const [isLoading, comments, pagination] = restaurantApiHelp.state();
 
-  const unixTimestampToTimeOfDay = (unixTimestamp?: number) => {
-    if (!unixTimestamp) {
-      return '';
-    }
-
-    return new Date(unixTimestamp * 1000).toLocaleTimeString('de-DE', {
-      hour: 'numeric',
-      minute: 'numeric',
-    });
-  };
+  React.useEffect(() => {
+    restaurantApiHelp.initialLoad();
+  }, [params]);
 
   return (
     <Modal
@@ -70,7 +71,12 @@ export default function RestaurantDetailsModal(params: {
       aria-labelledby='modal-modal-title'
       aria-describedby='modal-modal-description'
     >
-      <Fade in={open}>
+      <Fade
+        in={open}
+        onAnimationEnd={() => {
+          restaurantApiHelp.reset();
+        }}
+      >
         <Card className='restaurant-detail-modal'>
           <Grid container spacing={2} alignItems='center'>
             <Grid item xs={9}>
@@ -81,7 +87,15 @@ export default function RestaurantDetailsModal(params: {
 
             <Grid item xs>
               <Button variant='contained' startIcon={<ChevronRightIcon />}>
-                Reserve
+                <RouterLink
+                  to='/table'
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  onClick={() => {
+                    setRestaurant(restaurant);
+                  }}
+                >
+                  Reserve
+                </RouterLink>
               </Button>
             </Grid>
 
@@ -119,11 +133,7 @@ export default function RestaurantDetailsModal(params: {
             </Grid>
 
             <Grid item xs={5}>
-              <Typography>
-                Opening hours:{' '}
-                {unixTimestampToTimeOfDay(restaurant?.openingHours?.from)}-
-                {unixTimestampToTimeOfDay(restaurant?.openingHours?.to)}
-              </Typography>
+              Opening hours: <TimeslotText timeslot={restaurant.openingHours} />
             </Grid>
 
             <Grid item xs={1}>
@@ -157,54 +167,19 @@ export default function RestaurantDetailsModal(params: {
                 No comments yet.
               </Grid>
             ) : (
-              comments.map(comment => (
-                <>
-                  <Grid item xs={1}>
-                    <Avatar alt={comment.name} />
-                  </Grid>
-                  <Grid item xs={8}>
-                    {comment.name}
-                  </Grid>
-                  <Grid item xs={3}>
-                    <Rating
-                      name='simple-controlled'
-                      value={comment.rating}
-                      readOnly
-                    />
-                  </Grid>
-                  <Grid item xs={1}></Grid>
-                  <Grid item xs={11}>
-                    {comment.comment}
-                  </Grid>
-                  <Grid item xs={1}></Grid>
-                  <Grid item xs={11}>
-                    <Divider />
-                  </Grid>
-                </>
+              comments.map((comment, commentKey) => (
+                <RestaurantComment
+                  key={`${restaurant.id}-comment-${commentKey}`}
+                  comment={comment}
+                ></RestaurantComment>
               ))
             )}
 
             {Array.from(new Array(isLoading ? pagination.pageSize : 0)).map(
-              () => (
-                <>
-                  <Grid item xs={1}>
-                    <Skeleton variant='circular' />
-                  </Grid>
-                  <Grid item xs={8}>
-                    <Skeleton variant='text' />
-                  </Grid>
-                  <Grid item xs={3}>
-                    <Skeleton variant='text' />
-                  </Grid>
-                  <Grid item xs={1}></Grid>
-                  <Grid item xs={11}>
-                    <Skeleton variant='text' />
-                  </Grid>
-                  <Grid item xs={1}></Grid>
-                  <Grid item xs={11}>
-                    <Divider />
-                  </Grid>
-                </>
+              (_, key) => (
+                <RestaurantCommentSkeleton
+                  key={`${restaurant.id}-commentSkeleton-${key}`}
+                ></RestaurantCommentSkeleton>
               ),
             )}
 

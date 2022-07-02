@@ -1,5 +1,5 @@
-import { Button, TextField, Stack } from '@mui/material';
-import { CalendarPicker, TimePicker } from '@mui/x-date-pickers';
+import { Button, Stack } from '@mui/material';
+import { CalendarPicker } from '@mui/x-date-pickers';
 
 import { Context } from '../data/Context';
 import { useContext, useState } from 'react';
@@ -9,6 +9,7 @@ import FloatingSidebar from '../components/FloatingSidebar';
 
 import '../css/Landingpage.css';
 import { Link } from 'react-router-dom';
+import ReservationTimeslotTimePicker from '../components/ReservationTimeslotTimePicker';
 
 /**
  * Landingpage
@@ -17,40 +18,6 @@ import { Link } from 'react-router-dom';
 export default function Landingpage() {
   const { reservation, setReservation } = useContext(Context);
   const [numberOfPersons, setNumberOfPersons] = useState<number>(2);
-
-  /**
-   * Sets the reservation.time.from time to the new time
-   * @param  {Date} value
-   */
-  function handleTimeFromInput(value: Date | null) {
-    const newDate = new Date(reservation.time?.from?.valueOf() ?? 0);
-    newDate.setHours(value?.getHours() ?? 0);
-    newDate.setMinutes(value?.getMinutes() ?? 0);
-    setReservation({
-      ...reservation,
-      time: {
-        from: newDate.valueOf(),
-        to: reservation.time?.to,
-      },
-    });
-  }
-
-  /**
-   * Sets the reservation.time.to time to the new time
-   * @param  {Date} value
-   */
-  function handleTimeToInput(value: Date | null) {
-    const newDate = new Date(reservation.time?.to?.valueOf() ?? 0);
-    newDate.setHours(value?.getHours() ?? 0);
-    newDate.setMinutes(value?.getMinutes() ?? 0);
-    setReservation({
-      ...reservation,
-      time: {
-        from: reservation.time?.from?.valueOf(),
-        to: newDate.valueOf(),
-      },
-    });
-  }
 
   /**
    * Sets the date for both times
@@ -128,21 +95,18 @@ export default function Landingpage() {
           className='calendar-picker'
         />
         <div className='time-picker-container'>
-          <TimePicker
-            value={new Date(reservation.time?.from ?? 0)}
-            onChange={value => handleTimeFromInput(value)}
-            renderInput={params => <TextField {...params} label='Start time' />}
-            minutesStep={30}
-            views={['hours', 'minutes']}
-            ampm={false}
+          <ReservationTimeslotTimePicker
+            reservation={reservation}
+            setReservation={setReservation}
+            label='Start time'
+            timestampToChoose='from'
           />
-          <TimePicker
-            value={new Date(reservation.time?.to ?? 0)}
-            onChange={value => handleTimeToInput(value)}
-            renderInput={params => <TextField {...params} label='End time' />}
-            minutesStep={30}
-            views={['hours', 'minutes']}
-            ampm={false}
+          <ReservationTimeslotTimePicker
+            reservation={reservation}
+            setReservation={setReservation}
+            label='End time'
+            timestampToChoose='to'
+            minTime={(reservation.time?.from ?? 0) + 60 * 30000}
           />
         </div>
         <div className='background-image'></div>
