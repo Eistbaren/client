@@ -34,7 +34,6 @@ export default function RestaurantMap(params: {
 }) {
   const { restaurants, onClick, isLoading, center, setCenter, range } = params;
 
-  const theme = useTheme();
   const centerCords = fromLonLat([
     center.lon ?? 11.574231,
     center.lat ?? 48.139244,
