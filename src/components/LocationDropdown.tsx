@@ -1,5 +1,6 @@
 import React from 'react';
-import { Menu, MenuItem, Slider, TextField } from '@mui/material';
+import { Button, Menu, MenuItem, Slider, TextField } from '@mui/material';
+import EditLocationIcon from '@mui/icons-material/EditLocation';
 
 import { GeographicCoordinates } from '../data';
 
@@ -46,7 +47,7 @@ export default function LocationDropdown(props: {
         label='Location & Radius'
         value={
           location.lat === undefined
-            ? `Choosing...; ${range}`
+            ? `Choosing...; ${range} km`
             : `${location.lat?.toFixed(1)}°, ${location.lon?.toFixed(
                 1,
               )}°; ${range}km`
@@ -68,8 +69,16 @@ export default function LocationDropdown(props: {
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem onClick={changeLocation}>Change Location</MenuItem>
-        <MenuItem style={{ width: '200px' }}>
+        <MenuItem>
+          <Button
+            variant='outlined'
+            onClick={changeLocation}
+            startIcon={<EditLocationIcon />}
+          >
+            Change center
+          </Button>
+        </MenuItem>
+        <MenuItem>
           <Slider
             aria-label='Range'
             value={range}

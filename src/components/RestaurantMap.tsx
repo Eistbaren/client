@@ -10,6 +10,7 @@ import '../css/RestaurantMap.css';
 import RestaurantCard from '../components/RestaurantCard';
 
 import { GeographicCoordinates } from '../data';
+import { useTheme } from '@mui/material';
 
 /**
  * OnClick callback
@@ -33,6 +34,7 @@ export default function RestaurantMap(params: {
 }) {
   const { restaurants, onClick, isLoading, center, setCenter, range } = params;
 
+  const theme = useTheme();
   const centerCords = fromLonLat([
     center.lon ?? 11.574231,
     center.lat ?? 48.139244,
@@ -86,7 +88,12 @@ export default function RestaurantMap(params: {
       <RLayerVector zIndex={9}>
         <RFeature geometry={new Circle(centerCords, range * 1000)}>
           <RStyle>
-            <RStroke color={center.lat ? 'yellow' : 'transparent'} width={4} />
+            <RStroke
+              color={
+                center.lat ? useTheme().palette.primary.main : 'transparent'
+              }
+              width={4}
+            />
           </RStyle>
         </RFeature>
       </RLayerVector>
