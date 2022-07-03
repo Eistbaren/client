@@ -24,7 +24,7 @@ module.exports = {
   plugins: ['react', '@typescript-eslint', 'prettier', 'css'],
   rules: {
     'react/react-in-jsx-scope': 'off',
-    'react/jsx-indent': ["off"]
+    'react/jsx-indent': ['off'],
   },
   settings: {
     react: {

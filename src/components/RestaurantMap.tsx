@@ -1,14 +1,15 @@
 import { Restaurant } from '../data/api';
-import { fromLonLat } from 'ol/proj';
-import { Point } from 'ol/geom';
+import { fromLonLat, toLonLat } from 'ol/proj';
+import { Point, Circle } from 'ol/geom';
 import 'ol/ol.css';
 
 import { RMap, ROSM, RLayerVector, RFeature, RPopup } from 'rlayers';
-import { RStyle, RIcon } from 'rlayers/style';
+import { RStyle, RIcon, RStroke } from 'rlayers/style';
 
 import '../css/RestaurantMap.css';
 import RestaurantCard from '../components/RestaurantCard';
-/* import locationIcon from '../../public/images/location.svg'; */
+
+import { GeographicCoordinates } from '../data';
 
 /**
  * OnClick callback
@@ -26,14 +27,30 @@ export default function RestaurantMap(params: {
   restaurants: Array<Restaurant>;
   onClick: (restaurant: Restaurant) => void;
   isLoading: boolean;
+  center: GeographicCoordinates;
+  setCenter: (center: GeographicCoordinates) => void;
+  range: number;
 }) {
-  const { restaurants, onClick, isLoading } = params;
-  const center = fromLonLat([11.574231, 48.139244]);
+  const { restaurants, onClick, isLoading, center, setCenter, range } = params;
 
+  const centerCords = fromLonLat([
+    center.lon ?? 11.574231,
+    center.lat ?? 48.139244,
+  ]);
   return (
     <RMap
-      className={'restaurant-map ' + (isLoading ? 'loading' : '')}
-      initial={{ center: center, zoom: 12 }}
+      className={
+        'restaurant-map' +
+        (isLoading ? ' loading' : '') +
+        (center.lat ? '' : ' clickable')
+      }
+      initial={{ center: centerCords, zoom: 12 }}
+      onClick={e => {
+        const c: Array<number> = toLonLat(
+          e.map.getCoordinateFromPixel(e.pixel),
+        );
+        center.lon ?? setCenter({ lat: c[1], lon: c[0] });
+      }}
     >
       <ROSM />
       <RLayerVector zIndex={10}>
@@ -65,6 +82,13 @@ export default function RestaurantMap(params: {
             </RFeature>
           ) : null,
         )}
+      </RLayerVector>
+      <RLayerVector zIndex={9}>
+        <RFeature geometry={new Circle(centerCords, range * 1000)}>
+          <RStyle>
+            <RStroke color={center.lat ? 'yellow' : 'transparent'} width={4} />
+          </RStyle>
+        </RFeature>
       </RLayerVector>
     </RMap>
   );
