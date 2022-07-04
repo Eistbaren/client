@@ -54,7 +54,15 @@ export default function RestaurantMap(params: {
       }}
     >
       <ROSM />
-      <RLayerVector zIndex={10}>
+      <RLayerVector
+        zIndex={10}
+        onPointerEnter={e => {
+          e.map.getTargetElement().style.cursor = 'pointer';
+        }}
+        onPointerLeave={e => {
+          e.map.getTargetElement().style.cursor = '';
+        }}
+      >
         {restaurants.map(restaurant =>
           restaurant.location &&
           restaurant.location.lat &&
@@ -71,7 +79,11 @@ export default function RestaurantMap(params: {
               key={restaurant.id}
             >
               <RStyle>
-                <RIcon src='/images/location.svg' anchor={[0.5, 0.8]} />
+                <RIcon
+                  src='/images/location.svg'
+                  anchor={[0.5, 0.8]}
+                  scale={0.2}
+                />
               </RStyle>
               <RPopup trigger={'click'} className='restaurant-overlay'>
                 <RestaurantCard
