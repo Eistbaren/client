@@ -14,13 +14,11 @@ export default function PersonalData() {
   const [emailError, setEmailError] = useState<boolean>(false);
   const [submitted, setSubmitted] = useState<boolean>(false);
   const navigate = useNavigate();
+  const emailRegex = /^\S+@\S+\.\S+$/g;
 
   // checks if input is submitted and a valid email
   const handleEmailInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (
-      submitted &&
-      !e.target.value?.match(/^([a-z]|-|\.)+@([a-z]|-)+\.[a-z]+$/g)
-    ) {
+    if (submitted && !e.target.value?.match(emailRegex)) {
       setEmailError(true);
     } else {
       setEmailError(false);
@@ -36,7 +34,7 @@ export default function PersonalData() {
     if (!submitted) {
       setSubmitted(true);
     }
-    if (!reservation.userEmail?.match(/^([a-z]|-|\.)+@([a-z]|-)+\.[a-z]+$/g)) {
+    if (!reservation.userEmail?.match(emailRegex)) {
       setEmailError(true);
     } else {
       // await call api call
