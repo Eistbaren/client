@@ -134,7 +134,7 @@ export default function RestaurantMap(params: {
           <RStyle>
             <RStroke
               color={
-                center.lat ? useTheme().palette.primary.main : 'transparent'
+                center.lat ? useTheme().palette.primary.dark : 'transparent'
               }
               width={4}
             />
