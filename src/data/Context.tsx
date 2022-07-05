@@ -1,28 +1,39 @@
 import { createContext } from 'react';
-import { Reservation, Restaurant, RestaurantApi } from './api';
+import {
+  Reservation,
+  Restaurant,
+  RestaurantApi,
+  ReservationCreationRequest,
+} from './api';
 import { Configuration } from './configuration';
+
+interface Query {
+  restaurant: Restaurant;
+}
 
 /**
  * Creates a Context that is accessible to all nodes wrapped in the context provider
  * @return {React.Context}
  */
 export const Context = createContext<{
-  reservation: Reservation;
-  setReservation: (reservation: Reservation) => void;
-
   restaurant: Restaurant;
   setRestaurant: (restaurant: Restaurant) => void;
+
+  reservationCreationRequest: ReservationCreationRequest;
+  setReservationCreationRequest: (
+    reservationCreationRequest: ReservationCreationRequest,
+  ) => void;
 
   // api
   configuration: Configuration;
   restaurantApi: RestaurantApi;
 }>({
-  reservation: {},
-  setReservation: () => {
-    return;
-  },
   restaurant: {},
   setRestaurant: () => {
+    return;
+  },
+  reservationCreationRequest: {},
+  setReservationCreationRequest: () => {
     return;
   },
   configuration: {},
