@@ -28,8 +28,10 @@ export default function Landingpage() {
     const to = new Date(reservation.time?.to?.valueOf() ?? 0);
     from.setDate(value.getDate());
     from.setMonth(value.getMonth());
+    from.setFullYear(value.getFullYear());
     to.setDate(value.getDate());
     to.setMonth(value.getMonth());
+    to.setFullYear(value.getFullYear());
     setReservation({
       ...reservation,
       time: {
