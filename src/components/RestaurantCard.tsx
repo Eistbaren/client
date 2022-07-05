@@ -72,22 +72,22 @@ export default function RestaurantCard(params: {
         </Link>
       </CardContent>
       <CardActions>
-        <Button
-          startIcon={<ChevronRightIcon />}
-          onClick={e => {
-            e.stopPropagation();
+        <RouterLink
+          to='/table'
+          style={{ textDecoration: 'none', color: 'inherit' }}
+          onClick={() => {
+            setRestaurant(restaurant);
           }}
         >
-          <RouterLink
-            to='/table'
-            style={{ textDecoration: 'none', color: 'inherit' }}
-            onClick={() => {
-              setRestaurant(restaurant);
+          <Button
+            startIcon={<ChevronRightIcon />}
+            onClick={e => {
+              e.stopPropagation();
             }}
           >
             Reserve
-          </RouterLink>
-        </Button>
+          </Button>
+        </RouterLink>
       </CardActions>
     </Card>
   );
