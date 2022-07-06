@@ -79,14 +79,7 @@ export default function RestaurantCard(params: {
             setRestaurant(restaurant);
           }}
         >
-          <Button
-            startIcon={<ChevronRightIcon />}
-            onClick={e => {
-              e.stopPropagation();
-            }}
-          >
-            Reserve
-          </Button>
+          <Button startIcon={<ChevronRightIcon />}>Reserve</Button>
         </RouterLink>
       </CardActions>
     </Card>
