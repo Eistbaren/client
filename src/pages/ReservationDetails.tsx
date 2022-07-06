@@ -2,20 +2,21 @@ import { Button, Stack, TextField } from '@mui/material';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { useParams, useSearchParams } from 'react-router-dom';
 
-import { useContext } from 'react';
 import '../css/ReservationDetails.css';
-import { Context } from '../data/Context';
+import { Reservation } from '../data';
 
 /**
  * Reservation Approval Page
  * @return {JSX.Element}
  */
 export default function ReservationApproval() {
-  const { reservation } = useContext(Context);
   // gets reservationId from the URL params
   const { reservationId } = useParams();
   const [searchParams] = useSearchParams();
   console.log(reservationId);
+
+  // TODO: Load context from server!
+  const reservation: Reservation = {};
 
   /**
    * Checks if the given timestamp is tommorrow

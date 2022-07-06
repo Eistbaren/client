@@ -9,14 +9,14 @@ import FloatingSidebar from '../components/FloatingSidebar';
 
 import '../css/Landingpage.css';
 import { Link } from 'react-router-dom';
-import ReservationTimeslotTimePicker from '../components/ReservationTimeslotTimePicker';
+import QueryTimeslotTimePicker from '../components/QueryTimeslotTimePicker';
 
 /**
  * Landingpage
  * @return {JSX.Element}
  */
 export default function Landingpage() {
-  const { reservation, setReservation } = useContext(Context);
+  const { query, setQuery } = useContext(Context);
   const [numberOfPersons, setNumberOfPersons] = useState<number>(2);
 
   /**
@@ -24,14 +24,14 @@ export default function Landingpage() {
    * @param  {Date} value
    */
   function handleDateInput(value: Date) {
-    const from = new Date(reservation.time?.from?.valueOf() ?? 0);
-    const to = new Date(reservation.time?.to?.valueOf() ?? 0);
+    const from = new Date(query.time?.from?.valueOf() ?? 0);
+    const to = new Date(query.time?.to?.valueOf() ?? 0);
     from.setDate(value.getDate());
     from.setMonth(value.getMonth());
     to.setDate(value.getDate());
     to.setMonth(value.getMonth());
-    setReservation({
-      ...reservation,
+    setQuery({
+      ...query,
       time: {
         from: from.valueOf(),
         to: to.valueOf(),
@@ -88,25 +88,25 @@ export default function Landingpage() {
         <p className='label'>Pick a date & time</p>
         <CalendarPicker
           openTo='day'
-          date={new Date(reservation.time?.from ?? 0)}
+          date={new Date(query.time?.from ?? 0)}
           onChange={value => (value ? handleDateInput(value) : null)}
           disablePast
           views={['day']}
           className='calendar-picker'
         />
         <div className='time-picker-container'>
-          <ReservationTimeslotTimePicker
-            reservation={reservation}
-            setReservation={setReservation}
+          <QueryTimeslotTimePicker
+            query={query}
+            setQuery={setQuery}
             label='Start time'
             timestampToChoose='from'
           />
-          <ReservationTimeslotTimePicker
-            reservation={reservation}
-            setReservation={setReservation}
+          <QueryTimeslotTimePicker
+            query={query}
+            setQuery={setQuery}
             label='End time'
             timestampToChoose='to'
-            minTime={(reservation.time?.from ?? 0) + 60 * 30000}
+            minTime={(query.time?.from ?? 0) + 60 * 30000}
           />
         </div>
         <div className='background-image'></div>

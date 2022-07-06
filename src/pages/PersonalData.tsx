@@ -10,7 +10,8 @@ import { Context } from '../data/Context';
  * @return {JSX.Element}
  */
 export default function PersonalData() {
-  const { reservation, setReservation } = useContext(Context);
+  const { reservationCreationRequest, setReservationCreationRequest } =
+    useContext(Context);
   const [emailError, setEmailError] = useState<boolean>(false);
   const [submitted, setSubmitted] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -25,8 +26,8 @@ export default function PersonalData() {
     } else {
       setEmailError(false);
     }
-    setReservation({
-      ...reservation,
+    setReservationCreationRequest({
+      ...reservationCreationRequest,
       userEmail: e.target.value,
     });
   };
@@ -36,11 +37,16 @@ export default function PersonalData() {
     if (!submitted) {
       setSubmitted(true);
     }
-    if (!reservation.userEmail?.match(/^([a-z]|-|\.)+@([a-z]|-)+\.[a-z]+$/g)) {
+    if (
+      !reservationCreationRequest.userEmail?.match(
+        /^([a-z]|-|\.)+@([a-z]|-)+\.[a-z]+$/g,
+      )
+    ) {
       setEmailError(true);
     } else {
       // await call api call
-      navigate(`/reservation-details/${reservation.id}`);
+      // TODO: get ID from result!
+      navigate(`/reservation-details/${''}`);
     }
   };
 
@@ -58,16 +64,19 @@ export default function PersonalData() {
       <form className='personal-data-form'>
         <TextField
           id='nameInput'
-          value={reservation.userName ?? ''}
+          value={reservationCreationRequest.userName ?? ''}
           onChange={e =>
-            setReservation({ ...reservation, userName: e.target.value })
+            setReservationCreationRequest({
+              ...reservationCreationRequest,
+              userName: e.target.value,
+            })
           }
           type='text'
           label='Name'
         />
         <TextField
           id='emailInput'
-          value={reservation.userEmail ?? ''}
+          value={reservationCreationRequest.userEmail ?? ''}
           onChange={handleEmailInput}
           type='email'
           error={emailError}
