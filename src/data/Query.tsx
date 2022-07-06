@@ -22,7 +22,7 @@ export interface Query {
  * @return {string} an array of filters
  */
 export function queryToQueryStringArray(query: Query) {
-  return Object.entries(query).map((value, key) => {
+  return Object.entries(query).map(([key, value]) => {
     return `${key}=${value}`;
   });
 }
