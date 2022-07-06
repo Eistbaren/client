@@ -86,17 +86,17 @@ export default function RestaurantDetailsModal(params: {
             </Grid>
 
             <Grid item xs>
-              <Button variant='contained' startIcon={<ChevronRightIcon />}>
-                <RouterLink
-                  to='/table'
-                  style={{ textDecoration: 'none', color: 'inherit' }}
-                  onClick={() => {
-                    setRestaurant(restaurant);
-                  }}
-                >
+              <RouterLink
+                to='/table'
+                style={{ textDecoration: 'none', color: 'inherit' }}
+                onClick={() => {
+                  setRestaurant(restaurant);
+                }}
+              >
+                <Button variant='contained' startIcon={<ChevronRightIcon />}>
                   Reserve
-                </RouterLink>
-              </Button>
+                </Button>
+              </RouterLink>
             </Grid>
 
             <Grid item xs={12}>

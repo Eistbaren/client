@@ -8,8 +8,8 @@ import NumberOfPersonsPicker from '../components/NumberOfPersonsPicker';
 import FloatingSidebar from '../components/FloatingSidebar';
 
 import '../css/Landingpage.css';
-import { Link } from 'react-router-dom';
 import QueryTimeslotTimePicker from '../components/QueryTimeslotTimePicker';
+import { Link as RouterLink } from 'react-router-dom';
 
 /**
  * Landingpage
@@ -28,8 +28,10 @@ export default function Landingpage() {
     const to = new Date(query.time?.to?.valueOf() ?? 0);
     from.setDate(value.getDate());
     from.setMonth(value.getMonth());
+    from.setFullYear(value.getFullYear());
     to.setDate(value.getDate());
     to.setMonth(value.getMonth());
+    to.setFullYear(value.getFullYear());
     setQuery({
       ...query,
       time: {
@@ -51,32 +53,32 @@ export default function Landingpage() {
           Experience the very best from thousands of different cuisines!
         </p>
         <Stack direction='row' spacing={2}>
-          <Button
-            variant='contained'
-            color='primary'
-            size='large'
-            sx={{ boxShadow: 3 }}
+          <RouterLink
+            to='/search'
+            style={{ textDecoration: 'none', color: 'inherit' }}
           >
-            <Link
-              to='/search'
-              style={{ textDecoration: 'none', color: 'inherit' }}
+            <Button
+              variant='contained'
+              color='primary'
+              size='large'
+              sx={{ boxShadow: 3 }}
             >
               Book a table
-            </Link>
-          </Button>
-          <Button
-            variant='outlined'
-            color='secondary'
-            size='large'
-            sx={{ boxShadow: 14 }}
+            </Button>
+          </RouterLink>
+          <RouterLink
+            to='/search'
+            style={{ textDecoration: 'none', color: 'inherit' }}
           >
-            <Link
-              to='/search'
-              style={{ textDecoration: 'none', color: 'inherit' }}
+            <Button
+              variant='outlined'
+              color='secondary'
+              size='large'
+              sx={{ boxShadow: 14 }}
             >
               Start browsing
-            </Link>
-          </Button>
+            </Button>
+          </RouterLink>
         </Stack>
       </div>
       <div className='hero-image-container'>

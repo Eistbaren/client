@@ -18,8 +18,11 @@ import RestaurantMap from '../components/RestaurantMap';
 import RestaurantDetailsModal from '../components/RestaurantDetailsModal';
 import { Restaurant } from '../data/api';
 import ComboBox from '../components/ComboBox';
+import LocationDropdown from '../components/LocationDropdown';
 import { Context } from '../data/Context';
 import PaginatedApi from '../data/PaginatedApi';
+
+import { GeographicCoordinates } from '../data';
 
 /**
  * Bootstrap function
@@ -36,10 +39,6 @@ export default function SearchPage() {
     {
       label: 'Price',
       options: ['€', '€€', '€€€'],
-    },
-    {
-      label: 'Location & Distance',
-      options: [],
     },
     {
       label: 'Rating',
@@ -75,6 +74,18 @@ export default function SearchPage() {
   const [showMap, setShowMap] = React.useState(false);
   const toggleMap = () => setShowMap(!showMap);
 
+  const [location, setLocation] = React.useState<GeographicCoordinates>({
+    lat: 48.139244,
+    lon: 11.574231,
+  });
+
+  const updateLocation = (loc: GeographicCoordinates) => {
+    loc.lat ?? setShowMap(true);
+    setLocation(loc);
+  };
+
+  const [range, setRange] = React.useState(5);
+
   return (
     <>
       <div className='search-container'>
@@ -103,6 +114,15 @@ export default function SearchPage() {
             </Grid>
           ))}
 
+          <Grid item xs={2.4}>
+            <LocationDropdown
+              location={location}
+              setLocation={updateLocation}
+              range={range}
+              setRange={setRange}
+            ></LocationDropdown>
+          </Grid>
+
           <Grid item xs={9.6}>
             <Typography variant='h4' component='div'>
               Results
@@ -127,6 +147,9 @@ export default function SearchPage() {
                 restaurants={restaurants}
                 onClick={restaurant => openDetailModal(restaurant)}
                 isLoading={isLoading}
+                center={location}
+                setCenter={setLocation}
+                range={range}
               ></RestaurantMap>
             </Grid>
           ) : (

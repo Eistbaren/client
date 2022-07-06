@@ -38,6 +38,9 @@ export default function QueryTimeslotTimePicker(
   };
 
   const handleValueChanged = (value: Date | null) => {
+    if (!(value instanceof Date) || isNaN(value?.getHours())) {
+      return;
+    }
     const newDate = new Date(getTimstampType(query.time, timestampToChoose));
     newDate.setHours(value?.getHours() ?? 0);
     newDate.setMinutes(value?.getMinutes() ?? 0);

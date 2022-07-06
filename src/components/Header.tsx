@@ -24,7 +24,7 @@ export default function Header() {
     '/search',
     '/table',
     '/personal-data',
-    '/reservation-approval',
+    '/reservation-details',
   ];
 
   useEffect(() => {

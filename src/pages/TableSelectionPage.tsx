@@ -3,7 +3,7 @@ import { Context } from '../data/Context';
 import React from 'react';
 import { AnonymousReservation, Table } from '../data/api';
 import '../css/TableSelectionPage.css';
-import { Link } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import PaginatedApi from '../data/PaginatedApi';
 import QueryTimeslotTimePicker from '../components/QueryTimeslotTimePicker';
 import TimeslotText from '../components/TimeslotText';
@@ -172,7 +172,7 @@ export default function TableSelectionPage() {
                     }}
                     key={tableKey}
                   >
-                    <Link
+                    <RouterLink
                       to='/personal-data'
                       style={{ textDecoration: 'none', color: 'inherit' }}
                       onClick={e => {
@@ -202,7 +202,7 @@ export default function TableSelectionPage() {
                         }}
                         src={`${configuration.basePath}/image/${table.floorPlan?.image}`}
                       />
-                    </Link>
+                    </RouterLink>
                   </Box>
                 );
               })}
