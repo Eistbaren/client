@@ -1,11 +1,18 @@
 import { Context } from '../data/Context';
 import { useEffect, useState } from 'react';
-import { Reservation, RestaurantApi, BASE_PATH, Restaurant } from '../data/api';
+import {
+  RestaurantApi,
+  BASE_PATH,
+  Restaurant,
+  ReservationCreationRequest,
+} from '../data';
 import { Configuration, ConfigurationParameters } from '../data';
+import { Query } from '../data';
 
 interface StoredContext {
-  reservation: Reservation;
+  query: Query;
   restaurant: Restaurant;
+  reservationCreationRequest: ReservationCreationRequest;
 }
 
 /**
@@ -24,13 +31,14 @@ export default function ContextWrapper(props: { children: JSX.Element }) {
   to.setHours(to.getHours() + 1);
 
   let storedContext: StoredContext = {
-    reservation: {
+    query: {},
+    restaurant: {},
+    reservationCreationRequest: {
       time: {
         from: from.valueOf(),
         to: to.valueOf(),
       },
     },
-    restaurant: {},
   };
 
   // load old values from localstorage
@@ -42,9 +50,10 @@ export default function ContextWrapper(props: { children: JSX.Element }) {
     };
   }
 
-  const [reservation, setReservation] = useState(storedContext.reservation);
-  const [restaurant, setRestaurant] = useState<Restaurant>(
-    storedContext.restaurant,
+  const [query, setQuery] = useState(storedContext.query);
+  const [restaurant, setRestaurant] = useState(storedContext.restaurant);
+  const [reservationCreationRequest, setReservationCreationRequest] = useState(
+    storedContext.reservationCreationRequest,
   );
 
   const parameters: ConfigurationParameters = {};
@@ -67,19 +76,22 @@ export default function ContextWrapper(props: { children: JSX.Element }) {
     localStorage.setItem(
       'de.reservation-bear.context',
       JSON.stringify({
-        reservation: reservation,
+        query: query,
         restaurant: restaurant,
+        reservationCreationRequest: reservationCreationRequest,
       }),
     );
-  }, [reservation, restaurant]);
+  }, [query, restaurant, reservationCreationRequest]);
 
   return (
     <Context.Provider
       value={{
-        reservation,
-        setReservation,
+        query,
+        setQuery,
         restaurant,
         setRestaurant,
+        reservationCreationRequest,
+        setReservationCreationRequest,
         configuration,
         restaurantApi,
       }}

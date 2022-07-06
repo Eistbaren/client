@@ -5,7 +5,7 @@ import { AnonymousReservation, Table } from '../data/api';
 import '../css/TableSelectionPage.css';
 import { Link as RouterLink } from 'react-router-dom';
 import PaginatedApi from '../data/PaginatedApi';
-import ReservationTimeslotTimePicker from '../components/ReservationTimeslotTimePicker';
+import QueryTimeslotTimePicker from '../components/QueryTimeslotTimePicker';
 import TimeslotText from '../components/TimeslotText';
 
 /**
@@ -14,8 +14,10 @@ import TimeslotText from '../components/TimeslotText';
  */
 export default function TableSelectionPage() {
   const {
-    reservation,
-    setReservation,
+    query,
+    setQuery,
+    reservationCreationRequest,
+    setReservationCreationRequest,
     restaurantApi,
     restaurant,
     configuration,
@@ -47,8 +49,8 @@ export default function TableSelectionPage() {
       restaurantApi
         .getRestaurantReservations(
           restaurant.id ?? '',
-          reservation.time?.from ?? 0,
-          reservation.time?.to ?? 0,
+          query.time?.from ?? 0,
+          query.time?.to ?? 0,
           pagination.currentPage,
           pagination.pageSize,
         )
@@ -73,7 +75,7 @@ export default function TableSelectionPage() {
 
   React.useEffect(() => {
     reservationApi.initialLoad();
-  }, [reservation]);
+  }, [query]);
 
   React.useEffect(() => {
     handleResize();
@@ -114,9 +116,9 @@ export default function TableSelectionPage() {
         </Grid>
 
         <Grid item xs={4}>
-          <ReservationTimeslotTimePicker
-            reservation={reservation}
-            setReservation={setReservation}
+          <QueryTimeslotTimePicker
+            query={query}
+            setQuery={setQuery}
             label='Start time'
             timestampToChoose='from'
             // include 15 minutes buffer, it does not work otherwise \(*~*)/
@@ -126,12 +128,12 @@ export default function TableSelectionPage() {
         </Grid>
 
         <Grid item xs={4}>
-          <ReservationTimeslotTimePicker
-            reservation={reservation}
-            setReservation={setReservation}
+          <QueryTimeslotTimePicker
+            query={query}
+            setQuery={setQuery}
             label='End time'
             timestampToChoose='to'
-            minTime={(reservation.time?.from ?? 0) + 60 * 30 * 1000}
+            minTime={(query.time?.from ?? 0) + 60 * 30 * 1000}
             // include 15 minutes buffer, it does not work otherwise \(*~*)/
             maxTime={(restaurant.openingHours.to + 60 * 15) * 1000}
           />
@@ -186,7 +188,10 @@ export default function TableSelectionPage() {
                           return;
                         }
 
-                        reservation.tables = [table.id];
+                        setReservationCreationRequest({
+                          ...reservationCreationRequest,
+                          tables: [table.id],
+                        });
                       }}
                     >
                       <img

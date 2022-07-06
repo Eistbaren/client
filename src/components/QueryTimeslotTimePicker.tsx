@@ -1,11 +1,11 @@
 import { TextField } from '@mui/material';
 import { TimePicker } from '@mui/x-date-pickers';
 
-import { Reservation, Timeslot } from '../data/api';
+import { Query, Timeslot } from '../data';
 
-interface ReservationTimeslotTimePickerProps {
-  reservation: Reservation;
-  setReservation: (reservation: Reservation) => void;
+interface QueryTimeslotTimePickerProps {
+  query: Query;
+  setQuery: (query: Query) => void;
   label: string;
   timestampToChoose: 'from' | 'to';
   minTime?: number;
@@ -17,17 +17,10 @@ interface ReservationTimeslotTimePickerProps {
  * @param {number} props
  * @return {JSX.Element}
  */
-export default function ReservationTimeslotTimePicker(
-  props: ReservationTimeslotTimePickerProps,
+export default function QueryTimeslotTimePicker(
+  props: QueryTimeslotTimePickerProps,
 ) {
-  const {
-    reservation,
-    setReservation,
-    label,
-    timestampToChoose,
-    minTime,
-    maxTime,
-  } = props;
+  const { query, setQuery, label, timestampToChoose, minTime, maxTime } = props;
 
   const minDate = minTime === undefined ? undefined : new Date(minTime);
   const maxDate = maxTime === undefined ? undefined : new Date(maxTime);
@@ -48,28 +41,26 @@ export default function ReservationTimeslotTimePicker(
     if (!(value instanceof Date) || isNaN(value?.getHours())) {
       return;
     }
-    const newDate = new Date(
-      getTimstampType(reservation.time, timestampToChoose),
-    );
+    const newDate = new Date(getTimstampType(query.time, timestampToChoose));
     newDate.setHours(value?.getHours() ?? 0);
     newDate.setMinutes(value?.getMinutes() ?? 0);
 
     const newTime: Timeslot = {};
     newTime[timestampNotToChoose] = getTimstampType(
-      reservation.time,
+      query.time,
       timestampNotToChoose,
     );
     newTime[timestampToChoose] = newDate.valueOf();
 
-    setReservation({
-      ...reservation,
+    setQuery({
+      ...query,
       time: newTime,
     });
   };
 
   return (
     <TimePicker
-      value={new Date(getTimstampType(reservation.time, timestampToChoose))}
+      value={new Date(getTimstampType(query.time, timestampToChoose))}
       onChange={value => handleValueChanged(value)}
       renderInput={params => <TextField {...params} label={label} />}
       minutesStep={30}
