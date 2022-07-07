@@ -1,10 +1,21 @@
-import { TextField, Button, Checkbox, FormControlLabel } from '@mui/material';
+import {
+  TextField,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Collapse,
+  Alert,
+  IconButton,
+  AlertTitle,
+} from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 import '../css/PersonalData.css';
 import { Context } from '../data/Context';
+
+import CloseIcon from '@mui/icons-material/Close';
 
 /**
  * Personal Data Page
@@ -23,6 +34,7 @@ export default function PersonalData() {
   });
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -55,6 +67,7 @@ export default function PersonalData() {
       })
       .catch(e => {
         console.log(`Error creating reservation: ${e}`);
+        setError(true);
       })
       .finally(() => setIsLoading(false));
   };
@@ -71,6 +84,29 @@ export default function PersonalData() {
         <img src='/logo-big.png' className='personal-data-image' />
       </div>
       <form className='personal-data-form'>
+        <Collapse in={error}>
+          <Alert
+            action={
+              <IconButton
+                aria-label='close'
+                color='inherit'
+                size='small'
+                onClick={() => {
+                  return setError(false);
+                }}
+              >
+                <CloseIcon fontSize='inherit' />
+              </IconButton>
+            }
+            severity='error'
+            variant='outlined'
+            sx={{ mb: 2 }}
+          >
+            <AlertTitle>An error occured!</AlertTitle>
+            Your reservation could not be completed! Please try again later.
+          </Alert>
+        </Collapse>
+
         <TextField
           id='nameInput'
           value={reservationCreationRequest.userName ?? ''}
