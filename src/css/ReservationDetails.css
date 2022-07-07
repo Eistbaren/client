@@ -34,3 +34,13 @@
   grid-template-columns: 3fr 1fr;
   gap: 10px;
 }
+
+.booking-summary-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.booking-summary-header h3 {
+    margin-right: 5px;
+}
