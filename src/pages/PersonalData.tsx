@@ -1,8 +1,5 @@
 import {
   TextField,
-  Button,
-  Checkbox,
-  FormControlLabel,
   Collapse,
   Alert,
   IconButton,
@@ -124,6 +121,7 @@ export default function PersonalData() {
             formErrors.userName && submitted ? 'Please enter your name' : ''
           }
         />
+
         <TextField
           id='emailInput'
           value={reservationCreationRequest.userEmail ?? ''}
