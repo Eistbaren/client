@@ -1,6 +1,7 @@
 import { TextField, Button, Checkbox, FormControlLabel } from '@mui/material';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import LoadingButton from '@mui/lab/LoadingButton';
 
 import '../css/PersonalData.css';
 import { Context } from '../data/Context';
@@ -10,38 +11,52 @@ import { Context } from '../data/Context';
  * @return {JSX.Element}
  */
 export default function PersonalData() {
-  const { reservationCreationRequest, setReservationCreationRequest } =
-    useContext(Context);
-  const [emailError, setEmailError] = useState<boolean>(false);
+  const {
+    reservationCreationRequest,
+    setReservationCreationRequest,
+    reservationApi,
+  } = useContext(Context);
+
+  const [formErrors, setFormErrors] = useState({
+    userName: true,
+    userEmail: true,
+  });
   const [submitted, setSubmitted] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const navigate = useNavigate();
+
   const emailRegex = /^\S+@\S+\.\S+$/g;
 
-  // checks if input is submitted and a valid email
-  const handleEmailInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (submitted && !e.target.value?.match(emailRegex)) {
-      setEmailError(true);
-    } else {
-      setEmailError(false);
-    }
-    setReservationCreationRequest({
-      ...reservationCreationRequest,
-      userEmail: e.target.value,
+  // reavlidate form fields on changes
+  useEffect(() => {
+    setFormErrors({
+      userName: (reservationCreationRequest.userName?.length ?? 0) === 0,
+      userEmail: !reservationCreationRequest.userEmail?.match(emailRegex),
     });
-  };
+  }, [reservationCreationRequest]);
 
   // handles submitting the form
   const handleSubmit = () => {
     if (!submitted) {
       setSubmitted(true);
     }
-    if (!reservationCreationRequest.userEmail?.match(emailRegex)) {
-      setEmailError(true);
-    } else {
-      // await call api call
-      // TODO: get ID from result!
-      navigate(`/reservation-details/${''}`);
+
+    for (const error of Object.values(formErrors)) {
+      if (error) return;
     }
+
+    // await call api call and navigate on success
+    setIsLoading(true);
+    reservationApi
+      .createReservation(reservationCreationRequest)
+      .then(reservation => {
+        navigate(`/reservation-details/${reservation.id}`);
+      })
+      .catch(e => {
+        console.log(`Error creating reservation: ${e}`);
+      })
+      .finally(() => setIsLoading(false));
   };
 
   return (
@@ -59,33 +74,49 @@ export default function PersonalData() {
         <TextField
           id='nameInput'
           value={reservationCreationRequest.userName ?? ''}
-          onChange={e =>
+          onChange={e => {
             setReservationCreationRequest({
               ...reservationCreationRequest,
               userName: e.target.value,
-            })
-          }
+            });
+          }}
           type='text'
           label='Name'
+          disabled={isLoading}
+          error={formErrors.userName && submitted}
+          helperText={
+            formErrors.userName && submitted ? 'Please enter your name' : ''
+          }
         />
         <TextField
           id='emailInput'
           value={reservationCreationRequest.userEmail ?? ''}
-          onChange={handleEmailInput}
+          onChange={e => {
+            setReservationCreationRequest({
+              ...reservationCreationRequest,
+              userEmail: e.target.value,
+            });
+          }}
           type='email'
-          error={emailError}
-          helperText={emailError ? 'Email adress not valid' : ''}
           label='Email'
-        />
-        <FormControlLabel
-          label='I have read the terms and conditions of Eistbaeren'
-          sx={{ color: 'white' }}
-          control={<Checkbox disableRipple />}
+          disabled={isLoading}
+          error={formErrors.userEmail && submitted}
+          helperText={
+            formErrors.userEmail && submitted ? 'Email adress not valid' : ''
+          }
+          onKeyUp={e => {
+            if (e.key === 'Enter') handleSubmit();
+          }}
         />
 
-        <Button variant='contained' size='large' onClick={handleSubmit}>
+        <LoadingButton
+          variant='contained'
+          size='large'
+          onClick={handleSubmit}
+          loading={isLoading}
+        >
           Submit
-        </Button>
+        </LoadingButton>
       </form>
     </div>
   );
