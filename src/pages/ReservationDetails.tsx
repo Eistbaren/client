@@ -86,7 +86,6 @@ export default function ReservationApproval() {
         { confirmed: true },
         reservation?.id ?? '',
         confirmationToken ?? '',
-        { headers: { 'Content-Type': 'application/json' } },
       )
       .then(() => {
         successAlert('Reservation confirmed!');
