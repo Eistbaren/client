@@ -692,7 +692,7 @@ export const ReservationApiFetchParamCreator = function (
       const localVarHeaderParameter = {} as any;
       const localVarQueryParameter = {} as any;
 
-      localVarHeaderParameter['Content-Type'] = '*/*';
+      localVarHeaderParameter['Content-Type'] = 'application/json';
 
       localVarUrlObj.query = Object.assign(
         {},
@@ -903,7 +903,7 @@ export const ReservationApiFetchParamCreator = function (
         localVarQueryParameter['confirmationToken'] = confirmationToken;
       }
 
-      localVarHeaderParameter['Content-Type'] = '*/*';
+      localVarHeaderParameter['Content-Type'] = 'application/json';
 
       localVarUrlObj.query = Object.assign(
         {},
