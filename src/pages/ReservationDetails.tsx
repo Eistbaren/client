@@ -3,6 +3,7 @@ import {
   AlertTitle,
   Button,
   Chip,
+  Collapse,
   Skeleton,
   Stack,
   TextField,
@@ -11,6 +12,7 @@ import {
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
+import LoadingButton from '@mui/lab/LoadingButton';
 import { useContext, useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 
@@ -29,12 +31,11 @@ export default function ReservationApproval() {
   const confirmationToken = searchParams.get('confirmationToken');
 
   const [reservation, setReservation] = useState<Reservation>();
-  const [error, setError] = useState<string>();
-  const [confirmationButtonText, setConfirmationButtonText] = useState<string>(
-    'Confirm Reservation',
-  );
-  const [cancelButtonText, setCancelButtonText] =
-    useState<string>('Cancel Reservation');
+  const [alert, setAlert] = useState<React.ReactNode>();
+  const [isConfirmButtonLoading, setConfirmButtonLoading] =
+    useState<boolean>(false);
+  const [isCancelButtonLoading, setCancelButtonLoading] =
+    useState<boolean>(false);
 
   const { reservationApi } = useContext(Context);
   useEffect(() => {
@@ -47,70 +48,90 @@ export default function ReservationApproval() {
         if (e instanceof Response) {
           e.json().then(j =>
             (j.message as string).startsWith('Unable to find')
-              ? setError('Reservation not found!')
-              : setError(''),
+              ? errorAlert('Reservation not found!')
+              : errorAlert('Something went wrong!'),
           );
         }
       });
   }, []);
 
   const isIn12Hours = (timestamp: number): boolean => {
+    timestamp = timestamp * 1000;
     const now = new Date();
-    const difference = (timestamp - now.getTime()) * 60 * 60 * 1000;
-    if (difference > 0 && difference <= 12) {
-      return true;
-    }
-    return false;
+    const difference = (timestamp - now.getTime()) / 60 / 60 / 1000;
+    const a = difference > 0 && difference <= 12;
+    return a;
   };
 
   const cancelReservation = async () => {
-    setCancelButtonText('...');
+    setCancelButtonLoading(true);
+
     window.confirm('Are you sure you want to cancel your reservation?') &&
       reservationApi
         .deleteReservation(reservationId ?? '')
         .then(() => {
-          setCancelButtonText('Reservation canceled!');
+          successAlert('Reservation canceled!');
+          setReservation(undefined);
         })
         .catch(() => {
-          setCancelButtonText('Something went wrong!');
-          setError('Something went wrong canceling your reservation');
-        });
+          errorAlert('Something went wrong canceling your reservation');
+        })
+        .finally(() => setCancelButtonLoading(false));
   };
 
   const confirmReservation = async () => {
-    setConfirmationButtonText('...');
+    setConfirmButtonLoading(true);
     await reservationApi
       .putReservation(
         { confirmed: true },
         reservation?.id ?? '',
         confirmationToken ?? '',
+        { headers: { 'Content-Type': 'application/json' } },
       )
       .then(() => {
-        setConfirmationButtonText('reservation confirmed!');
+        successAlert('Reservation confirmed!');
         reservation !== undefined ? (reservation.confirmed = true) : null;
       })
       .catch(() => {
-        setConfirmationButtonText('Something went wrong!');
-        setError('Something went wrong confirming your reservation');
-      });
+        errorAlert('Something went wrong confirming your reservation');
+      })
+      .finally(() => setConfirmButtonLoading(false));
+  };
+
+  const errorAlert = (title: string, body?: string) => {
+    setAlert(
+      <Alert
+        severity='error'
+        style={{ marginBottom: '10px', marginTop: '10px' }}
+        variant='outlined'
+        onClose={() => {
+          setAlert(undefined);
+        }}
+      >
+        <AlertTitle>{title}</AlertTitle>
+        {body ?? 'Please try again later'}
+      </Alert>,
+    );
+  };
+
+  const successAlert = (title: string, body?: string) => {
+    setAlert(
+      <Alert
+        severity='success'
+        style={{ marginBottom: '10px', marginTop: '10px' }}
+        variant='outlined'
+        onClose={() => {
+          setAlert(undefined);
+        }}
+      >
+        <AlertTitle>{title}</AlertTitle>
+        {body ?? ''}
+      </Alert>,
+    );
   };
 
   return (
     <>
-      {error ? (
-        error !== '' ? (
-          <Alert severity='error' style={{ margin: '30px' }}>
-            <AlertTitle>{error}</AlertTitle>
-            Please try again later
-          </Alert>
-        ) : (
-          <Alert severity='error' style={{ margin: '30px' }}>
-            <AlertTitle>Holy Guacamole!</AlertTitle>
-            Something went wrong —{' '}
-            <strong>please contact the server administrator</strong>
-          </Alert>
-        )
-      ) : null}
       <div className='booking-summary-container'>
         <div className='booking-summary-header'>
           <h3>Reservation summary</h3>
@@ -128,12 +149,13 @@ export default function ReservationApproval() {
             </Tooltip>
           ) : null}
         </div>
+        <Collapse in={alert !== undefined}>{alert}</Collapse>
         <div className='booking-summary-date_person-container'>
           <div>
             <p className='booking-summary-label'>Date</p>
             {reservation ? (
               <DatePicker
-                value={reservation?.time?.from ?? null}
+                value={(reservation?.time?.from ?? 0) * 1000}
                 onChange={() => {
                   return;
                 }}
@@ -165,39 +187,47 @@ export default function ReservationApproval() {
             )}
           </div>
         </div>
-
-        <p className='booking-summary-label'>Time</p>
-
         {reservation ? (
           <div className='booking-summary-time-picker-container'>
-            <TimePicker
-              onChange={() => {
-                return;
-              }}
-              readOnly
-              value={reservation.time?.from ?? null}
-              renderInput={params => (
-                <TextField {...params} size='small' disabled />
-              )}
-              ampm={false}
-            />
-
-            <TimePicker
-              value={reservation.time?.to ?? null}
-              readOnly
-              onChange={() => {
-                return;
-              }}
-              renderInput={params => (
-                <TextField {...params} size='small' disabled />
-              )}
-              ampm={false}
-            />
+            <div>
+              <p className='booking-summary-label'>From</p>
+              <TimePicker
+                onChange={() => {
+                  return;
+                }}
+                readOnly
+                value={(reservation?.time?.from ?? 0) * 1000}
+                renderInput={params => (
+                  <TextField {...params} size='small' disabled />
+                )}
+                ampm={false}
+              />
+            </div>
+            <div>
+              <p className='booking-summary-label'>To</p>
+              <TimePicker
+                value={(reservation?.time?.to ?? 0) * 1000}
+                readOnly
+                onChange={() => {
+                  return;
+                }}
+                renderInput={params => (
+                  <TextField {...params} size='small' disabled />
+                )}
+                ampm={false}
+              />
+            </div>
           </div>
         ) : (
           <div className='booking-summary-time-picker-container'>
-            <Skeleton variant='rectangular' width={241} height={25} />
-            <Skeleton variant='rectangular' width={241} height={25} />
+            <div style={{ width: '100%' }}>
+              <p className='booking-summary-label'>From</p>
+              <Skeleton variant='rectangular' height={25} />
+            </div>
+            <div style={{ width: '100%' }}>
+              <p className='booking-summary-label'>To</p>
+              <Skeleton variant='rectangular' height={25} />
+            </div>
           </div>
         )}
 
@@ -239,29 +269,29 @@ export default function ReservationApproval() {
           className='booking-summary-cta-container'
         >
           {reservation && !reservation.confirmed && confirmationToken && (
-            <Button
+            <LoadingButton
               variant='contained'
               color='success'
               size='large'
               sx={{ boxShadow: 3, color: 'white' }}
               onClick={() => confirmReservation()}
+              loading={isConfirmButtonLoading}
             >
-              {confirmationButtonText}
-            </Button>
+              Confirm Reservation
+            </LoadingButton>
           )}
-          {reservation &&
-            !reservation.confirmed &&
-            !isIn12Hours(reservation.time?.from ?? 0) && (
-              <Button
-                variant='contained'
-                color='error'
-                size='large'
-                sx={{ boxShadow: 3, color: 'white' }}
-                onClick={() => cancelReservation()}
-              >
-                {cancelButtonText}
-              </Button>
-            )}
+          {reservation && !isIn12Hours(reservation.time?.from ?? 0) && (
+            <LoadingButton
+              variant='contained'
+              color='error'
+              size='large'
+              sx={{ boxShadow: 3, color: 'white' }}
+              onClick={() => cancelReservation()}
+              loading={isCancelButtonLoading}
+            >
+              Cancel Reservation
+            </LoadingButton>
+          )}
           {reservation && (
             <Button
               variant='outlined'
