@@ -80,7 +80,6 @@ export default function ContextWrapper(props: { children: JSX.Element }) {
   const tableApi = new TableApi(configuration);
 
   useEffect(() => {
-    console.log(query);
     localStorage.setItem(
       'de.reservation-bear.context',
       JSON.stringify({

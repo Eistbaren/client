@@ -325,5 +325,4 @@ export default function ReservationApproval() {
       </div>
     </>
   );
-  /* } */
 }
