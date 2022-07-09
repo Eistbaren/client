@@ -118,9 +118,7 @@ export default class PaginatedApi<T> {
    * Initially load the data
    */
   public initialLoad() {
-    this._currentPagination.currentPage = 0;
-    this._setCurrentData([]);
-    this._currentData = [];
+    this.reset();
 
     if (this._shouldLoadAllPages) {
       this._loadAllPages();
@@ -133,8 +131,15 @@ export default class PaginatedApi<T> {
    * Reset internal state
    */
   public reset() {
-    this._setCurrentData([]);
+    this._currentPagination = {
+      ...this._currentPagination,
+      currentPage: 0,
+      totalPages: undefined,
+    };
+    this._setCurrentPagination(this._currentPagination);
+
     this._currentData = [];
+    this._setCurrentData([]);
   }
 
   /**
@@ -167,14 +172,22 @@ export default class PaginatedApi<T> {
       this._loadFunction(this._currentPagination)
         .then(result => {
           const [pagination, data] = result;
+          this._currentPagination = pagination;
           this._setCurrentPagination(pagination);
+          this._currentData = this._currentData.concat(data);
           this._setCurrentData(this._currentData.concat(data));
+
           if (
             (pagination.currentPage ?? 0) >=
             (pagination.totalPages ?? 0) - 1
           ) {
             this._setIsLoading(false);
           } else {
+            this._currentPagination = {
+              ...this._currentPagination,
+              currentPage: (this._currentPagination.currentPage ?? 0) + 1,
+            };
+            this._setCurrentPagination(this._currentPagination);
             loadNextPage();
           }
         })
