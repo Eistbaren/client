@@ -37,8 +37,8 @@ export default function Landingpage() {
     setQuery({
       ...query,
       time: {
-        from: from.valueOf() / 1000,
-        to: to.valueOf() / 1000,
+        from: Math.floor(from.valueOf() / 1000),
+        to: Math.floor(to.valueOf() / 1000),
       },
     });
   }

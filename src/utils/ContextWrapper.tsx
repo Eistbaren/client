@@ -36,8 +36,8 @@ export default function ContextWrapper(props: { children: JSX.Element }) {
   let storedContext: StoredContext = {
     query: {
       time: {
-        from: from.valueOf() / 1000,
-        to: to.valueOf() / 1000,
+        from: Math.floor(from.valueOf() / 1000),
+        to: Math.floor(to.valueOf() / 1000),
       },
     },
     restaurant: {},

@@ -1,12 +1,13 @@
-import { Grid, Typography, Box, CircularProgress } from '@mui/material';
+import { Grid, Typography, CircularProgress } from '@mui/material';
 import { Context } from '../data/Context';
 import React from 'react';
 import { AnonymousReservation, Table } from '../data/api';
 import '../css/TableSelectionPage.css';
-import { Link as RouterLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import PaginatedApi from '../data/PaginatedApi';
 import QueryTimeslotTimePicker from '../components/QueryTimeslotTimePicker';
 import TimeslotText from '../components/TimeslotText';
+import FloorplanTable from '../components/FloorplanTable';
 
 /**
  * TableSelection page
@@ -60,6 +61,7 @@ export default function TableSelectionPage() {
   const [reservationsLoading, existingReservations] = reservationApi.state();
 
   const [sizeFactor, setSizeFactor] = React.useState<number>(1);
+  const navigate = useNavigate();
 
   const canvasRef = React.useRef<HTMLDivElement>(null);
   const reservedTables = existingReservations
@@ -87,6 +89,19 @@ export default function TableSelectionPage() {
       (canvasRef.current?.offsetWidth ?? 0) /
         (restaurant.floorPlan?.size?.width ?? 0),
     );
+  };
+
+  const handleTablePicked = (tableId: string) => {
+    if ((query.time?.from ?? 1) + 60 * 30 > (query.time?.to ?? 0)) {
+      alert('Please select a valid time range!');
+      return;
+    }
+    setReservationCreationRequest({
+      ...reservationCreationRequest,
+      tables: [tableId],
+      time: query.time,
+    });
+    navigate(`/personal-data`);
   };
 
   const fixSize = (originalSize?: number) => {
@@ -162,49 +177,28 @@ export default function TableSelectionPage() {
 
               {tables.map((table, tableKey) => {
                 return (
-                  <Box
-                    sx={{
-                      position: 'absolute',
-                      left: fixSize(table.floorPlan?.position?.x),
-                      top: fixSize(table.floorPlan?.position?.y),
-                      width: fixSize(table.floorPlan?.size?.width),
-                      height: fixSize(table.floorPlan?.size?.height),
+                  <FloorplanTable
+                    key={`floorplanTable-${tableKey}`}
+                    image={`${configuration.basePath}/image/${table.floorPlan?.image}`}
+                    tableOnFloorplan={{
+                      position: {
+                        x: fixSize(table.floorPlan?.position?.x),
+                        y: fixSize(table.floorPlan?.position?.y),
+                      },
+                      size: {
+                        width: fixSize(table.floorPlan?.size?.width),
+                        height: fixSize(table.floorPlan?.size?.height),
+                      },
                     }}
-                    key={tableKey}
-                  >
-                    <RouterLink
-                      to='/personal-data'
-                      style={{ textDecoration: 'none', color: 'inherit' }}
-                      onClick={e => {
-                        if (table?.id === undefined) return;
-                        if (reservationsLoading) {
-                          e.preventDefault();
-                          return;
-                        }
-                        if (reservedTables.indexOf(table.id) >= 0) {
-                          e.preventDefault();
-                          alert('this table is already reserved');
-                          // TODO: create popover which shows when this table is reserved!
-                          return;
-                        }
-
-                        setReservationCreationRequest({
-                          ...reservationCreationRequest,
-                          tables: [table.id],
-                          time: query.time,
-                        });
-                      }}
-                    >
-                      <img
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          cursor: 'pointer',
-                        }}
-                        src={`${configuration.basePath}/image/${table.floorPlan?.image}`}
-                      />
-                    </RouterLink>
-                  </Box>
+                    disabled={
+                      reservedTables.indexOf(table.id ?? '') >= 0 ||
+                      reservationsLoading
+                    }
+                    onClick={() => {
+                      if (table?.id === undefined) return;
+                      handleTablePicked(table.id);
+                    }}
+                  />
                 );
               })}
             </div>
