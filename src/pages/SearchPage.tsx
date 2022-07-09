@@ -128,11 +128,17 @@ export default function SearchPage() {
                 id={`filter-${filterKey}-comboBox`}
                 label={item.label}
                 options={item.options}
-                defaultValue={query[item.id]}
+                value={query[item.id]}
                 onChange={value =>
                   setQuery({
                     ...query,
                     [item.id]: value,
+                  })
+                }
+                onClear={() =>
+                  setQuery({
+                    ...query,
+                    [item.id]: undefined,
                   })
                 }
               />
@@ -144,8 +150,11 @@ export default function SearchPage() {
               id={`filter-time-comboBox`}
               label='Time'
               options={new Map<number, string>([])}
-              defaultValue={undefined}
+              value={undefined}
               onChange={() => {
+                return;
+              }}
+              onClear={() => {
                 return;
               }}
             />

@@ -1,18 +1,30 @@
-import { Select, MenuItem, InputLabel, FormControl } from '@mui/material';
+import {
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  IconButton,
+  InputAdornment,
+} from '@mui/material';
 
-/**
- * ComboBox
- * @param  {{id: string, label: string, options: Array<string>}} params accepts id, label and selectable options
- * @return {JSX.Element}
- */
-export default function ComboBox(params: {
+import ClearIcon from '@mui/icons-material/Clear';
+
+interface ComboBoxProps {
   id: string;
   label: string;
   options: Map<number, string>;
-  defaultValue: number | undefined;
+  value: number | undefined;
   onChange: (newValue: number) => void;
-}) {
-  const { id, label, options, defaultValue, onChange } = params;
+  onClear: () => void;
+}
+
+/**
+ * ComboBox
+ * @param  {ComboBoxProps} params accepts id, label and selectable options
+ * @return {JSX.Element}
+ */
+export default function ComboBox(params: ComboBoxProps) {
+  const { id, label, options, value, onChange, onClear } = params;
 
   const optionsArray: Array<[string, number]> = [];
   options.forEach((value, key) => optionsArray.push([value, key]));
@@ -25,7 +37,20 @@ export default function ComboBox(params: {
         labelId={`filter-input-${id}-label`}
         label={label}
         onChange={e => onChange(e.target.value as number)}
-        defaultValue={defaultValue}
+        value={value || ''}
+        endAdornment={
+          value === undefined ? undefined : (
+            <InputAdornment position='end'>
+              <IconButton
+                onClick={() => {
+                  onClear();
+                }}
+              >
+                <ClearIcon />
+              </IconButton>
+            </InputAdornment>
+          )
+        }
       >
         {optionsArray.map(([option, optionKey]) => (
           <MenuItem key={`filter-${id}-option-${optionKey}`} value={optionKey}>

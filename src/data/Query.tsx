@@ -28,15 +28,18 @@ export interface Query {
  * @param {Query} query the query to convert
  * @return {string} an array of filters
  */
-export function queryToQueryStringArray(query: Query) {
-  return Object.entries(query).map(([key, value]) => {
-    if (value instanceof Object) {
-      value = Object.values(value).join(';');
-    } else if (key === 'type') {
-      value = RestaurantType[value];
-    }
-    return `${key}=${value}`;
-  });
+export function queryToQueryStringArray(query: Query): string[] {
+  return Object.entries(query)
+    .map(([key, value]) => {
+      if (value === undefined) return;
+      if (value instanceof Object) {
+        value = Object.values(value).join(';');
+      } else if (key === 'type') {
+        value = RestaurantType[value];
+      }
+      return `${key}=${value}`;
+    })
+    .filter((item): item is string => !!item);
 }
 
 export const restaurantTypeStrings: Map<number, string> = new Map([
