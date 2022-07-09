@@ -37,8 +37,6 @@ export default function QueryTimeslotTimePicker(
     return timeslot[ttc] ?? 0;
   };
 
-  console.log(query.time);
-
   const handleValueChanged = (value: Date | null) => {
     if (!(value instanceof Date) || isNaN(value?.getHours())) {
       return;
