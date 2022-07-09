@@ -170,7 +170,7 @@ export default function TableSelectionPage() {
                       width: fixSize(table.floorPlan?.size?.width),
                       height: fixSize(table.floorPlan?.size?.height),
                     }}
-                    key={tableKey}
+                    key={`table-${table.id}-${tableKey}`}
                   >
                     <RouterLink
                       to='/personal-data'

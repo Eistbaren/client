@@ -85,7 +85,11 @@ export default function SearchPage() {
 
   React.useEffect(() => {
     restaurantApiHelp.initialLoad();
-  }, [query, showMap]);
+  }, [query]);
+
+  React.useEffect(() => {
+    if (showMap) restaurantApiHelp.initialLoad();
+  }, [showMap]);
 
   const [detailModalRestaurant, setDetailModalRestaurant] =
     React.useState<Restaurant>({});
@@ -129,9 +133,9 @@ export default function SearchPage() {
           </Grid>
 
           {filterFormItems.map((item, filterKey) => (
-            <Grid item xs={2.4} key={filterKey}>
+            <Grid item xs={2.4} key={`filter-${filterKey}-${item.id}`}>
               <ComboBox
-                id={`filter-${filterKey}-comboBox`}
+                id={`filter-${filterKey}-${item.id}-comboBox`}
                 label={item.label}
                 options={item.options}
                 value={query[item.id]}
@@ -213,7 +217,7 @@ export default function SearchPage() {
                 </Grid>
               ) : (
                 restaurants.map(restaurant => (
-                  <Grid item xs={2.4} key={restaurant.id}>
+                  <Grid item xs={2.4} key={`restaurant-card-${restaurant.id}`}>
                     <RestaurantCard
                       restaurant={restaurant}
                       onClick={() => openDetailModal(restaurant)}
@@ -223,7 +227,7 @@ export default function SearchPage() {
               )}
               {Array.from(new Array(isLoading ? pagination.pageSize : 0)).map(
                 (_, index) => (
-                  <Grid item xs={2.4} key={index}>
+                  <Grid item xs={2.4} key={`restaurant-card-skeleton-${index}`}>
                     <Card>
                       <Skeleton variant='rectangular' height={118} />
                       <Skeleton variant='text' />
