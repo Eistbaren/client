@@ -118,6 +118,12 @@ export default function SearchPage() {
             <TextField
               variant='outlined'
               label='Search for restaurants'
+              onChange={e =>
+                setQuery({
+                  ...query,
+                  query: e.target.value,
+                })
+              }
               fullWidth
             />
           </Grid>
