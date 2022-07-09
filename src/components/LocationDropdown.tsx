@@ -10,12 +10,13 @@ import { GeographicCoordinates } from '../data';
  * @return {JSX.Element}
  */
 export default function LocationDropdown(props: {
-  location: GeographicCoordinates;
+  location: GeographicCoordinates | undefined;
   setLocation: (coords: GeographicCoordinates) => void;
-  range: number;
-  setRange: (range: number) => void;
+  radius: number | undefined;
+  setRadius: (range: number) => void;
+  disabled: boolean;
 }) {
-  const { location, setLocation, range, setRange } = props;
+  const { location, setLocation, radius, setRadius, disabled } = props;
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -31,7 +32,7 @@ export default function LocationDropdown(props: {
   };
 
   const handleRangeChange = (event: Event, newValue: number | number[]) => {
-    setRange(newValue as number);
+    setRadius(newValue as number);
   };
 
   const changeLocation = () => {
@@ -46,11 +47,11 @@ export default function LocationDropdown(props: {
         id='outlined-read-only-input'
         label='Location & Radius'
         value={
-          location.lat === undefined
-            ? `Choosing...; ${range} km`
+          location === undefined
+            ? `Choosing...; ${radius} km`
             : `${location.lat?.toFixed(1)}°, ${location.lon?.toFixed(
                 1,
-              )}°; ${range}km`
+              )}°; ${radius}km`
         }
         InputProps={{
           readOnly: true,
@@ -59,6 +60,7 @@ export default function LocationDropdown(props: {
         aria-controls={open ? 'basic-menu' : undefined}
         aria-haspopup='true'
         aria-expanded={open ? 'true' : undefined}
+        disabled={disabled}
       />
       <Menu
         id='basic-menu'
@@ -74,6 +76,7 @@ export default function LocationDropdown(props: {
             variant='outlined'
             onClick={changeLocation}
             startIcon={<EditLocationIcon />}
+            disabled={disabled}
           >
             Change center
           </Button>
@@ -81,13 +84,14 @@ export default function LocationDropdown(props: {
         <MenuItem>
           <Slider
             aria-label='Range'
-            value={range}
+            value={radius}
             onChange={handleRangeChange}
             getAriaValueText={valuetext}
             valueLabelDisplay='auto'
             step={1}
             min={1}
             max={50}
+            disabled={disabled}
           />
         </MenuItem>
       </Menu>

@@ -38,26 +38,26 @@ export default function RestaurantMap(params: {
   restaurants: Array<Restaurant>;
   onClick: (restaurant: Restaurant) => void;
   isLoading: boolean;
-  center: GeographicCoordinates;
+  center: GeographicCoordinates | undefined;
   setCenter: (center: GeographicCoordinates) => void;
-  range: number;
+  radius: number | undefined;
 }) {
-  const { restaurants, onClick, isLoading, center, setCenter, range } = params;
+  const { restaurants, onClick, isLoading, center, setCenter, radius } = params;
 
   const [currentRestaurant, setCurrentRestaurant] = React.useState(
     null as Feature<Geometry> | null,
   );
 
   const centerCords = fromLonLat([
-    center.lon ?? 11.574231,
-    center.lat ?? 48.139244,
+    center?.lon ?? 11.574231,
+    center?.lat ?? 48.139244,
   ]);
   return (
     <RMap
       className={
         'restaurant-map' +
         (isLoading ? ' loading' : '') +
-        (center.lat ? '' : ' clickable')
+        (center?.lat ? '' : ' clickable')
       }
       initial={{ center: centerCords, zoom: 12 }}
       onClick={e => {
@@ -67,7 +67,7 @@ export default function RestaurantMap(params: {
         const c: Array<number> = toLonLat(
           e.map.getCoordinateFromPixel(e.pixel),
         );
-        center.lon ?? setCenter({ lat: c[1], lon: c[0] });
+        center?.lon ?? setCenter({ lat: c[1], lon: c[0] });
       }}
     >
       <ROSM />
@@ -130,11 +130,11 @@ export default function RestaurantMap(params: {
         ) : null}
       </RLayerVector>
       <RLayerVector zIndex={9}>
-        <RFeature geometry={new Circle(centerCords, range * 1000)}>
+        <RFeature geometry={new Circle(centerCords, (radius ?? 0) * 1000)}>
           <RStyle>
             <RStroke
               color={
-                center.lat ? useTheme().palette.primary.dark : 'transparent'
+                center?.lat ? useTheme().palette.primary.dark : 'transparent'
               }
               width={4}
             />
