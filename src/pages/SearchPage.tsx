@@ -22,7 +22,11 @@ import LocationDropdown from '../components/LocationDropdown';
 import { Context } from '../data/Context';
 import PaginatedApi from '../data/PaginatedApi';
 
-import { GeographicCoordinates, queryToQueryStringArray } from '../data';
+import {
+  GeographicCoordinates,
+  queryToQueryStringArray,
+  restaurantTypeStrings,
+} from '../data';
 
 /**
  * Bootstrap function
@@ -33,20 +37,34 @@ export default function SearchPage() {
 
   const filterFormItems = [
     {
+      id: 'type',
       label: 'Type',
-      options: ['Italian'],
+      options: restaurantTypeStrings,
     },
     {
+      id: 'priceCategory',
       label: 'Price',
-      options: ['€', '€€', '€€€'],
+      options: new Map([
+        [1, '💲'],
+        [2, '💲💲'],
+        [3, '💲💲💲'],
+      ]),
     },
     {
+      id: 'averageRating',
       label: 'Rating',
-      options: ['Medium', 'Good', 'Excellent'],
+      options: new Map([
+        [1, '⭐'],
+        [2, '⭐⭐'],
+        [3, '⭐⭐⭐'],
+        [4, '⭐⭐⭐⭐'],
+        [5, '⭐⭐⭐⭐⭐'],
+      ]),
     },
     {
+      id: 'time',
       label: 'Time',
-      options: [],
+      options: new Map<number, string>([]),
     },
   ];
 
@@ -108,9 +126,15 @@ export default function SearchPage() {
           {filterFormItems.map((item, filterKey) => (
             <Grid item xs={2.4} key={filterKey}>
               <ComboBox
-                id={`${filterKey}`}
+                id={`filter-${filterKey}-comboBox`}
                 label={item.label}
                 options={item.options}
+                onChange={value =>
+                  setQuery({
+                    ...query,
+                    [item.id]: value,
+                  })
+                }
               />
             </Grid>
           ))}

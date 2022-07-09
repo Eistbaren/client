@@ -38,3 +38,15 @@ export function queryToQueryStringArray(query: Query) {
     return `${key}=${value}`;
   });
 }
+
+export const restaurantTypeStrings: Map<number, string> = new Map([
+  [RestaurantType.ITALIAN, 'Italian 🍕'],
+  [RestaurantType.FRENCH, 'French 🥐'],
+  [RestaurantType.GREEK, 'Greek 🐟'],
+  [RestaurantType.GERMAN, 'German 🥨'],
+  [RestaurantType.JAPANESE, 'Japanese 🍣'],
+  [RestaurantType.CHINESE, 'Chinese 🍙'],
+  [RestaurantType.SPANISH, 'Spanish 🥘'],
+  [RestaurantType.BRITISH, 'British 🫖'],
+  [RestaurantType.KOREAN, 'Korean 🍚'],
+]);

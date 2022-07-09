@@ -1,4 +1,10 @@
-import { Select, MenuItem, InputLabel, FormControl } from '@mui/material';
+import {
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  SelectChangeEvent,
+} from '@mui/material';
 
 /**
  * ComboBox
@@ -8,9 +14,14 @@ import { Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 export default function ComboBox(params: {
   id: string;
   label: string;
-  options: Array<string>;
+  options: Map<number, string>;
+  onChange: (newValue: number) => void;
 }) {
-  const { id, label, options } = params;
+  const { id, label, options, onChange } = params;
+
+  const optionsArray: Array<[string, number]> = [];
+  options.forEach((value, key) => optionsArray.push([value, key]));
+
   return (
     <FormControl fullWidth>
       <InputLabel id={`filter-input-${id}-label`}>{label}</InputLabel>
@@ -18,8 +29,9 @@ export default function ComboBox(params: {
         variant='outlined'
         labelId={`filter-input-${id}-label`}
         label={label}
+        onChange={e => onChange(e.target.value as number)}
       >
-        {options.map((option, optionKey) => (
+        {optionsArray.map(([option, optionKey]) => (
           <MenuItem key={`filter-${id}-option-${optionKey}`} value={optionKey}>
             {option}
           </MenuItem>
