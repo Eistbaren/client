@@ -49,7 +49,6 @@ export default function PersonalData() {
       userName: !reservationCreationRequest.userName?.match(nameRegex),
       userEmail: !reservationCreationRequest.userEmail?.match(emailRegex),
     });
-    console.log('test');
   }, [reservationCreationRequest]);
 
   // handles submitting the form
