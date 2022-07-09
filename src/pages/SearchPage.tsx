@@ -22,14 +22,14 @@ import LocationDropdown from '../components/LocationDropdown';
 import { Context } from '../data/Context';
 import PaginatedApi from '../data/PaginatedApi';
 
-import { GeographicCoordinates } from '../data';
+import { GeographicCoordinates, queryToQueryStringArray } from '../data';
 
 /**
  * Bootstrap function
  * @return {JSX.Element}
  */
 export default function SearchPage() {
-  const { restaurantApi } = React.useContext(Context);
+  const { restaurantApi, setQuery, query } = React.useContext(Context);
 
   const filterFormItems = [
     {
@@ -50,16 +50,25 @@ export default function SearchPage() {
     },
   ];
 
-  const restaurantApiHelp = new PaginatedApi<Restaurant>(10, pagination =>
-    restaurantApi
-      .getRestaurants([], pagination.currentPage, pagination.pageSize)
-      .then(result => [result, result.results ?? []]),
+  const [showMap, setShowMap] = React.useState(false);
+
+  const restaurantApiHelp = new PaginatedApi<Restaurant>(
+    10,
+    pagination =>
+      restaurantApi
+        .getRestaurants(
+          queryToQueryStringArray(query),
+          pagination.currentPage,
+          pagination.pageSize,
+        )
+        .then(result => [result, result.results ?? []]),
+    showMap && query.radius !== undefined && query.location !== undefined,
   );
   const [isLoading, restaurants, pagination] = restaurantApiHelp.state();
 
   React.useEffect(() => {
     restaurantApiHelp.initialLoad();
-  }, []);
+  }, [query, showMap]);
 
   const [detailModalRestaurant, setDetailModalRestaurant] =
     React.useState<Restaurant>({});
@@ -71,20 +80,12 @@ export default function SearchPage() {
   };
   const handleDetailModalClose = () => setDetailModalOpen(false);
 
-  const [showMap, setShowMap] = React.useState(false);
   const toggleMap = () => setShowMap(!showMap);
 
-  const [location, setLocation] = React.useState<GeographicCoordinates>({
-    lat: 48.139244,
-    lon: 11.574231,
-  });
-
-  const updateLocation = (loc: GeographicCoordinates) => {
-    loc.lat ?? setShowMap(true);
-    setLocation(loc);
+  const handleLocationChanged = (location: GeographicCoordinates) => {
+    if (!showMap) location.lat ?? setShowMap(true);
+    setQuery({ ...query, location: location });
   };
-
-  const [range, setRange] = React.useState(5);
 
   return (
     <>
@@ -116,10 +117,11 @@ export default function SearchPage() {
 
           <Grid item xs={2.4}>
             <LocationDropdown
-              location={location}
-              setLocation={updateLocation}
-              range={range}
-              setRange={setRange}
+              location={query.location}
+              setLocation={handleLocationChanged}
+              radius={query.radius}
+              setRadius={radius => setQuery({ ...query, radius: radius })}
+              disabled={isLoading}
             ></LocationDropdown>
           </Grid>
 
@@ -147,9 +149,9 @@ export default function SearchPage() {
                 restaurants={restaurants}
                 onClick={restaurant => openDetailModal(restaurant)}
                 isLoading={isLoading}
-                center={location}
-                setCenter={setLocation}
-                range={range}
+                center={query.location}
+                setCenter={handleLocationChanged}
+                radius={query.radius}
               ></RestaurantMap>
             </Grid>
           ) : (
