@@ -1,47 +1,99 @@
-import { TextField, Button, Checkbox, FormControlLabel } from '@mui/material';
-import { useContext, useState } from 'react';
+import {
+  TextField,
+  Collapse,
+  Alert,
+  AlertColor,
+  IconButton,
+  AlertTitle,
+} from '@mui/material';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import LoadingButton from '@mui/lab/LoadingButton';
 
 import '../css/PersonalData.css';
 import { Context } from '../data/Context';
+
+import CloseIcon from '@mui/icons-material/Close';
 
 /**
  * Personal Data Page
  * @return {JSX.Element}
  */
 export default function PersonalData() {
-  const { reservationCreationRequest, setReservationCreationRequest } =
-    useContext(Context);
-  const [emailError, setEmailError] = useState<boolean>(false);
-  const [submitted, setSubmitted] = useState<boolean>(false);
-  const navigate = useNavigate();
-  const emailRegex = /^\S+@\S+\.\S+$/g;
+  const {
+    reservationCreationRequest,
+    setReservationCreationRequest,
+    reservationApi,
+  } = useContext(Context);
 
-  // checks if input is submitted and a valid email
-  const handleEmailInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (submitted && !e.target.value?.match(emailRegex)) {
-      setEmailError(true);
-    } else {
-      setEmailError(false);
-    }
-    setReservationCreationRequest({
-      ...reservationCreationRequest,
-      userEmail: e.target.value,
+  const [formErrors, setFormErrors] = useState({
+    userName: true,
+    userEmail: true,
+  });
+  const [submitted, setSubmitted] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showAlert, setShowAlert] = useState<boolean>(false);
+  const [alert, setAlert] = useState<{
+    severity?: AlertColor;
+    title?: string;
+    body?: string;
+  }>();
+  const navigate = useNavigate();
+
+  const emailRegex = /^\S+@\S+\.\S+$/g;
+  const nameRegex = /^\S+ .+$/g;
+
+  // reavlidate form fields on changes
+  useEffect(() => {
+    setFormErrors({
+      userName: !reservationCreationRequest.userName?.match(nameRegex),
+      userEmail: !reservationCreationRequest.userEmail?.match(emailRegex),
     });
-  };
+  }, [reservationCreationRequest]);
 
   // handles submitting the form
   const handleSubmit = () => {
     if (!submitted) {
       setSubmitted(true);
     }
-    if (!reservationCreationRequest.userEmail?.match(emailRegex)) {
-      setEmailError(true);
-    } else {
-      // await call api call
-      // TODO: get ID from result!
-      navigate(`/reservation-details/${''}`);
+
+    for (const error of Object.values(formErrors)) {
+      if (error) return;
     }
+
+    // await call api call and navigate on success
+    setIsLoading(true);
+    reservationApi
+      .createReservation(reservationCreationRequest)
+      .then(reservation => {
+        navigate(`/reservation-details/${reservation.id}`);
+      })
+      .catch(e => {
+        console.log(`Error creating reservation: ${e}`);
+        if (e instanceof Response) {
+          e.json().then(j => {
+            if ((j.status as number) === 400) {
+              errorAlert(
+                j.message,
+                'Plase check your provided data and try again.',
+              );
+            } else {
+              errorAlert();
+            }
+          });
+        }
+        setShowAlert(true);
+      })
+      .finally(() => setIsLoading(false));
+  };
+
+  const errorAlert = (title?: string, body?: string) => {
+    setAlert({
+      severity: 'error',
+      title: title,
+      body: body,
+    });
+    setShowAlert(true);
   };
 
   return (
@@ -56,36 +108,79 @@ export default function PersonalData() {
         <img src='/logo-big.png' className='personal-data-image' />
       </div>
       <form className='personal-data-form'>
+        <Collapse in={showAlert}>
+          <Alert
+            action={
+              <IconButton
+                aria-label='close'
+                color='inherit'
+                size='small'
+                onClick={() => {
+                  return setShowAlert(false);
+                }}
+              >
+                <CloseIcon fontSize='inherit' />
+              </IconButton>
+            }
+            severity={alert?.severity}
+            variant='outlined'
+            sx={{ mb: 2 }}
+          >
+            <AlertTitle>{alert?.title ?? 'An error occured!'}</AlertTitle>
+            {alert?.body ??
+              'Your reservation could not be completed! Please try again later.'}
+          </Alert>
+        </Collapse>
+
         <TextField
           id='nameInput'
           value={reservationCreationRequest.userName ?? ''}
-          onChange={e =>
+          onChange={e => {
             setReservationCreationRequest({
               ...reservationCreationRequest,
               userName: e.target.value,
-            })
-          }
+            });
+          }}
           type='text'
           label='Name'
+          disabled={isLoading}
+          error={formErrors.userName && submitted}
+          helperText={
+            formErrors.userName && submitted
+              ? 'Please enter your first and last name'
+              : ''
+          }
         />
+
         <TextField
           id='emailInput'
           value={reservationCreationRequest.userEmail ?? ''}
-          onChange={handleEmailInput}
+          onChange={e => {
+            setReservationCreationRequest({
+              ...reservationCreationRequest,
+              userEmail: e.target.value,
+            });
+          }}
           type='email'
-          error={emailError}
-          helperText={emailError ? 'Email adress not valid' : ''}
           label='Email'
-        />
-        <FormControlLabel
-          label='I have read the terms and conditions of Eistbaeren'
-          sx={{ color: 'white' }}
-          control={<Checkbox disableRipple />}
+          disabled={isLoading}
+          error={formErrors.userEmail && submitted}
+          helperText={
+            formErrors.userEmail && submitted ? 'Email adress not valid' : ''
+          }
+          onKeyUp={e => {
+            if (e.key === 'Enter') handleSubmit();
+          }}
         />
 
-        <Button variant='contained' size='large' onClick={handleSubmit}>
+        <LoadingButton
+          variant='contained'
+          size='large'
+          onClick={handleSubmit}
+          loading={isLoading}
+        >
           Submit
-        </Button>
+        </LoadingButton>
       </form>
     </div>
   );

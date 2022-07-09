@@ -23,20 +23,22 @@ export default function Landingpage() {
    * Sets the date for both times
    * @param  {Date} value
    */
-  function handleDateInput(value: Date) {
-    const from = new Date(query.time?.from?.valueOf() ?? 0);
-    const to = new Date(query.time?.to?.valueOf() ?? 0);
+  function handleDateInput(value: Date | null) {
+    if (value === null) return;
+    const from = new Date((query.time?.from ?? 0) * 1000);
+    const to = new Date((query.time?.to ?? 0) * 1000);
     from.setDate(value.getDate());
     from.setMonth(value.getMonth());
     from.setFullYear(value.getFullYear());
     to.setDate(value.getDate());
     to.setMonth(value.getMonth());
     to.setFullYear(value.getFullYear());
+
     setQuery({
       ...query,
       time: {
-        from: from.valueOf(),
-        to: to.valueOf(),
+        from: from.valueOf() / 1000,
+        to: to.valueOf() / 1000,
       },
     });
   }
@@ -90,8 +92,8 @@ export default function Landingpage() {
         <p className='label'>Pick a date & time</p>
         <CalendarPicker
           openTo='day'
-          date={new Date(query.time?.from ?? 0)}
-          onChange={value => (value ? handleDateInput(value) : null)}
+          date={new Date((query.time?.from ?? 0) * 1000)}
+          onChange={handleDateInput}
           disablePast
           views={['day']}
           className='calendar-picker'
@@ -108,7 +110,7 @@ export default function Landingpage() {
             setQuery={setQuery}
             label='End time'
             timestampToChoose='to'
-            minTime={(query.time?.from ?? 0) + 60 * 30000}
+            minTime={(query.time?.from ?? 0) + 60 * 30}
           />
         </div>
         <div className='background-image'></div>
