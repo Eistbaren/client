@@ -61,8 +61,8 @@ export default function RestaurantDetailsModal(params: {
   const [isLoading, comments, pagination] = restaurantApiHelp.state();
 
   React.useEffect(() => {
-    restaurantApiHelp.initialLoad();
-  }, [params]);
+    if (open) restaurantApiHelp.initialLoad();
+  }, [open]);
 
   return (
     <Modal
@@ -71,12 +71,7 @@ export default function RestaurantDetailsModal(params: {
       aria-labelledby='modal-modal-title'
       aria-describedby='modal-modal-description'
     >
-      <Fade
-        in={open}
-        onAnimationEnd={() => {
-          restaurantApiHelp.reset();
-        }}
-      >
+      <Fade in={open}>
         <Card className='restaurant-detail-modal'>
           <Grid container spacing={2} alignItems='center'>
             <Grid item xs={9}>
