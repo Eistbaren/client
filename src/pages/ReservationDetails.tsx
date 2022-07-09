@@ -186,10 +186,7 @@ export default function ReservationApproval() {
                   <TextField
                     id='outlined-number'
                     type='text'
-                    defaultValue={numberSeats}
-                    InputProps={{
-                      readOnly: true,
-                    }}
+                    value={numberSeats}
                     size='small'
                     disabled
                   />
