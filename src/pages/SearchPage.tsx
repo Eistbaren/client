@@ -35,7 +35,11 @@ import {
 export default function SearchPage() {
   const { restaurantApi, setQuery, query } = React.useContext(Context);
 
-  const filterFormItems = [
+  const filterFormItems: Array<{
+    id: 'type' | 'priceCategory' | 'averageRating';
+    label: string;
+    options: Map<number, string>;
+  }> = [
     {
       id: 'type',
       label: 'Type',
@@ -60,11 +64,6 @@ export default function SearchPage() {
         [4, '⭐⭐⭐⭐'],
         [5, '⭐⭐⭐⭐⭐'],
       ]),
-    },
-    {
-      id: 'time',
-      label: 'Time',
-      options: new Map<number, string>([]),
     },
   ];
 
@@ -129,6 +128,7 @@ export default function SearchPage() {
                 id={`filter-${filterKey}-comboBox`}
                 label={item.label}
                 options={item.options}
+                defaultValue={query[item.id]}
                 onChange={value =>
                   setQuery({
                     ...query,
@@ -138,6 +138,18 @@ export default function SearchPage() {
               />
             </Grid>
           ))}
+
+          <Grid item xs={2.4}>
+            <ComboBox
+              id={`filter-time-comboBox`}
+              label='Time'
+              options={new Map<number, string>([])}
+              defaultValue={undefined}
+              onChange={() => {
+                return;
+              }}
+            />
+          </Grid>
 
           <Grid item xs={2.4}>
             <LocationDropdown

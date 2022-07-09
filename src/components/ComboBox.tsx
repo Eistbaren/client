@@ -9,9 +9,10 @@ export default function ComboBox(params: {
   id: string;
   label: string;
   options: Map<number, string>;
+  defaultValue: number | undefined;
   onChange: (newValue: number) => void;
 }) {
-  const { id, label, options, onChange } = params;
+  const { id, label, options, defaultValue, onChange } = params;
 
   const optionsArray: Array<[string, number]> = [];
   options.forEach((value, key) => optionsArray.push([value, key]));
@@ -24,6 +25,7 @@ export default function ComboBox(params: {
         labelId={`filter-input-${id}-label`}
         label={label}
         onChange={e => onChange(e.target.value as number)}
+        defaultValue={defaultValue}
       >
         {optionsArray.map(([option, optionKey]) => (
           <MenuItem key={`filter-${id}-option-${optionKey}`} value={optionKey}>
