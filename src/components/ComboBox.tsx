@@ -1,10 +1,4 @@
-import {
-  Select,
-  MenuItem,
-  InputLabel,
-  FormControl,
-  SelectChangeEvent,
-} from '@mui/material';
+import { Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 
 /**
  * ComboBox
