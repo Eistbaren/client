@@ -2,6 +2,7 @@ import {
   TextField,
   Collapse,
   Alert,
+  AlertColor,
   IconButton,
   AlertTitle,
 } from '@mui/material';
@@ -31,8 +32,12 @@ export default function PersonalData() {
   });
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<boolean>(false);
-
+  const [showAlert, setShowAlert] = useState<boolean>(false);
+  const [alert, setAlert] = useState<{
+    severity?: AlertColor;
+    title?: string;
+    body?: string;
+  }>();
   const navigate = useNavigate();
 
   const emailRegex = /^\S+@\S+\.\S+$/g;
@@ -64,9 +69,30 @@ export default function PersonalData() {
       })
       .catch(e => {
         console.log(`Error creating reservation: ${e}`);
-        setError(true);
+        if (e instanceof Response) {
+          e.json().then(j => {
+            if ((j.status as number) === 400) {
+              errorAlert(
+                j.message,
+                'Plase check your provided data and try again.',
+              );
+            } else {
+              errorAlert();
+            }
+          });
+        }
+        setShowAlert(true);
       })
       .finally(() => setIsLoading(false));
+  };
+
+  const errorAlert = (title?: string, body?: string) => {
+    setAlert({
+      severity: 'error',
+      title: title,
+      body: body,
+    });
+    setShowAlert(true);
   };
 
   return (
@@ -81,7 +107,7 @@ export default function PersonalData() {
         <img src='/logo-big.png' className='personal-data-image' />
       </div>
       <form className='personal-data-form'>
-        <Collapse in={error}>
+        <Collapse in={showAlert}>
           <Alert
             action={
               <IconButton
@@ -89,18 +115,19 @@ export default function PersonalData() {
                 color='inherit'
                 size='small'
                 onClick={() => {
-                  return setError(false);
+                  return setShowAlert(false);
                 }}
               >
                 <CloseIcon fontSize='inherit' />
               </IconButton>
             }
-            severity='error'
+            severity={alert?.severity}
             variant='outlined'
             sx={{ mb: 2 }}
           >
-            <AlertTitle>An error occured!</AlertTitle>
-            Your reservation could not be completed! Please try again later.
+            <AlertTitle>{alert?.title ?? 'An error occured!'}</AlertTitle>
+            {alert?.body ??
+              'Your reservation could not be completed! Please try again later.'}
           </Alert>
         </Collapse>
 
