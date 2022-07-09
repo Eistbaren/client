@@ -52,9 +52,7 @@ export default function QueryTimeslotTimePicker(
       query.time,
       timestampNotToChoose,
     );
-    newTime[timestampToChoose] = newDate.valueOf() / 1000;
-    console.log(newDate.valueOf(), newDate.valueOf() / 1000);
-    console.log(newTime);
+    newTime[timestampToChoose] = Math.floor(newDate.valueOf() / 1000);
 
     setQuery({
       ...query,
