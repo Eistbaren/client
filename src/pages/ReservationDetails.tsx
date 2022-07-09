@@ -32,7 +32,7 @@ export default function ReservationApproval() {
   const confirmationToken = searchParams.get('confirmationToken');
 
   const [reservation, setReservation] = useState<Reservation>();
-  const [numberSeats, setNumberSeats] = useState<number>(0);
+  const [numberOfSeats, setNumberOfSeats] = useState<number>(0);
   const [showReservation, setShowReservation] = useState<boolean>(true);
   const [alert, setAlert] = useState<{
     severity: AlertColor;
@@ -57,7 +57,7 @@ export default function ReservationApproval() {
           for (const table of t) {
             tableApi
               .getTable(table)
-              .then(t => setNumberSeats(numberSeats + (t?.seats ?? 0)))
+              .then(t => setNumberOfSeats(numberOfSeats + (t?.seats ?? 0)))
               .catch(() => errorAlert('Error getting table information'));
           }
         }
@@ -186,10 +186,7 @@ export default function ReservationApproval() {
                   <TextField
                     id='outlined-number'
                     type='text'
-                    defaultValue={numberSeats}
-                    InputProps={{
-                      readOnly: true,
-                    }}
+                    value={numberOfSeats}
                     size='small'
                     disabled
                   />
