@@ -1,8 +1,15 @@
 import { GeographicCoordinates, Timeslot } from './api';
 
 export enum RestaurantType {
-  ITALIAN = 'ita',
-  GERMAN = 'ger',
+  ITALIAN,
+  FRENCH,
+  GREEK,
+  GERMAN,
+  JAPANESE,
+  CHINESE,
+  SPANISH,
+  BRITISH,
+  KOREAN,
 }
 
 export interface Query {
@@ -25,6 +32,8 @@ export function queryToQueryStringArray(query: Query) {
   return Object.entries(query).map(([key, value]) => {
     if (value instanceof Object) {
       value = Object.values(value).join(';');
+    } else if (key === 'type') {
+      value = RestaurantType[value];
     }
     return `${key}=${value}`;
   });
