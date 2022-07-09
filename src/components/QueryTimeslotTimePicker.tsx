@@ -22,8 +22,8 @@ export default function QueryTimeslotTimePicker(
 ) {
   const { query, setQuery, label, timestampToChoose, minTime, maxTime } = props;
 
-  const minDate = minTime === undefined ? undefined : new Date(minTime);
-  const maxDate = maxTime === undefined ? undefined : new Date(maxTime);
+  const minDate = minTime === undefined ? undefined : new Date(minTime * 1000);
+  const maxDate = maxTime === undefined ? undefined : new Date(maxTime * 1000);
   const timestampNotToChoose = timestampToChoose === 'from' ? 'to' : 'from';
 
   const getTimstampType = (
@@ -41,7 +41,9 @@ export default function QueryTimeslotTimePicker(
     if (!(value instanceof Date) || isNaN(value?.getHours())) {
       return;
     }
-    const newDate = new Date(getTimstampType(query.time, timestampToChoose));
+    const newDate = new Date(
+      getTimstampType(query.time, timestampToChoose) * 1000,
+    );
     newDate.setHours(value?.getHours() ?? 0);
     newDate.setMinutes(value?.getMinutes() ?? 0);
 
@@ -50,7 +52,9 @@ export default function QueryTimeslotTimePicker(
       query.time,
       timestampNotToChoose,
     );
-    newTime[timestampToChoose] = newDate.valueOf();
+    newTime[timestampToChoose] = newDate.valueOf() / 1000;
+    console.log(newDate.valueOf(), newDate.valueOf() / 1000);
+    console.log(newTime);
 
     setQuery({
       ...query,
@@ -60,8 +64,8 @@ export default function QueryTimeslotTimePicker(
 
   return (
     <TimePicker
-      value={new Date(getTimstampType(query.time, timestampToChoose))}
-      onChange={value => handleValueChanged(value)}
+      value={new Date(getTimstampType(query.time, timestampToChoose) * 1000)}
+      onChange={handleValueChanged}
       renderInput={params => <TextField {...params} label={label} />}
       minutesStep={30}
       views={['hours', 'minutes']}

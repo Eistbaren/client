@@ -122,8 +122,8 @@ export default function TableSelectionPage() {
             label='Start time'
             timestampToChoose='from'
             // include 15 minutes buffer, it does not work otherwise \(*~*)/
-            minTime={restaurant.openingHours.from * 1000}
-            maxTime={(restaurant.openingHours.to - 60 * 15) * 1000}
+            minTime={restaurant.openingHours.from}
+            maxTime={restaurant.openingHours.to - 60 * 15}
           />
         </Grid>
 
@@ -133,9 +133,9 @@ export default function TableSelectionPage() {
             setQuery={setQuery}
             label='End time'
             timestampToChoose='to'
-            minTime={(query.time?.from ?? 0) + 60 * 30 * 1000}
+            minTime={(query.time?.from ?? 0) + 60 * 30}
             // include 15 minutes buffer, it does not work otherwise \(*~*)/
-            maxTime={(restaurant.openingHours.to + 60 * 15) * 1000}
+            maxTime={restaurant.openingHours.to + 60 * 15}
           />
         </Grid>
 
@@ -191,6 +191,7 @@ export default function TableSelectionPage() {
                         setReservationCreationRequest({
                           ...reservationCreationRequest,
                           tables: [table.id],
+                          time: query.time,
                         });
                       }}
                     >

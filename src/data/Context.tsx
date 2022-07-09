@@ -1,5 +1,11 @@
 import { createContext } from 'react';
-import { Restaurant, RestaurantApi, ReservationCreationRequest } from './api';
+import {
+  Restaurant,
+  RestaurantApi,
+  ReservationCreationRequest,
+  ReservationApi,
+  TableApi,
+} from './api';
 import { Configuration } from './configuration';
 import { Query } from './';
 
@@ -26,6 +32,8 @@ export const Context = createContext<{
   // api
   configuration: Configuration;
   restaurantApi: RestaurantApi;
+  reservationApi: ReservationApi;
+  tableApi: TableApi;
 }>({
   query: {},
   setQuery: () => {
@@ -41,4 +49,6 @@ export const Context = createContext<{
   },
   configuration: {},
   restaurantApi: new RestaurantApi(),
+  reservationApi: new ReservationApi(),
+  tableApi: new TableApi(),
 });
