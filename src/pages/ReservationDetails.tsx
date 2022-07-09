@@ -1,5 +1,6 @@
 import {
   Alert,
+  AlertColor,
   AlertTitle,
   Button,
   Chip,
@@ -31,18 +32,30 @@ export default function ReservationApproval() {
   const confirmationToken = searchParams.get('confirmationToken');
 
   const [reservation, setReservation] = useState<Reservation>();
+  const [noSeats, setNoSeats] = useState<number>(0);
   const [alert, setAlert] = useState<React.ReactNode>();
   const [isConfirmButtonLoading, setConfirmButtonLoading] =
     useState<boolean>(false);
   const [isCancelButtonLoading, setCancelButtonLoading] =
     useState<boolean>(false);
 
-  const { reservationApi } = useContext(Context);
+  const { configuration, reservationApi, tableApi } = useContext(Context);
   useEffect(() => {
     reservationApi
       .getReservation(reservationId ?? '0')
-      .then(val => {
-        setReservation(val);
+      .then(r => {
+        setReservation(r);
+        return r.tables;
+      })
+      .then(t => {
+        if (t !== undefined) {
+          for (const table of t) {
+            tableApi
+              .getTable(table)
+              .then(t => setNoSeats(noSeats + (t?.seats ?? 0)))
+              .catch(() => errorAlert('Error getting table information'));
+          }
+        }
       })
       .catch(e => {
         if (e instanceof Response) {
@@ -67,7 +80,7 @@ export default function ReservationApproval() {
     setCancelButtonLoading(true);
 
     window.confirm('Are you sure you want to cancel your reservation?') &&
-      reservationApi
+      (await reservationApi
         .deleteReservation(reservationId ?? '')
         .then(() => {
           successAlert('Reservation canceled!');
@@ -75,8 +88,8 @@ export default function ReservationApproval() {
         })
         .catch(() => {
           errorAlert('Something went wrong canceling your reservation');
-        })
-        .finally(() => setCancelButtonLoading(false));
+        }));
+    setCancelButtonLoading(false);
   };
 
   const confirmReservation = async () => {
@@ -86,7 +99,6 @@ export default function ReservationApproval() {
         { confirmed: true },
         reservation?.id ?? '',
         confirmationToken ?? '',
-        { headers: { 'Content-Type': 'application/json' } },
       )
       .then(() => {
         successAlert('Reservation confirmed!');
@@ -94,40 +106,30 @@ export default function ReservationApproval() {
       })
       .catch(() => {
         errorAlert('Something went wrong confirming your reservation');
-      })
-      .finally(() => setConfirmButtonLoading(false));
+      });
+    setConfirmButtonLoading(false);
   };
 
-  const errorAlert = (title: string, body?: string) => {
+  const showAlert = (severity: AlertColor, title: string, body?: string) => {
     setAlert(
       <Alert
-        severity='error'
+        severity={severity}
         style={{ marginBottom: '10px', marginTop: '10px' }}
         variant='outlined'
-        onClose={() => {
-          setAlert(undefined);
-        }}
+        onClose={() => setAlert(undefined)}
       >
         <AlertTitle>{title}</AlertTitle>
-        {body ?? 'Please try again later'}
+        {body}
       </Alert>,
     );
   };
 
-  const successAlert = (title: string, body?: string) => {
-    setAlert(
-      <Alert
-        severity='success'
-        style={{ marginBottom: '10px', marginTop: '10px' }}
-        variant='outlined'
-        onClose={() => {
-          setAlert(undefined);
-        }}
-      >
-        <AlertTitle>{title}</AlertTitle>
-        {body ?? ''}
-      </Alert>,
-    );
+  const errorAlert = (title: string) => {
+    showAlert('error', title, 'please try again later');
+  };
+
+  const successAlert = (title: string) => {
+    showAlert('success', title);
   };
 
   return (
@@ -136,7 +138,7 @@ export default function ReservationApproval() {
         <div className='booking-summary-header'>
           <h3>Reservation summary</h3>
           {reservation ? (
-            <Tooltip title='24 hours before your reservation you can confirm it!'>
+            <Tooltip title='You will recieve an email with a confirmation link 24 hours before your reservation'>
               {reservation.confirmed ? (
                 <Chip icon={<CheckIcon />} label='Confirmed' color='success' />
               ) : (
@@ -168,14 +170,13 @@ export default function ReservationApproval() {
               <Skeleton variant='rectangular' height={25} />
             )}
           </div>
-          {/* TODO */}
           <div>
-            <p className='booking-summary-label'># of persons</p>
+            <p className='booking-summary-label'>max # of seats</p>
             {reservation ? (
               <TextField
                 id='outlined-number'
-                type='number'
-                defaultValue={2}
+                type='text'
+                defaultValue={noSeats}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -276,6 +277,7 @@ export default function ReservationApproval() {
               sx={{ boxShadow: 3, color: 'white' }}
               onClick={() => confirmReservation()}
               loading={isConfirmButtonLoading}
+              disabled={isCancelButtonLoading}
             >
               Confirm Reservation
             </LoadingButton>
@@ -288,6 +290,7 @@ export default function ReservationApproval() {
               sx={{ boxShadow: 3, color: 'white' }}
               onClick={() => cancelReservation()}
               loading={isCancelButtonLoading}
+              disabled={isConfirmButtonLoading}
             >
               Cancel Reservation
             </LoadingButton>
@@ -297,7 +300,7 @@ export default function ReservationApproval() {
               variant='outlined'
               color='secondary'
               size='large'
-              href={`https://reservation-bear.de/api/reservation/${reservation.id}/ics`}
+              href={`${configuration.basePath}/reservation/${reservation.id}/ics`}
               target='_blank'
               rel='noreferrer'
               sx={{ boxShadow: 3 }}
