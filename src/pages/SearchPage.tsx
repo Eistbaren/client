@@ -182,23 +182,22 @@ export default function SearchPage() {
                   </Grid>
                 ),
               )}
+              <Grid item xs={12} className='center-children'>
+                <Button
+                  onClick={() => {
+                    restaurantApiHelp.loadNextPage();
+                  }}
+                  disabled={restaurantApiHelp.atLastPage() || isLoading}
+                >
+                  {restaurantApiHelp.atLastPage()
+                    ? "That's all!"
+                    : isLoading
+                    ? 'Loading...'
+                    : 'Load more'}
+                </Button>
+              </Grid>
             </>
           )}
-
-          <Grid item xs={12} className='center-children'>
-            <Button
-              onClick={() => {
-                restaurantApiHelp.loadNextPage();
-              }}
-              disabled={restaurantApiHelp.atLastPage() || isLoading}
-            >
-              {restaurantApiHelp.atLastPage()
-                ? "That's all!"
-                : isLoading
-                ? 'Loading...'
-                : 'Load more'}
-            </Button>
-          </Grid>
 
           <Grid item xs={12}></Grid>
         </Grid>
