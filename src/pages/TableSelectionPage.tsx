@@ -191,6 +191,7 @@ export default function TableSelectionPage() {
                         setReservationCreationRequest({
                           ...reservationCreationRequest,
                           tables: [table.id],
+                          time: query.time,
                         });
                       }}
                     >
