@@ -109,9 +109,9 @@ export default function ReservationApproval() {
         reservation?.id ?? '',
         confirmationToken ?? '',
       )
-      .then(() => {
+      .then(r => {
         successAlert('Reservation confirmed!');
-        reservation !== undefined ? (reservation.confirmed = true) : null;
+        setReservation(r);
       })
       .catch(() => {
         errorAlert('Something went wrong confirming your reservation');
@@ -325,5 +325,4 @@ export default function ReservationApproval() {
       </div>
     </>
   );
-  /* } */
 }
