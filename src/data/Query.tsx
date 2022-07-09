@@ -23,6 +23,9 @@ export interface Query {
  */
 export function queryToQueryStringArray(query: Query) {
   return Object.entries(query).map(([key, value]) => {
+    if (value instanceof Object) {
+      value = Object.values(value).join(';');
+    }
     return `${key}=${value}`;
   });
 }
