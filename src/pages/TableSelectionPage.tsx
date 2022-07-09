@@ -6,7 +6,7 @@ import '../css/TableSelectionPage.css';
 import { useNavigate } from 'react-router-dom';
 import PaginatedApi from '../data/PaginatedApi';
 import QueryTimeslotTimePicker from '../components/QueryTimeslotTimePicker';
-import TimeslotText from '../components/TimeslotText';
+import TimeslotText, { timeslotToText } from '../components/TimeslotText';
 import FloorplanTable from '../components/FloorplanTable';
 
 /**
@@ -104,6 +104,12 @@ export default function TableSelectionPage() {
     navigate(`/personal-data`);
   };
 
+  const getReservationsOfTable = (tableId: string) => {
+    return existingReservations.filter(
+      r => (r.tables?.indexOf(tableId) ?? -1) >= 0,
+    );
+  };
+
   const fixSize = (originalSize?: number) => {
     return (originalSize ?? 0) * sizeFactor;
   };
@@ -193,6 +199,29 @@ export default function TableSelectionPage() {
                     disabled={
                       reservedTables.indexOf(table.id ?? '') >= 0 ||
                       reservationsLoading
+                    }
+                    tooltip={
+                      table.id === undefined ? (
+                        'There is a problem with this table!'
+                      ) : reservedTables.indexOf(table.id ?? '') >= 0 ? (
+                        <div>
+                          This table is already reserved at these times:
+                          <ul>
+                            {getReservationsOfTable(table?.id)
+                              .map(r => r.time)
+                              .map(t => timeslotToText(t))
+                              .map(t => (
+                                <li key={`reserved-time-${table.id}-${t}`}>
+                                  {t}
+                                </li>
+                              ))}
+                          </ul>
+                        </div>
+                      ) : reservationsLoading ? (
+                        'Please wait...'
+                      ) : (
+                        ''
+                      )
                     }
                     onClick={() => {
                       if (table?.id === undefined) return;
