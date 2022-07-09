@@ -6,13 +6,11 @@ interface TimeslotTextProps {
 }
 
 /**
- * Convert a timeslot to a text element in the form of 00:00-01:00
- * @param {TimeslotTextProps} props
- * @return {JSX.Element}
+ * Convert a timeslot to a string
+ * @param {Timeslot} timeslot The timeslot to convert
+ * @return {string}
  */
-export default function TimeslotText(props: TimeslotTextProps) {
-  const { timeslot } = props;
-
+export function timeslotToText(timeslot?: Timeslot) {
   const unixTimestampToTimeOfDay = (unixTimestamp?: number) => {
     if (!unixTimestamp) {
       return '';
@@ -24,10 +22,17 @@ export default function TimeslotText(props: TimeslotTextProps) {
     });
   };
 
-  return (
-    <Typography>
-      {unixTimestampToTimeOfDay(timeslot?.from)}-
-      {unixTimestampToTimeOfDay(timeslot?.to)}
-    </Typography>
-  );
+  return `${unixTimestampToTimeOfDay(timeslot?.from)}-
+  ${unixTimestampToTimeOfDay(timeslot?.to)}`;
+}
+
+/**
+ * Convert a timeslot to a text element in the form of 00:00-01:00
+ * @param {TimeslotTextProps} props
+ * @return {JSX.Element}
+ */
+export default function TimeslotText(props: TimeslotTextProps) {
+  const { timeslot } = props;
+
+  return <Typography>{timeslotToText(timeslot)}</Typography>;
 }

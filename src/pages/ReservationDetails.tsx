@@ -79,7 +79,7 @@ export default function ReservationApproval() {
   const isIn12Hours = (timestamp: number): boolean => {
     timestamp = timestamp * 1000;
     const now = new Date();
-    const difference = (timestamp - now.getTime()) / 60 / 60 / 1000;
+    const difference = timestamp - Math.floor(now.getTime() / 60 / 60 / 1000);
     const a = difference > 0 && difference <= 12;
     return a;
   };
