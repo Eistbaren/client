@@ -53,7 +53,6 @@ export default function ContextWrapper(props: { children: JSX.Element }) {
     };
   }
 
-  console.log(storedContext.query);
   const [query, setQuery] = useState(storedContext.query);
   const [restaurant, setRestaurant] = useState(storedContext.restaurant);
   const [reservationCreationRequest, setReservationCreationRequest] = useState(
