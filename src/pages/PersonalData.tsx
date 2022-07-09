@@ -41,13 +41,15 @@ export default function PersonalData() {
   const navigate = useNavigate();
 
   const emailRegex = /^\S+@\S+\.\S+$/g;
+  const nameRegex = /^\S+ .+$/g;
 
   // reavlidate form fields on changes
   useEffect(() => {
     setFormErrors({
-      userName: (reservationCreationRequest.userName?.length ?? 0) === 0,
+      userName: !reservationCreationRequest.userName?.match(nameRegex),
       userEmail: !reservationCreationRequest.userEmail?.match(emailRegex),
     });
+    console.log('test');
   }, [reservationCreationRequest]);
 
   // handles submitting the form
@@ -145,7 +147,9 @@ export default function PersonalData() {
           disabled={isLoading}
           error={formErrors.userName && submitted}
           helperText={
-            formErrors.userName && submitted ? 'Please enter your name' : ''
+            formErrors.userName && submitted
+              ? 'Please enter your first and last name'
+              : ''
           }
         />
 
