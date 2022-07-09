@@ -29,18 +29,19 @@ export default function ContextWrapper(props: { children: JSX.Element }) {
   const from = new Date();
   from.setMinutes(from.getMinutes() + 30);
   from.setMinutes(0);
+  from.setDate(from.getDate() + 1);
   const to = new Date(from);
   to.setHours(to.getHours() + 1);
 
   let storedContext: StoredContext = {
-    query: {},
-    restaurant: {},
-    reservationCreationRequest: {
+    query: {
       time: {
-        from: from.valueOf(),
-        to: to.valueOf(),
+        from: from.valueOf() / 1000,
+        to: to.valueOf() / 1000,
       },
     },
+    restaurant: {},
+    reservationCreationRequest: {},
   };
 
   // load old values from localstorage
@@ -52,6 +53,7 @@ export default function ContextWrapper(props: { children: JSX.Element }) {
     };
   }
 
+  console.log(storedContext.query);
   const [query, setQuery] = useState(storedContext.query);
   const [restaurant, setRestaurant] = useState(storedContext.restaurant);
   const [reservationCreationRequest, setReservationCreationRequest] = useState(
@@ -79,6 +81,7 @@ export default function ContextWrapper(props: { children: JSX.Element }) {
   const tableApi = new TableApi(configuration);
 
   useEffect(() => {
+    console.log(query);
     localStorage.setItem(
       'de.reservation-bear.context',
       JSON.stringify({
