@@ -34,6 +34,7 @@ export default function ReservationApproval() {
   const [reservation, setReservation] = useState<Reservation>();
   const [numberOfSeats, setNumberOfSeats] = useState<number>(0);
   const [showReservation, setShowReservation] = useState<boolean>(true);
+  const [showAlert, setShowAlert] = useState<boolean>(false);
   const [alert, setAlert] = useState<{
     severity: AlertColor;
     title: string;
@@ -124,10 +125,12 @@ export default function ReservationApproval() {
       title: title,
       body: 'please try again later',
     });
+    setShowAlert(true);
   };
 
   const successAlert = (title: string) => {
     setAlert({ severity: 'success', title: title });
+    setShowAlert(true);
   };
 
   return (
@@ -149,12 +152,12 @@ export default function ReservationApproval() {
             </Tooltip>
           ) : null}
         </div>
-        <Collapse in={alert !== undefined}>
+        <Collapse in={showAlert}>
           <Alert
             severity={alert?.severity}
             style={{ marginBottom: '10px', marginTop: '10px' }}
             variant='outlined'
-            onClose={() => setAlert(undefined)}
+            onClose={showReservation ? () => setShowAlert(false) : undefined}
           >
             <AlertTitle>{alert?.title}</AlertTitle>
             {alert?.body}
