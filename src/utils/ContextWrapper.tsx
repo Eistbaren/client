@@ -5,6 +5,8 @@ import {
   BASE_PATH,
   Restaurant,
   ReservationCreationRequest,
+  ReservationApi,
+  TableApi,
 } from '../data';
 import { Configuration, ConfigurationParameters } from '../data';
 import { Query } from '../data';
@@ -72,6 +74,10 @@ export default function ContextWrapper(props: { children: JSX.Element }) {
 
   const restaurantApi = new RestaurantApi(configuration);
 
+  const reservationApi = new ReservationApi(configuration);
+
+  const tableApi = new TableApi(configuration);
+
   useEffect(() => {
     localStorage.setItem(
       'de.reservation-bear.context',
@@ -94,6 +100,8 @@ export default function ContextWrapper(props: { children: JSX.Element }) {
         setReservationCreationRequest,
         configuration,
         restaurantApi,
+        reservationApi,
+        tableApi,
       }}
     >
       {children}
