@@ -68,6 +68,10 @@ export default function SearchPage() {
   ];
 
   const [showMap, setShowMap] = React.useState(false);
+  const [detailModalRestaurant, setDetailModalRestaurant] =
+    React.useState<Restaurant>({});
+  const [detailModalOpen, setDetailModalOpen] = React.useState(false);
+  const reloadTimeoutRef = React.useRef(0);
 
   const restaurantApiHelp = new PaginatedApi<Restaurant>(
     10,
@@ -85,15 +89,19 @@ export default function SearchPage() {
 
   React.useEffect(() => {
     restaurantApiHelp.initialLoad();
+  }, []);
+
+  // Only reload after there was no activity for 0.5 seconds!
+  React.useEffect(() => {
+    window.clearTimeout(reloadTimeoutRef.current);
+    reloadTimeoutRef.current = window.setTimeout(() => {
+      if (!isLoading) restaurantApiHelp.initialLoad();
+    }, 500);
   }, [query]);
 
   React.useEffect(() => {
     if (showMap) restaurantApiHelp.initialLoad();
   }, [showMap]);
-
-  const [detailModalRestaurant, setDetailModalRestaurant] =
-    React.useState<Restaurant>({});
-  const [detailModalOpen, setDetailModalOpen] = React.useState(false);
 
   const openDetailModal = (restaurant: Restaurant) => {
     setDetailModalRestaurant(restaurant);
@@ -128,6 +136,7 @@ export default function SearchPage() {
                   query: e.target.value,
                 })
               }
+              defaultValue={query.query ?? ''}
               fullWidth
             />
           </Grid>
