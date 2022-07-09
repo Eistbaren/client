@@ -43,6 +43,7 @@ export default function FloorplanTable(props: FloorplanTableProps) {
           onClick={onClick}
         >
           <img
+            className='floorplan-table-image'
             style={{
               width: '100%',
               height: '100%',
