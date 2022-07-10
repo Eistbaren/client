@@ -107,7 +107,9 @@ export default function RestaurantDetailsModal(params: {
               >
                 {(restaurant?.images?.length ?? 0) > 0 ? (
                   (restaurant?.images || []).map((image, imageKey) => (
-                    <ImageListItem key={`${restaurant.id}-image-${imageKey}`}>
+                    <ImageListItem
+                      key={`details-modal-${restaurant.id}-image-${imageKey}`}
+                    >
                       <img src={`${configuration.basePath}/image/${image}`} />
                     </ImageListItem>
                   ))
@@ -164,7 +166,7 @@ export default function RestaurantDetailsModal(params: {
             ) : (
               comments.map((comment, commentKey) => (
                 <RestaurantComment
-                  key={`${restaurant.id}-comment-${commentKey}`}
+                  key={`details-modal-${restaurant.id}-comment-${commentKey}`}
                   comment={comment}
                 ></RestaurantComment>
               ))
@@ -173,7 +175,7 @@ export default function RestaurantDetailsModal(params: {
             {Array.from(new Array(isLoading ? pagination.pageSize : 0)).map(
               (_, key) => (
                 <RestaurantCommentSkeleton
-                  key={`${restaurant.id}-commentSkeleton-${key}`}
+                  key={`details-modal-${restaurant.id}-comment-skeleton-${key}`}
                 ></RestaurantCommentSkeleton>
               ),
             )}

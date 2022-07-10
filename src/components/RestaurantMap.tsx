@@ -93,7 +93,7 @@ export default function RestaurantMap(params: {
                   ]),
                 )
               }
-              key={restaurant.id}
+              key={`restaurant-pin-${restaurant.id}`}
               onClick={e => {
                 if (e.target !== currentRestaurant) {
                   e.target.set('restaurant', restaurant);
