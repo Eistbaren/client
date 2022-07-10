@@ -17,7 +17,7 @@ import '../css/RestaurantMap.css';
 import RestaurantCard from '../components/RestaurantCard';
 
 import { GeographicCoordinates } from '../data';
-import { useTheme } from '@mui/material';
+import { Fade, useTheme } from '@mui/material';
 import { Geometry } from 'ol/geom';
 import Feature from 'ol/Feature';
 import React, { useCallback } from 'react';
@@ -44,9 +44,9 @@ export default function RestaurantMap(params: {
 }) {
   const { restaurants, onClick, isLoading, center, setCenter, range } = params;
 
-  const [currentRestaurant, setCurrentRestaurant] = React.useState(
-    null as Feature<Geometry> | null,
-  );
+  const [currentRestaurant, setCurrentRestaurant] =
+    React.useState<Feature<Geometry>>();
+  const [showRestaurantPopup, setShowRestaurantPopup] = React.useState(false);
 
   const centerCords = fromLonLat([
     center.lon ?? 11.574231,
@@ -62,7 +62,7 @@ export default function RestaurantMap(params: {
       initial={{ center: centerCords, zoom: 12 }}
       onClick={e => {
         if (!e.map.hasFeatureAtPixel(e.map.getEventPixel(e.originalEvent))) {
-          setCurrentRestaurant(null);
+          setShowRestaurantPopup(false);
         }
         const c: Array<number> = toLonLat(
           e.map.getCoordinateFromPixel(e.pixel),
@@ -95,11 +95,15 @@ export default function RestaurantMap(params: {
               }
               key={restaurant.id}
               onClick={e => {
-                if (e.target !== currentRestaurant) {
+                if (e.target !== currentRestaurant || !showRestaurantPopup) {
+                  /* if (showRestaurantPopup) {
+                   *   setShowRestaurantPopup(false);
+                   * } */
                   e.target.set('restaurant', restaurant);
                   setCurrentRestaurant(e.target);
+                  setShowRestaurantPopup(true);
                 } else {
-                  setCurrentRestaurant(null);
+                  setShowRestaurantPopup(false);
                 }
               }}
             >
@@ -115,18 +119,22 @@ export default function RestaurantMap(params: {
         )}
       </RLayerVector>
       <RLayerVector zIndex={10}>
-        {currentRestaurant ? (
-          <div>
-            <RFeature geometry={currentRestaurant.getGeometry()}>
-              <ROverlay className='restaurant-overlay' autoPosition={true}>
-                <RestaurantCard
-                  restaurant={currentRestaurant.get('restaurant')}
-                  onClick={() => onClick(currentRestaurant.get('restaurant'))}
-                  dontShowImages={true}
-                ></RestaurantCard>
-              </ROverlay>
-            </RFeature>
-          </div>
+        {currentRestaurant !== undefined ? (
+          <RFeature geometry={currentRestaurant.getGeometry()}>
+            <ROverlay className='restaurant-overlay' autoPosition={true}>
+              <Fade in={showRestaurantPopup} timeout={400}>
+                <div>
+                  <RestaurantCard
+                    restaurant={currentRestaurant?.get('restaurant')}
+                    onClick={() =>
+                      onClick(currentRestaurant?.get('restaurant'))
+                    }
+                    dontShowImages={true}
+                  ></RestaurantCard>
+                </div>
+              </Fade>
+            </ROverlay>
+          </RFeature>
         ) : null}
       </RLayerVector>
       <RLayerVector zIndex={9}>
