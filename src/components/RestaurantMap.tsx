@@ -1,5 +1,5 @@
 import { Restaurant } from '../data/api';
-import { fromLonLat, toLonLat } from 'ol/proj';
+import { fromLonLat, getPointResolution, toLonLat } from 'ol/proj';
 import { Point, Circle } from 'ol/geom';
 import 'ol/ol.css';
 
@@ -17,9 +17,8 @@ import '../css/RestaurantMap.css';
 import RestaurantCard from '../components/RestaurantCard';
 
 import { GeographicCoordinates } from '../data';
-import { useTheme } from '@mui/material';
+import { Fade, useTheme } from '@mui/material';
 import { Geometry } from 'ol/geom';
-import Feature from 'ol/Feature';
 import React, { useCallback } from 'react';
 
 /**
@@ -44,14 +43,19 @@ export default function RestaurantMap(params: {
 }) {
   const { restaurants, onClick, isLoading, center, setCenter, radius } = params;
 
-  const [currentRestaurant, setCurrentRestaurant] = React.useState(
-    null as Feature<Geometry> | null,
-  );
-
   const centerCords = fromLonLat([
     center?.lon ?? 11.574231,
     center?.lat ?? 48.139244,
   ]);
+
+  const [currentRestaurant, setCurrentRestaurant] = React.useState<Restaurant>(
+    {},
+  );
+  const [currentRestaurantCardGeometry, setCurrentRestaurantCardGeometry] =
+    React.useState<Geometry>(new Point(centerCords));
+  const [showRestaurantPopup, setShowRestaurantPopup] = React.useState(false);
+  const [renderRestaurantCard, setRenderRestaurantCard] = React.useState(false);
+
   return (
     <RMap
       className={
@@ -62,7 +66,7 @@ export default function RestaurantMap(params: {
       initial={{ center: centerCords, zoom: 12 }}
       onClick={e => {
         if (!e.map.hasFeatureAtPixel(e.map.getEventPixel(e.originalEvent))) {
-          setCurrentRestaurant(null);
+          setShowRestaurantPopup(false);
         }
         const c: Array<number> = toLonLat(
           e.map.getCoordinateFromPixel(e.pixel),
@@ -95,11 +99,18 @@ export default function RestaurantMap(params: {
               }
               key={`restaurant-pin-${restaurant.id}`}
               onClick={e => {
-                if (e.target !== currentRestaurant) {
-                  e.target.set('restaurant', restaurant);
-                  setCurrentRestaurant(e.target);
+                if (
+                  e.target.getGeometry() !== currentRestaurantCardGeometry ||
+                  !showRestaurantPopup
+                ) {
+                  setCurrentRestaurant(restaurant);
+                  setCurrentRestaurantCardGeometry(
+                    e.target.getGeometry() ?? currentRestaurantCardGeometry,
+                  );
+                  setShowRestaurantPopup(true);
+                  setRenderRestaurantCard(true);
                 } else {
-                  setCurrentRestaurant(null);
+                  setShowRestaurantPopup(false);
                 }
               }}
             >
@@ -115,22 +126,42 @@ export default function RestaurantMap(params: {
         )}
       </RLayerVector>
       <RLayerVector zIndex={10}>
-        {currentRestaurant ? (
-          <div>
-            <RFeature geometry={currentRestaurant.getGeometry()}>
-              <ROverlay className='restaurant-overlay' autoPosition={true}>
-                <RestaurantCard
-                  restaurant={currentRestaurant.get('restaurant')}
-                  onClick={() => onClick(currentRestaurant.get('restaurant'))}
-                  dontShowImages={true}
-                ></RestaurantCard>
-              </ROverlay>
-            </RFeature>
-          </div>
-        ) : null}
+        <RFeature geometry={currentRestaurantCardGeometry}>
+          <ROverlay className='restaurant-overlay'>
+            <Fade
+              in={showRestaurantPopup}
+              timeout={400}
+              addEndListener={() => {
+                setTimeout(() => {
+                  if (!showRestaurantPopup) setRenderRestaurantCard(false);
+                }, 400);
+              }}
+            >
+              <div>
+                {renderRestaurantCard && (
+                  // It is important, not to render the card when it is hidden!
+                  // Otherwise, pins under it are not clickable!
+                  <RestaurantCard
+                    restaurant={currentRestaurant}
+                    onClick={() => onClick(currentRestaurant)}
+                    dontShowImages={true}
+                  ></RestaurantCard>
+                )}
+              </div>
+            </Fade>
+          </ROverlay>
+        </RFeature>
       </RLayerVector>
       <RLayerVector zIndex={9}>
-        <RFeature geometry={new Circle(centerCords, (radius ?? 0) * 1000)}>
+        <RFeature
+          geometry={
+            new Circle(
+              centerCords,
+              ((radius ?? 0) * 1000) /
+                getPointResolution('EPSG:3857', 1, centerCords, 'm'),
+            )
+          }
+        >
           <RStyle>
             <RStroke
               color={
