@@ -1,5 +1,5 @@
 import { Restaurant } from '../data/api';
-import { fromLonLat, toLonLat } from 'ol/proj';
+import { fromLonLat, getPointResolution, toLonLat } from 'ol/proj';
 import { Point, Circle } from 'ol/geom';
 import 'ol/ol.css';
 
@@ -130,7 +130,15 @@ export default function RestaurantMap(params: {
         ) : null}
       </RLayerVector>
       <RLayerVector zIndex={9}>
-        <RFeature geometry={new Circle(centerCords, range * 1000)}>
+        <RFeature
+          geometry={
+            new Circle(
+              centerCords,
+              (range * 1000) /
+                getPointResolution('EPSG:3857', 1, centerCords, 'm'),
+            )
+          }
+        >
           <RStyle>
             <RStroke
               color={
