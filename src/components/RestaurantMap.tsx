@@ -19,7 +19,6 @@ import RestaurantCard from '../components/RestaurantCard';
 import { GeographicCoordinates } from '../data';
 import { Fade, useTheme } from '@mui/material';
 import { Geometry } from 'ol/geom';
-import Feature from 'ol/Feature';
 import React, { useCallback } from 'react';
 
 /**
@@ -44,14 +43,19 @@ export default function RestaurantMap(params: {
 }) {
   const { restaurants, onClick, isLoading, center, setCenter, range } = params;
 
-  const [currentRestaurant, setCurrentRestaurant] =
-    React.useState<Feature<Geometry>>();
-  const [showRestaurantPopup, setShowRestaurantPopup] = React.useState(false);
-
   const centerCords = fromLonLat([
     center.lon ?? 11.574231,
     center.lat ?? 48.139244,
   ]);
+
+  const [currentRestaurant, setCurrentRestaurant] = React.useState<Restaurant>(
+    {},
+  );
+  const [currentRestaurantCardGeometry, setCurrentRestaurantCardGeometry] =
+    React.useState<Geometry>(new Point(centerCords));
+  const [showRestaurantPopup, setShowRestaurantPopup] = React.useState(false);
+  const [renderRestaurantCard, setRenderRestaurantCard] = React.useState(false);
+
   return (
     <RMap
       className={
@@ -95,13 +99,16 @@ export default function RestaurantMap(params: {
               }
               key={restaurant.id}
               onClick={e => {
-                if (e.target !== currentRestaurant || !showRestaurantPopup) {
-                  /* if (showRestaurantPopup) {
-                   *   setShowRestaurantPopup(false);
-                   * } */
-                  e.target.set('restaurant', restaurant);
-                  setCurrentRestaurant(e.target);
+                if (
+                  e.target.getGeometry() !== currentRestaurantCardGeometry ||
+                  !showRestaurantPopup
+                ) {
+                  setCurrentRestaurant(restaurant);
+                  setCurrentRestaurantCardGeometry(
+                    e.target.getGeometry() ?? currentRestaurantCardGeometry,
+                  );
                   setShowRestaurantPopup(true);
+                  setRenderRestaurantCard(true);
                 } else {
                   setShowRestaurantPopup(false);
                 }
@@ -119,23 +126,31 @@ export default function RestaurantMap(params: {
         )}
       </RLayerVector>
       <RLayerVector zIndex={10}>
-        {currentRestaurant !== undefined ? (
-          <RFeature geometry={currentRestaurant.getGeometry()}>
-            <ROverlay className='restaurant-overlay' autoPosition={true}>
-              <Fade in={showRestaurantPopup} timeout={400}>
-                <div>
+        <RFeature geometry={currentRestaurantCardGeometry}>
+          <ROverlay className='restaurant-overlay'>
+            <Fade
+              in={showRestaurantPopup}
+              timeout={400}
+              addEndListener={() => {
+                setTimeout(() => {
+                  if (!showRestaurantPopup) setRenderRestaurantCard(false);
+                }, 400);
+              }}
+            >
+              <div>
+                {renderRestaurantCard && (
+                  // It is important, not to render the card when it is hidden!
+                  // Otherwise, pins under it are not clickable!
                   <RestaurantCard
-                    restaurant={currentRestaurant?.get('restaurant')}
-                    onClick={() =>
-                      onClick(currentRestaurant?.get('restaurant'))
-                    }
+                    restaurant={currentRestaurant}
+                    onClick={() => onClick(currentRestaurant)}
                     dontShowImages={true}
                   ></RestaurantCard>
-                </div>
-              </Fade>
-            </ROverlay>
-          </RFeature>
-        ) : null}
+                )}
+              </div>
+            </Fade>
+          </ROverlay>
+        </RFeature>
       </RLayerVector>
       <RLayerVector zIndex={9}>
         <RFeature
