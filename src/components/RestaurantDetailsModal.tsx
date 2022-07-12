@@ -72,7 +72,7 @@ export default function RestaurantDetailsModal(params: {
       aria-describedby='modal-modal-description'
     >
       <Fade in={open}>
-        <Card className='restaurant-detail-modal'>
+        <Card className='restaurant-detail-modal' style={{ outline: 'none' }}>
           <Grid container spacing={2} alignItems='center'>
             <Grid item xs={9}>
               <Typography variant='h4' component='div'>

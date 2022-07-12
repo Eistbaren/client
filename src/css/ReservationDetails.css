@@ -22,18 +22,32 @@
   margin-top: 25px;
 }
 
-.booking-summary-time-picker-container {
+.booking-summary-date-time-container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   gap: 10px;
 }
 
-.booking-summary-date_person-container {
+.booking-summary-restaurant-container {
   display: grid;
   grid-template-columns: 3fr 1fr;
   gap: 10px;
 }
+
+.booking-summary-restaurant {
+    width: 100%;
+    opacity: 1;
+    -webkit-text-fill-color: rgba(0, 0, 0, 0.38);
+    position: absolute;
+}
+
+.booking-summary-restaurant input:hover {
+    /* text-decoration: underline; */
+    cursor: pointer;
+    -webkit-text-fill-color: initial;
+}
+
 
 .booking-summary-header {
   width: 100%;
@@ -41,6 +55,7 @@
   align-items: center;
   justify-content: space-between;
 }
+
 
 .booking-summary-header h3 {
   margin-right: 5px;
