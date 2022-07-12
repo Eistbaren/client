@@ -40,9 +40,9 @@ export default function RestaurantDetailsModal(params: {
   open: boolean;
   onClose: () => void;
   restaurant: Restaurant;
-  hideReservationButton?: boolean;
+  showReserveButton: boolean;
 }) {
-  const { open, onClose, restaurant, hideReservationButton } = params;
+  const { open, onClose, restaurant, showReserveButton } = params;
   if (restaurant.id === undefined) {
     return <></>;
   }
@@ -86,7 +86,7 @@ export default function RestaurantDetailsModal(params: {
               </Typography>
             </Grid>
 
-            {!hideReservationButton && (
+            {showReserveButton && (
               <Grid item xs>
                 <RouterLink
                   to='/table'
