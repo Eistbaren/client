@@ -21,6 +21,7 @@ import '../css/ReservationDetails.css';
 import { Reservation, Restaurant } from '../data';
 import { Context } from '../data/Context';
 import RestaurantDetailsModal from '../components/RestaurantDetailsModal';
+import RestaurantCardSideways from '../components/RestaurantCardSideways';
 
 /**
  * Reservation Approval Page
@@ -158,214 +159,203 @@ export default function ReservationApproval() {
 
   return (
     <>
-      <div className='booking-summary-container'>
-        <div className='booking-summary-header'>
-          <h3>Reservation summary</h3>
-          {reservation ? (
-            <Tooltip title='You will recieve an email with a confirmation link 24 hours before your reservation'>
-              {reservation.confirmed ? (
-                <Chip icon={<CheckIcon />} label='Confirmed' color='success' />
-              ) : (
-                <Chip
-                  icon={<CloseIcon />}
-                  label='Not Confirmed'
-                  color='error'
-                />
-              )}
-            </Tooltip>
-          ) : null}
+      <div className='personal-data-container'>
+        <div className='personal-data-body'>
+          <h1>Your Reservation</h1>
+          <p>
+            <RestaurantCardSideways
+              restaurant={restaurant}
+              numberOfSeats={numberOfSeats}
+              onClick={() => setDetailModalOpen(true)}
+            />
+          </p>
+          <img src='/logo-big.png' className='personal-data-image' />
         </div>
-        <Collapse in={showAlert}>
-          <Alert
-            severity={alert?.severity}
-            style={{ marginBottom: '10px', marginTop: '10px' }}
-            variant='outlined'
-            onClose={showReservation ? () => setShowAlert(false) : undefined}
-          >
-            <AlertTitle>{alert?.title}</AlertTitle>
-            {alert?.body}
-          </Alert>
-        </Collapse>
-        {showReservation ? (
-          <>
-            <div className='booking-summary-restaurant-container'>
-              <div>
-                <p className='booking-summary-label'>Restaurant</p>
-                {restaurant ? (
-                  <TextField
-                    InputProps={{
-                      readOnly: true,
-                      onClick: () => {
-                        console.log('a');
-                        setDetailModalOpen(true);
-                      },
-                    }}
-                    className='booking-summary-restaurant'
-                    id='restaurant-name'
-                    type='text'
-                    defaultValue={restaurant.name}
-                    size='small'
-                  />
+        <form className='personal-data-form'>
+          <div className='booking-summary-container'>
+            <div className='booking-summary-header'>
+              <h3>Reservation summary</h3>
+              {reservation ? (
+                <Tooltip title='You will recieve an email with a confirmation link 24 hours before your reservation'>
+                  {reservation.confirmed ? (
+                    <Chip
+                      icon={<CheckIcon />}
+                      label='Confirmed'
+                      color='success'
+                    />
+                  ) : (
+                    <Chip
+                      icon={<CloseIcon />}
+                      label='Not Confirmed'
+                      color='error'
+                    />
+                  )}
+                </Tooltip>
+              ) : null}
+            </div>
+            <Collapse in={showAlert}>
+              <Alert
+                severity={alert?.severity}
+                style={{ marginBottom: '10px', marginTop: '10px' }}
+                variant='outlined'
+                onClose={
+                  showReservation ? () => setShowAlert(false) : undefined
+                }
+              >
+                <AlertTitle>{alert?.title}</AlertTitle>
+                {alert?.body}
+              </Alert>
+            </Collapse>
+            {showReservation ? (
+              <>
+                {reservation ? (
+                  <div className='booking-summary-date-time-container'>
+                    <div style={{ width: '40%' }}>
+                      <p className='booking-summary-label'>From</p>
+                      <TimePicker
+                        onChange={() => {
+                          return;
+                        }}
+                        readOnly
+                        value={(reservation?.time?.from ?? 0) * 1000}
+                        renderInput={params => (
+                          <TextField {...params} size='small' disabled />
+                        )}
+                        ampm={false}
+                      />
+                    </div>
+                    <div style={{ width: '40%' }}>
+                      <p className='booking-summary-label'>To</p>
+                      <TimePicker
+                        value={(reservation?.time?.to ?? 0) * 1000}
+                        readOnly
+                        onChange={() => {
+                          return;
+                        }}
+                        renderInput={params => (
+                          <TextField {...params} size='small' disabled />
+                        )}
+                        ampm={false}
+                      />
+                    </div>
+                    <div>
+                      <p className='booking-summary-label'>Date</p>
+                      <DatePicker
+                        value={(reservation?.time?.from ?? 0) * 1000}
+                        onChange={() => {
+                          return;
+                        }}
+                        renderInput={params => (
+                          <TextField
+                            {...params}
+                            size='small'
+                            fullWidth
+                            disabled
+                          />
+                        )}
+                        disabled={true}
+                      />
+                    </div>
+                  </div>
                 ) : (
-                  <Skeleton variant='rectangular' height={25} />
+                  <div className='booking-summary-date-time-container'>
+                    <div style={{ width: '30%' }}>
+                      <p className='booking-summary-label'>From</p>
+                      <Skeleton variant='rectangular' height={25} />
+                    </div>
+                    <div style={{ width: '30%' }}>
+                      <p className='booking-summary-label'>To</p>
+                      <Skeleton variant='rectangular' height={25} />
+                    </div>
+                    <div style={{ width: '40%' }}>
+                      <p className='booking-summary-label'>Date</p>
+                      <Skeleton variant='rectangular' height={25} />
+                    </div>
+                  </div>
                 )}
-              </div>
-              <div>
-                <p className='booking-summary-label'>max # of seats</p>
+
+                <p className='booking-summary-label'>Name</p>
                 {reservation ? (
                   <TextField
-                    id='outlined-number'
+                    id='nameInput'
+                    defaultValue={reservation?.userName}
                     type='text'
-                    value={numberOfSeats}
+                    InputProps={{
+                      readOnly: true,
+                    }}
                     size='small'
                     disabled
                   />
                 ) : (
                   <Skeleton variant='rectangular' height={25} />
                 )}
-              </div>
-            </div>
-            {reservation ? (
-              <div className='booking-summary-date-time-container'>
-                <div style={{ width: '40%' }}>
-                  <p className='booking-summary-label'>From</p>
-                  <TimePicker
-                    onChange={() => {
-                      return;
-                    }}
-                    readOnly
-                    value={(reservation?.time?.from ?? 0) * 1000}
-                    renderInput={params => (
-                      <TextField {...params} size='small' disabled />
-                    )}
-                    ampm={false}
-                  />
-                </div>
-                <div style={{ width: '40%' }}>
-                  <p className='booking-summary-label'>To</p>
-                  <TimePicker
-                    value={(reservation?.time?.to ?? 0) * 1000}
-                    readOnly
-                    onChange={() => {
-                      return;
-                    }}
-                    renderInput={params => (
-                      <TextField {...params} size='small' disabled />
-                    )}
-                    ampm={false}
-                  />
-                </div>
-                <div>
-                  <p className='booking-summary-label'>Date</p>
-                  <DatePicker
-                    value={(reservation?.time?.from ?? 0) * 1000}
-                    onChange={() => {
-                      return;
-                    }}
-                    renderInput={params => (
-                      <TextField {...params} size='small' fullWidth disabled />
-                    )}
-                    disabled={true}
-                  />
-                </div>
-              </div>
-            ) : (
-              <div className='booking-summary-date-time-container'>
-                <div style={{ width: '30%' }}>
-                  <p className='booking-summary-label'>From</p>
-                  <Skeleton variant='rectangular' height={25} />
-                </div>
-                <div style={{ width: '30%' }}>
-                  <p className='booking-summary-label'>To</p>
-                  <Skeleton variant='rectangular' height={25} />
-                </div>
-                <div style={{ width: '40%' }}>
-                  <p className='booking-summary-label'>Date</p>
-                  <Skeleton variant='rectangular' height={25} />
-                </div>
-              </div>
-            )}
 
-            <p className='booking-summary-label'>Name</p>
-            {reservation ? (
-              <TextField
-                id='nameInput'
-                defaultValue={reservation?.userName}
-                type='text'
-                InputProps={{
-                  readOnly: true,
-                }}
-                size='small'
-                disabled
-              />
-            ) : (
-              <Skeleton variant='rectangular' height={25} />
-            )}
+                <p className='booking-summary-label'>Email</p>
+                {reservation ? (
+                  <TextField
+                    id='emailInput'
+                    defaultValue={reservation?.userEmail}
+                    type='email'
+                    InputProps={{
+                      readOnly: true,
+                    }}
+                    size='small'
+                    disabled
+                  />
+                ) : (
+                  <Skeleton variant='rectangular' height={25} />
+                )}
 
-            <p className='booking-summary-label'>Email</p>
-            {reservation ? (
-              <TextField
-                id='emailInput'
-                defaultValue={reservation?.userEmail}
-                type='email'
-                InputProps={{
-                  readOnly: true,
-                }}
-                size='small'
-                disabled
-              />
-            ) : (
-              <Skeleton variant='rectangular' height={25} />
-            )}
-
-            <Stack
-              direction='column'
-              spacing={2}
-              className='booking-summary-cta-container'
-            >
-              {reservation && !reservation.confirmed && confirmationToken && (
-                <LoadingButton
-                  variant='contained'
-                  color='success'
-                  size='large'
-                  sx={{ boxShadow: 3, color: 'white' }}
-                  onClick={() => confirmReservation()}
-                  loading={isConfirmButtonLoading}
-                  disabled={isCancelButtonLoading}
+                <Stack
+                  direction='column'
+                  spacing={2}
+                  className='booking-summary-cta-container'
                 >
-                  Confirm Reservation
-                </LoadingButton>
-              )}
-              {reservation && !isIn12Hours(reservation.time?.from ?? 0) && (
-                <LoadingButton
-                  variant='contained'
-                  color='error'
-                  size='large'
-                  sx={{ boxShadow: 3, color: 'white' }}
-                  onClick={() => cancelReservation()}
-                  loading={isCancelButtonLoading}
-                  disabled={isConfirmButtonLoading}
-                >
-                  Cancel Reservation
-                </LoadingButton>
-              )}
-              {reservation && (
-                <Button
-                  variant='outlined'
-                  color='secondary'
-                  size='large'
-                  href={`${configuration.basePath}/reservation/${reservation.id}/ics`}
-                  target='_blank'
-                  rel='noreferrer'
-                  sx={{ boxShadow: 3 }}
-                  download
-                >
-                  Download ICS File
-                </Button>
-              )}
-            </Stack>
-          </>
-        ) : null}
+                  {reservation && !reservation.confirmed && confirmationToken && (
+                    <LoadingButton
+                      variant='contained'
+                      color='success'
+                      size='large'
+                      sx={{ boxShadow: 3, color: 'white' }}
+                      onClick={() => confirmReservation()}
+                      loading={isConfirmButtonLoading}
+                      disabled={isCancelButtonLoading}
+                    >
+                      Confirm Reservation
+                    </LoadingButton>
+                  )}
+                  {reservation && !isIn12Hours(reservation.time?.from ?? 0) && (
+                    <LoadingButton
+                      variant='contained'
+                      color='error'
+                      size='large'
+                      sx={{ boxShadow: 3, color: 'white' }}
+                      onClick={() => cancelReservation()}
+                      loading={isCancelButtonLoading}
+                      disabled={isConfirmButtonLoading}
+                    >
+                      Cancel Reservation
+                    </LoadingButton>
+                  )}
+                  {reservation && (
+                    <Button
+                      variant='outlined'
+                      color='secondary'
+                      size='large'
+                      href={`${configuration.basePath}/reservation/${reservation.id}/ics`}
+                      target='_blank'
+                      rel='noreferrer'
+                      sx={{ boxShadow: 3 }}
+                      download
+                    >
+                      Download ICS File
+                    </Button>
+                  )}
+                </Stack>
+              </>
+            ) : null}
+          </div>
+        </form>
       </div>
       {restaurant && (
         <RestaurantDetailsModal

@@ -45,6 +45,11 @@ export default function Theme(props: { children: JSX.Element }) {
         primary: '#2e3440',
         secondary: '#4c566a',
       },
+      grey: {
+        A200: '#eceff4',
+        A400: '#e5e9f0',
+        A700: '#d8dee9',
+      },
     },
     shadows: [
       'none',

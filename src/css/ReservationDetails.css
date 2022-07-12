@@ -10,6 +10,7 @@
   gap: 5px;
   box-shadow: rgba(50, 50, 93, 0.125) 0 40px 65px -12px,
     rgba(0, 0, 0, 0.13) 0 30px 35px -21px;
+  background-color: #eceff4;
 }
 
 .booking-summary-label {
@@ -39,7 +40,6 @@
     width: 100%;
     opacity: 1;
     -webkit-text-fill-color: rgba(0, 0, 0, 0.38);
-    position: absolute;
 }
 
 .booking-summary-restaurant input:hover {
