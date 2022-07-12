@@ -145,7 +145,11 @@ export default function RestaurantDetailsModal(params: {
 
             <Grid item xs={5}>
               <Link
-                href={restaurant.website}
+                href={
+                  restaurant.website?.includes('://')
+                    ? restaurant.website
+                    : `//${restaurant.website}`
+                }
                 target='_blank'
                 onClick={e => {
                   e.stopPropagation();
