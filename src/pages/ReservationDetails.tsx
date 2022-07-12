@@ -70,7 +70,6 @@ export default function ReservationApproval() {
                 return t;
               })
               .then(t => {
-                console.log(t.restaurantId);
                 return t.restaurantId;
               })
 
