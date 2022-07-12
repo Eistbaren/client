@@ -372,6 +372,7 @@ export default function ReservationApproval() {
           open={detailModalOpen}
           onClose={() => setDetailModalOpen(false)}
           restaurant={restaurant}
+          showReserveButton={false}
         ></RestaurantDetailsModal>
       )}
     </>

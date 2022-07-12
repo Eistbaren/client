@@ -40,8 +40,9 @@ export default function RestaurantDetailsModal(params: {
   open: boolean;
   onClose: () => void;
   restaurant: Restaurant;
+  showReserveButton: boolean;
 }) {
-  const { open, onClose, restaurant } = params;
+  const { open, onClose, restaurant, showReserveButton } = params;
   if (restaurant.id === undefined) {
     return <></>;
   }
@@ -85,19 +86,21 @@ export default function RestaurantDetailsModal(params: {
               </Typography>
             </Grid>
 
-            <Grid item xs>
-              <RouterLink
-                to='/table'
-                style={{ textDecoration: 'none', color: 'inherit' }}
-                onClick={() => {
-                  setRestaurant(restaurant);
-                }}
-              >
-                <Button variant='contained' startIcon={<ChevronRightIcon />}>
-                  Reserve
-                </Button>
-              </RouterLink>
-            </Grid>
+            {showReserveButton && (
+              <Grid item xs>
+                <RouterLink
+                  to='/table'
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  onClick={() => {
+                    setRestaurant(restaurant);
+                  }}
+                >
+                  <Button variant='contained' startIcon={<ChevronRightIcon />}>
+                    Reserve
+                  </Button>
+                </RouterLink>
+              </Grid>
+            )}
 
             <Grid item xs={12}>
               <ImageList
