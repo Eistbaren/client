@@ -18,8 +18,9 @@ import { useContext, useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 
 import '../css/ReservationDetails.css';
-import { Reservation } from '../data';
+import { Reservation, Restaurant } from '../data';
 import { Context } from '../data/Context';
+import RestaurantDetailsModal from '../components/RestaurantDetailsModal';
 
 /**
  * Reservation Approval Page
@@ -31,6 +32,8 @@ export default function ReservationApproval() {
   const [searchParams] = useSearchParams();
   const confirmationToken = searchParams.get('confirmationToken');
 
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
+  const [restaurant, setRestaurant] = useState<Restaurant>();
   const [reservation, setReservation] = useState<Reservation>();
   const [numberOfSeats, setNumberOfSeats] = useState<number>(0);
   const [showReservation, setShowReservation] = useState<boolean>(true);
@@ -45,7 +48,8 @@ export default function ReservationApproval() {
   const [isCancelButtonLoading, setCancelButtonLoading] =
     useState<boolean>(false);
 
-  const { configuration, reservationApi, tableApi } = useContext(Context);
+  const { configuration, reservationApi, tableApi, restaurantApi } =
+    useContext(Context);
   useEffect(() => {
     reservationApi
       .getReservation(reservationId ?? '0')
@@ -54,13 +58,32 @@ export default function ReservationApproval() {
         return r.tables;
       })
       .then(t => {
+        let restaurantId: Promise<string | void | undefined> = new Promise(
+          resolve => resolve(),
+        );
         if (t !== undefined) {
           for (const table of t) {
-            tableApi
+            restaurantId = tableApi
               .getTable(table)
-              .then(t => setNumberOfSeats(numberOfSeats + (t?.seats ?? 0)))
+              .then(t => {
+                setNumberOfSeats(numberOfSeats + (t?.seats ?? 0));
+                return t;
+              })
+              .then(t => {
+                return t.restaurantId;
+              })
+
               .catch(() => errorAlert('Error getting table information'));
           }
+        }
+        return restaurantId;
+      })
+      .then(rId => {
+        if (rId !== undefined) {
+          restaurantApi
+            .getRestaurant(rId)
+            .then(r => setRestaurant(r))
+            .catch(() => errorAlert('Error getting restaurant information'));
         }
       })
       .catch(e => {
@@ -165,19 +188,23 @@ export default function ReservationApproval() {
         </Collapse>
         {showReservation ? (
           <>
-            <div className='booking-summary-date_person-container'>
+            <div className='booking-summary-restaurant-container'>
               <div>
-                <p className='booking-summary-label'>Date</p>
-                {reservation ? (
-                  <DatePicker
-                    value={(reservation?.time?.from ?? 0) * 1000}
-                    onChange={() => {
-                      return;
+                <p className='booking-summary-label'>Restaurant</p>
+                {restaurant ? (
+                  <TextField
+                    InputProps={{
+                      readOnly: true,
+                      onClick: () => {
+                        console.log('a');
+                        setDetailModalOpen(true);
+                      },
                     }}
-                    renderInput={params => (
-                      <TextField {...params} size='small' fullWidth disabled />
-                    )}
-                    disabled={true}
+                    className='booking-summary-restaurant'
+                    id='restaurant-name'
+                    type='text'
+                    defaultValue={restaurant.name}
+                    size='small'
                   />
                 ) : (
                   <Skeleton variant='rectangular' height={25} />
@@ -199,8 +226,8 @@ export default function ReservationApproval() {
               </div>
             </div>
             {reservation ? (
-              <div className='booking-summary-time-picker-container'>
-                <div>
+              <div className='booking-summary-date-time-container'>
+                <div style={{ width: '40%' }}>
                   <p className='booking-summary-label'>From</p>
                   <TimePicker
                     onChange={() => {
@@ -214,7 +241,7 @@ export default function ReservationApproval() {
                     ampm={false}
                   />
                 </div>
-                <div>
+                <div style={{ width: '40%' }}>
                   <p className='booking-summary-label'>To</p>
                   <TimePicker
                     value={(reservation?.time?.to ?? 0) * 1000}
@@ -228,15 +255,32 @@ export default function ReservationApproval() {
                     ampm={false}
                   />
                 </div>
+                <div>
+                  <p className='booking-summary-label'>Date</p>
+                  <DatePicker
+                    value={(reservation?.time?.from ?? 0) * 1000}
+                    onChange={() => {
+                      return;
+                    }}
+                    renderInput={params => (
+                      <TextField {...params} size='small' fullWidth disabled />
+                    )}
+                    disabled={true}
+                  />
+                </div>
               </div>
             ) : (
-              <div className='booking-summary-time-picker-container'>
-                <div style={{ width: '100%' }}>
+              <div className='booking-summary-date-time-container'>
+                <div style={{ width: '30%' }}>
                   <p className='booking-summary-label'>From</p>
                   <Skeleton variant='rectangular' height={25} />
                 </div>
-                <div style={{ width: '100%' }}>
+                <div style={{ width: '30%' }}>
                   <p className='booking-summary-label'>To</p>
+                  <Skeleton variant='rectangular' height={25} />
+                </div>
+                <div style={{ width: '40%' }}>
+                  <p className='booking-summary-label'>Date</p>
                   <Skeleton variant='rectangular' height={25} />
                 </div>
               </div>
@@ -323,6 +367,14 @@ export default function ReservationApproval() {
           </>
         ) : null}
       </div>
+      {restaurant && (
+        <RestaurantDetailsModal
+          open={detailModalOpen}
+          onClose={() => setDetailModalOpen(false)}
+          restaurant={restaurant}
+          hideReservationButton={true}
+        ></RestaurantDetailsModal>
+      )}
     </>
   );
 }
