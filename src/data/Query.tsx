@@ -1,6 +1,7 @@
 import { GeographicCoordinates, Timeslot } from './api';
 
 export enum RestaurantType {
+  EMPTY,
   ITALIAN,
   FRENCH,
   GREEK,
