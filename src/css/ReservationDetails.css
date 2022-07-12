@@ -48,12 +48,14 @@
     -webkit-text-fill-color: initial;
 }
 
+
 .booking-summary-header {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
+
 
 .booking-summary-header h3 {
   margin-right: 5px;

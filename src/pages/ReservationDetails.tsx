@@ -72,6 +72,7 @@ export default function ReservationApproval() {
                 return t;
               })
               .then(t => {
+                console.log(t.restaurantId);
                 return t.restaurantId;
               })
 
@@ -386,7 +387,6 @@ export default function ReservationApproval() {
           open={detailModalOpen}
           onClose={() => setDetailModalOpen(false)}
           restaurant={restaurant}
-          hideReservationButton={true}
         ></RestaurantDetailsModal>
       )}
     </>
