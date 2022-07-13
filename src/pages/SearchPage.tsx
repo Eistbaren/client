@@ -206,7 +206,6 @@ export default function SearchPage() {
         open={detailModalOpen}
         onClose={handleDetailModalClose}
         restaurant={detailModalRestaurant}
-        showReserveButton={true}
       ></RestaurantDetailsModal>
     </>
   );
