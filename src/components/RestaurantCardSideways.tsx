@@ -35,30 +35,40 @@ export default function RestaurantCardSideways(params: {
 
   return (
     <>
-      {restaurant ? (
-        <Card
-          onClick={onClick}
-          className='restaurant-card'
-          sx={{ display: 'flex', boxShadow: 14, backgroundColor: 'grey.A200' }}
-        >
+      <Card
+        onClick={onClick}
+        className='restaurant-card'
+        sx={{ display: 'flex', boxShadow: 14, backgroundColor: 'grey.A200' }}
+      >
+        {restaurant ? (
           <CardMedia
             component='img'
             sx={{ width: 151 }}
             image={`${configuration.basePath}/image/${image}`}
           />
-          <CardContent>
-            <Typography
-              gutterBottom
-              variant='h6'
-              component='div'
-              className='restaurant-card-title'
-            >
-              {restaurant.name}
-            </Typography>
-            <Typography gutterBottom variant='body2' component='div'>
-              {numberOfSeats ?? '?'} reserved seats
-            </Typography>
+        ) : (
+          <Skeleton variant='rectangular' width={151} height={127} />
+        )}
+        <CardContent style={{ width: '100%' }}>
+          <Typography
+            gutterBottom
+            variant='h6'
+            component='div'
+            className='restaurant-card-title'
+            width='100%'
+          >
+            {restaurant?.name ?? <Skeleton variant='text' width='100%' />}
+          </Typography>
+          <Typography gutterBottom variant='body2' component='div' width='100%'>
+            {numberOfSeats ? (
+              `${numberOfSeats} reserved seats`
+            ) : (
+              <Skeleton variant='text' />
+            )}
+          </Typography>
+          {restaurant ? (
             <Link
+              width='100%'
               href={restaurant.website}
               target='_blank'
               onClick={e => {
@@ -67,17 +77,11 @@ export default function RestaurantCardSideways(params: {
             >
               Visit website
             </Link>
-          </CardContent>
-        </Card>
-      ) : (
-        <Card
-          sx={{ display: 'flex', boxShadow: 14, backgroundColor: 'grey.A200' }}
-        >
-          <Skeleton variant='rectangular' width={151} height={151} />
-          <Skeleton variant='text' />
-          <Skeleton variant='text' />
-        </Card>
-      )}
+          ) : (
+            <Skeleton variant='text' />
+          )}
+        </CardContent>
+      </Card>
     </>
   );
 }
