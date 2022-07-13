@@ -69,7 +69,11 @@ export default function RestaurantCardSideways(params: {
           {restaurant ? (
             <Link
               width='100%'
-              href={restaurant.website}
+              href={
+                restaurant.website?.includes('://')
+                  ? restaurant.website
+                  : `//${restaurant.website}`
+              }
               target='_blank'
               onClick={e => {
                 e.stopPropagation();
