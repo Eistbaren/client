@@ -2,6 +2,7 @@ import {
   Alert,
   AlertColor,
   AlertTitle,
+  Box,
   Button,
   Chip,
   Collapse,
@@ -72,7 +73,6 @@ export default function ReservationApproval() {
                 return t;
               })
               .then(t => {
-                console.log(t.restaurantId);
                 return t.restaurantId;
               })
 
@@ -176,7 +176,7 @@ export default function ReservationApproval() {
               <Typography variant='h4' sx={{ color: 'primary.contrastText' }}>
                 Your Reservation
               </Typography>
-              {reservation ? (
+              {reservation && (
                 <Tooltip title='You will recieve an email with a confirmation link 24 hours before your reservation'>
                   {reservation.confirmed ? (
                     <Chip
@@ -192,14 +192,21 @@ export default function ReservationApproval() {
                     />
                   )}
                 </Tooltip>
-              ) : null}
+              )}
             </Stack>
             <RestaurantCardSideways
               restaurant={restaurant}
               numberOfSeats={numberOfSeats}
               onClick={() => setDetailModalOpen(true)}
             />
-            <img src='/logo-big.png' className='personal-data-image' />
+            <Box
+              component='img'
+              sx={{
+                width: '80%',
+              }}
+              alt='Eistbären logo'
+              src='/logo-big.png'
+            />
           </Stack>
         </Grid>
         <Grid
@@ -226,8 +233,8 @@ export default function ReservationApproval() {
               </Alert>
             </Collapse>
           </Grid>
-          {showReservation ? (
-            reservation ? (
+          {showReservation &&
+            (reservation ? (
               <>
                 <Grid container item spacing={2}>
                   <Grid item xs={3}>
@@ -378,8 +385,7 @@ export default function ReservationApproval() {
                   <Skeleton variant='rectangular' height={40} />
                 </Grid>
               </>
-            )
-          ) : null}
+            ))}
         </Grid>
       </Grid>
       {restaurant && (
