@@ -52,6 +52,7 @@ export default function TimeDatePeopleDropdown(props: {
         aria-controls={open ? 'basic-menu' : undefined}
         aria-haspopup='true'
         aria-expanded={open ? 'true' : undefined}
+        sx={{ width: '100%' }}
       />
       <Menu
         id='basic-menu'
