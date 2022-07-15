@@ -2,7 +2,7 @@ import { Button, Stack } from '@mui/material';
 import { CalendarPicker } from '@mui/x-date-pickers';
 
 import { Context } from '../data/Context';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 
 import NumberOfPersonsPicker from '../components/NumberOfPersonsPicker';
 import FloatingSidebar from '../components/FloatingSidebar';
