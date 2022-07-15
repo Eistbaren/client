@@ -91,14 +91,22 @@ export default function TableSelectionPage() {
     );
   };
 
-  const handleTablePicked = (tableId: string) => {
+  const handleTablePicked = (table: Table) => {
+    if (table.id === undefined) {
+      alert('This table cannot be reserved!');
+      return;
+    }
     if ((query.time?.from ?? 1) + 60 * 30 > (query.time?.to ?? 0)) {
       alert('Please select a valid time range!');
       return;
     }
+    if ((table?.seats ?? 0) < (query?.numberOfVisitors ?? 1)) {
+      alert('This table does not have enough seats!');
+      return;
+    }
     setReservationCreationRequest({
       ...reservationCreationRequest,
-      tables: [tableId],
+      tables: [table.id],
       time: query.time,
     });
     navigate(`/personal-data`);
@@ -198,7 +206,8 @@ export default function TableSelectionPage() {
                     }}
                     disabled={
                       reservedTables.indexOf(table.id ?? '') >= 0 ||
-                      reservationsLoading
+                      reservationsLoading ||
+                      (table?.seats ?? 0) < (query?.numberOfVisitors ?? 1)
                     }
                     tooltip={
                       table.id === undefined ? (
@@ -219,13 +228,16 @@ export default function TableSelectionPage() {
                         </div>
                       ) : reservationsLoading ? (
                         'Please wait...'
+                      ) : (table?.seats ?? 0) <
+                        (query?.numberOfVisitors ?? 1) ? (
+                        'This table does not have enough seats'
                       ) : (
                         ''
                       )
                     }
                     onClick={() => {
                       if (table?.id === undefined) return;
-                      handleTablePicked(table.id);
+                      handleTablePicked(table);
                     }}
                   />
                 );
