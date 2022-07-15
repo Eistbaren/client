@@ -163,11 +163,13 @@ export default function ReservationApproval() {
     <>
       <Grid
         container
-        spacing={5}
-        gap={4}
+        spacing={0}
+        gap={8}
         sx={{
           backgroundColor: '#5e81ac5b',
           padding: '60px',
+          alignSelf: 'center',
+          margin: 'auto 0',
         }}
       >
         <Grid container item xs={5}>
@@ -194,13 +196,6 @@ export default function ReservationApproval() {
                 </Tooltip>
               )}
             </Stack>
-            {showReservation && (
-              <RestaurantCardSideways
-                restaurant={restaurant}
-                numberOfSeats={numberOfSeats}
-                onClick={() => setDetailModalOpen(true)}
-              />
-            )}
             <Box
               component='img'
               sx={{
@@ -235,6 +230,15 @@ export default function ReservationApproval() {
               </Alert>
             </Collapse>
           </Grid>
+          {showReservation && (
+            <Grid item xs={12}>
+              <RestaurantCardSideways
+                restaurant={restaurant}
+                numberOfSeats={numberOfSeats}
+                onClick={() => setDetailModalOpen(true)}
+              />
+            </Grid>
+          )}
           {showReservation &&
             (reservation ? (
               <>
