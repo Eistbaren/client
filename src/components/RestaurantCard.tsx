@@ -62,7 +62,11 @@ export default function RestaurantCard(params: {
         />
         <br></br>
         <Link
-          href={restaurant.website}
+          href={
+            restaurant.website?.includes('://')
+              ? restaurant.website
+              : `//${restaurant.website}`
+          }
           target='_blank'
           onClick={e => {
             e.stopPropagation();

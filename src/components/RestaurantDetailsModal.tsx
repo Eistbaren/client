@@ -40,8 +40,9 @@ export default function RestaurantDetailsModal(params: {
   open: boolean;
   onClose: () => void;
   restaurant: Restaurant;
+  hideReservationButton?: boolean;
 }) {
-  const { open, onClose, restaurant } = params;
+  const { open, onClose, restaurant, hideReservationButton } = params;
   if (restaurant.id === undefined) {
     return <></>;
   }
@@ -72,7 +73,7 @@ export default function RestaurantDetailsModal(params: {
       aria-describedby='modal-modal-description'
     >
       <Fade in={open}>
-        <Card className='restaurant-detail-modal'>
+        <Card className='restaurant-detail-modal' style={{ outline: 'none' }}>
           <Grid container spacing={2} alignItems='center'>
             <Grid item xs={9}>
               <Typography variant='h4' component='div'>
@@ -80,19 +81,21 @@ export default function RestaurantDetailsModal(params: {
               </Typography>
             </Grid>
 
-            <Grid item xs>
-              <RouterLink
-                to='/table'
-                style={{ textDecoration: 'none', color: 'inherit' }}
-                onClick={() => {
-                  setRestaurant(restaurant);
-                }}
-              >
-                <Button variant='contained' startIcon={<ChevronRightIcon />}>
-                  Reserve
-                </Button>
-              </RouterLink>
-            </Grid>
+            {!hideReservationButton && (
+              <Grid item xs>
+                <RouterLink
+                  to='/table'
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                  onClick={() => {
+                    setRestaurant(restaurant);
+                  }}
+                >
+                  <Button variant='contained' startIcon={<ChevronRightIcon />}>
+                    Reserve
+                  </Button>
+                </RouterLink>
+              </Grid>
+            )}
 
             <Grid item xs={12}>
               <ImageList
@@ -139,7 +142,11 @@ export default function RestaurantDetailsModal(params: {
 
             <Grid item xs={5}>
               <Link
-                href={restaurant.website}
+                href={
+                  restaurant.website?.includes('://')
+                    ? restaurant.website
+                    : `//${restaurant.website}`
+                }
                 target='_blank'
                 onClick={e => {
                   e.stopPropagation();
