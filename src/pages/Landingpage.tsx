@@ -17,7 +17,6 @@ import { Link as RouterLink } from 'react-router-dom';
  */
 export default function Landingpage() {
   const { query, setQuery } = useContext(Context);
-  const [numberOfPersons, setNumberOfPersons] = useState<number>(2);
 
   /**
    * Sets the date for both times
@@ -86,8 +85,10 @@ export default function Landingpage() {
       <div className='hero-image-container'>
         <p className='label'>Number of Persons</p>
         <NumberOfPersonsPicker
-          numberOfPersons={numberOfPersons}
-          setNumberOfPersons={setNumberOfPersons}
+          numberOfPersons={query.numberOfVisitors}
+          setNumberOfPersons={newNumberOfVisiors =>
+            setQuery({ ...query, numberOfVisitors: newNumberOfVisiors })
+          }
         />
         <p className='label'>Pick a date & time</p>
         <CalendarPicker
