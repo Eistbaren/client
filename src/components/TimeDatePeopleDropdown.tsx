@@ -24,11 +24,9 @@ export default function TimeDatePeopleDropdown(props: {
 
   const open = Boolean(anchorEl);
 
-  const value = `${timeslotToText(timeslot)} | ${timeslotToDate(
-    timeslot,
-  )} | ${numberOfVisitors} ${
-    (numberOfVisitors ?? 1) > 1 ? 'visitors' : 'visitor'
-  }`;
+  const value = `${timeslotToText(timeslot)} | ${timeslotToDate(timeslot)} | ${
+    numberOfVisitors ?? 1
+  } ${(numberOfVisitors ?? 1) > 1 ? 'visitors' : 'visitor'}`;
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);

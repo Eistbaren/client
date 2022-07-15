@@ -15,7 +15,7 @@ export default function NumberOfPersonsPicker(props: {
     <ToggleButtonGroup
       value={numberOfPersons}
       exclusive
-      onChange={(e, person) => setNumberOfPersons(person)}
+      onChange={(e, person) => setNumberOfPersons(person ?? numberOfPersons)}
     >
       <ToggleButton value={1}>1</ToggleButton>
       <ToggleButton value={2}>2</ToggleButton>
