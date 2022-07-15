@@ -22,8 +22,37 @@ export function timeslotToText(timeslot?: Timeslot) {
     });
   };
 
-  return `${unixTimestampToTimeOfDay(timeslot?.from)}-
-  ${unixTimestampToTimeOfDay(timeslot?.to)}`;
+  return `${unixTimestampToTimeOfDay(
+    timeslot?.from,
+  )}-${unixTimestampToTimeOfDay(timeslot?.to)}`;
+}
+
+/**
+ *
+ * @param {Timeslot} timeslot
+ * @return {string}
+ */
+export function timeslotToDate(timeslot?: Timeslot) {
+  const unixTimestampToDate = (unixTimestamp?: number) => {
+    if (!unixTimestamp) {
+      return '';
+    }
+
+    return new Date(unixTimestamp * 1000)
+      .toLocaleTimeString('de-DE', {
+        day: 'numeric',
+        month: 'numeric',
+      })
+      .split(',')[0];
+  };
+
+  const from = unixTimestampToDate(timeslot?.from);
+  const to = unixTimestampToDate(timeslot?.to);
+  if (from === to) {
+    return from;
+  }
+
+  return `${from}-${to}`;
 }
 
 /**

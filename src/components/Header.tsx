@@ -51,7 +51,7 @@ export default function Header() {
           <Box sx={{ width: '80%', flexGrow: 1 }}>
             <Stepper activeStep={step}>
               {steps.map(label => (
-                <Step key={label}>
+                <Step key={`header-step-${label}`}>
                   <StepLabel>{label}</StepLabel>
                 </Step>
               ))}

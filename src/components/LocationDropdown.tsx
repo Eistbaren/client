@@ -1,6 +1,15 @@
 import React from 'react';
-import { Button, Menu, MenuItem, Slider, TextField } from '@mui/material';
+import {
+  Button,
+  IconButton,
+  InputAdornment,
+  Menu,
+  Slider,
+  TextField,
+} from '@mui/material';
+
 import EditLocationIcon from '@mui/icons-material/EditLocation';
+import ClearIcon from '@mui/icons-material/Clear';
 
 import { GeographicCoordinates } from '../data';
 
@@ -10,15 +19,30 @@ import { GeographicCoordinates } from '../data';
  * @return {JSX.Element}
  */
 export default function LocationDropdown(props: {
-  location: GeographicCoordinates;
+  location: GeographicCoordinates | undefined;
   setLocation: (coords: GeographicCoordinates) => void;
-  range: number;
-  setRange: (range: number) => void;
+  radius: number | undefined;
+  setRadius: (range: number) => void;
+  disabled: boolean;
+  onClear: () => void;
 }) {
-  const { location, setLocation, range, setRange } = props;
+  const { location, setLocation, radius, setRadius, disabled, onClear } = props;
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
+  const noLocationDefined = location === undefined;
+  const currentlyChoosingLocation =
+    !noLocationDefined && location?.lon === undefined;
+
+  const value = noLocationDefined
+    ? undefined
+    : currentlyChoosingLocation
+    ? 'Click the map!'
+    : `${location.lat?.toFixed(1)}°, ${location.lon?.toFixed(
+        1,
+      )}° | ${radius}km`;
+
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -31,7 +55,7 @@ export default function LocationDropdown(props: {
   };
 
   const handleRangeChange = (event: Event, newValue: number | number[]) => {
-    setRange(newValue as number);
+    setRadius(newValue as number);
   };
 
   const changeLocation = () => {
@@ -45,20 +69,26 @@ export default function LocationDropdown(props: {
       <TextField
         id='outlined-read-only-input'
         label='Location & Radius'
-        value={
-          location.lat === undefined
-            ? `Choosing...; ${range} km`
-            : `${location.lat?.toFixed(1)}°, ${location.lon?.toFixed(
-                1,
-              )}°; ${range}km`
-        }
+        value={value || ''}
         InputProps={{
           readOnly: true,
+          endAdornment: !noLocationDefined && !currentlyChoosingLocation && (
+            <InputAdornment position='end'>
+              <IconButton
+                onClick={() => {
+                  onClear();
+                }}
+              >
+                <ClearIcon />
+              </IconButton>
+            </InputAdornment>
+          ),
         }}
         onClick={handleClick}
         aria-controls={open ? 'basic-menu' : undefined}
         aria-haspopup='true'
         aria-expanded={open ? 'true' : undefined}
+        disabled={disabled}
       />
       <Menu
         id='basic-menu'
@@ -69,27 +99,35 @@ export default function LocationDropdown(props: {
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem>
+        <div style={{ padding: '6px 16px', width: '100%' }}>
           <Button
             variant='outlined'
             onClick={changeLocation}
             startIcon={<EditLocationIcon />}
+            disabled={disabled || currentlyChoosingLocation}
           >
-            Change center
+            {noLocationDefined
+              ? 'Choose center'
+              : currentlyChoosingLocation
+              ? 'Click the map'
+              : 'Change center'}
           </Button>
-        </MenuItem>
-        <MenuItem>
+        </div>
+        <div style={{ padding: '6px 16px', width: '100%' }}>
           <Slider
             aria-label='Range'
-            value={range}
+            value={radius}
             onChange={handleRangeChange}
             getAriaValueText={valuetext}
             valueLabelDisplay='auto'
             step={1}
             min={1}
             max={50}
+            disabled={
+              disabled || noLocationDefined || currentlyChoosingLocation
+            }
           />
-        </MenuItem>
+        </div>
       </Menu>
     </div>
   );

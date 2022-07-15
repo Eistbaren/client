@@ -5,16 +5,19 @@ import { Paginated } from './api';
  * Class for easily handling paginaged apis
  */
 export default class PaginatedApi<T> {
-  private _currentData: T[];
-  private _setCurrentData: React.Dispatch<React.SetStateAction<T[]>>;
+  private _currentDataState: T[];
+  private _setCurrentDataState: React.Dispatch<React.SetStateAction<T[]>>;
+  private _currentData: React.MutableRefObject<T[]>;
 
-  private _currentPagination: Paginated;
-  private _setCurrentPagination: React.Dispatch<
+  private _currentPaginationState: Paginated;
+  private _setCurrentPaginationState: React.Dispatch<
     React.SetStateAction<Paginated>
   >;
+  private _currentPagination: React.MutableRefObject<Paginated>;
 
-  private _isLoading: boolean;
-  private _setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  private _isLoadingState: boolean;
+  private _setIsLoadingState: React.Dispatch<React.SetStateAction<boolean>>;
+  private _isLoading: React.MutableRefObject<boolean>;
 
   private _loadFunction: (pagination: Paginated) => Promise<[Paginated, T[]]>;
 
@@ -39,13 +42,21 @@ export default class PaginatedApi<T> {
     loadFunction: (pagination: Paginated) => Promise<[Paginated, T[]]>,
     loadAllPages = false,
   ) {
-    [this._isLoading, this._setIsLoading] = React.useState<boolean>(true);
-    [this._currentData, this._setCurrentData] = React.useState<T[]>([]);
-    [this._currentPagination, this._setCurrentPagination] =
+    [this._isLoadingState, this._setIsLoadingState] =
+      React.useState<boolean>(true);
+    this._isLoading = React.useRef<boolean>(false);
+
+    [this._currentDataState, this._setCurrentDataState] = React.useState<T[]>(
+      [],
+    );
+    this._currentData = React.useRef<T[]>([]);
+
+    [this._currentPaginationState, this._setCurrentPaginationState] =
       React.useState<Paginated>({
         currentPage: 0,
         pageSize: pageSize,
       });
+    this._currentPagination = React.useRef<Paginated>({});
 
     this._loadFunction = loadFunction;
     this._shouldLoadAllPages = loadAllPages;
@@ -56,7 +67,7 @@ export default class PaginatedApi<T> {
    * @return {T[]} array of data
    */
   public data() {
-    return this._currentData;
+    return this._currentDataState;
   }
 
   /**
@@ -64,7 +75,7 @@ export default class PaginatedApi<T> {
    * @return {boolean} if the api is currently busy
    */
   public isLoading() {
-    return this._isLoading;
+    return this._isLoadingState;
   }
 
   /**
@@ -72,7 +83,7 @@ export default class PaginatedApi<T> {
    * @return {Paginated} the current pagination
    */
   public pagination() {
-    return this._currentPagination;
+    return this._currentPaginationState;
   }
 
   /**
@@ -81,17 +92,19 @@ export default class PaginatedApi<T> {
    */
   public loadNextPage() {
     if (
-      this._currentPagination.currentPage === undefined ||
-      this._currentPagination.totalPages === undefined ||
+      this._currentPagination.current.currentPage === undefined ||
+      this._currentPagination.current.totalPages === undefined ||
       this._shouldLoadAllPages
     )
       return;
     if (
-      this._currentPagination.currentPage >= this._currentPagination.totalPages
+      this._currentPagination.current.currentPage >=
+      this._currentPagination.current.totalPages
     )
       return;
 
-    this._currentPagination.currentPage++;
+    this._currentPagination.current.currentPage++;
+    this._setCurrentPagination(this._currentPagination.current);
     this._loadCurrentPage();
   }
 
@@ -100,10 +113,9 @@ export default class PaginatedApi<T> {
    * @return {boolean} whether we are at the last page yet
    */
   public atLastPage() {
-    return (
-      (this._currentPagination.currentPage ?? 0) >=
-      (this._currentPagination.totalPages ?? 0) - 1
-    );
+    const current = this._currentPagination.current.currentPage ?? 0;
+    const total = this._currentPagination.current.totalPages;
+    return total !== undefined && current >= total;
   }
 
   /**
@@ -111,16 +123,19 @@ export default class PaginatedApi<T> {
    * @return {[boolean, T[], Paginated]} all state variables
    */
   public state(): [boolean, T[], Paginated] {
-    return [this._isLoading, this._currentData, this._currentPagination];
+    return [
+      this._isLoadingState,
+      this._currentDataState,
+      this._currentPaginationState,
+    ];
   }
 
   /**
    * Initially load the data
    */
   public initialLoad() {
-    this._currentPagination.currentPage = 0;
-    this._setCurrentData([]);
-    this._currentData = [];
+    if (this._isLoading.current) return;
+    this.reset();
 
     if (this._shouldLoadAllPages) {
       this._loadAllPages();
@@ -133,8 +148,41 @@ export default class PaginatedApi<T> {
    * Reset internal state
    */
   public reset() {
+    if (this._isLoading.current) return;
+    this._setCurrentPagination({
+      ...this._currentPagination.current,
+      currentPage: 0,
+      totalPages: undefined,
+    });
+
     this._setCurrentData([]);
-    this._currentData = [];
+  }
+
+  /**
+   * Set the internal pagination and the external state
+   * @param {Paginated} pagination new pagination
+   */
+  private _setCurrentPagination(pagination: Paginated) {
+    this._currentPagination.current = pagination;
+    this._setCurrentPaginationState(this._currentPagination.current);
+  }
+
+  /**
+   * Set the internal loading and external state
+   * @param {boolean} isLoading
+   */
+  private _setIsLoading(isLoading: boolean) {
+    this._isLoading.current = isLoading;
+    this._setIsLoadingState(this._isLoading.current);
+  }
+
+  /**
+   * Set the internal data and external state
+   * @param {T[]} data
+   */
+  private _setCurrentData(data: T[]) {
+    this._currentData.current = data;
+    this._setCurrentDataState(data);
   }
 
   /**
@@ -142,11 +190,11 @@ export default class PaginatedApi<T> {
    */
   private _loadCurrentPage() {
     this._setIsLoading(true);
-    this._loadFunction(this._currentPagination)
+    this._loadFunction(this._currentPagination.current)
       .then(result => {
         const [pagination, data] = result;
         this._setCurrentPagination(pagination);
-        this._setCurrentData(this._currentData.concat(data));
+        this._setCurrentData(this._currentData.current.concat(data));
         this._setIsLoading(false);
       })
       .catch(() => {
@@ -159,27 +207,31 @@ export default class PaginatedApi<T> {
    * @return {void}
    */
   public _loadAllPages() {
+    if (this._isLoading.current) return;
+    if (this.atLastPage()) return;
     this._setIsLoading(true);
 
     // Recoursively load all pages
     // there shouldn't be any stack issues, as the function just starts the request and returns after that
     const loadNextPage = () => {
-      this._loadFunction(this._currentPagination)
+      this._loadFunction(this._currentPagination.current)
         .then(result => {
           const [pagination, data] = result;
           this._setCurrentPagination(pagination);
-          this._setCurrentData(this._currentData.concat(data));
-          if (
-            (pagination.currentPage ?? 0) >=
-            (pagination.totalPages ?? 0) - 1
-          ) {
+          this._setCurrentData(this._currentData.current.concat(data));
+
+          if (this.atLastPage()) {
             this._setIsLoading(false);
           } else {
+            this._setCurrentPagination({
+              ...this._currentPagination.current,
+              currentPage:
+                (this._currentPagination.current.currentPage ?? 0) + 1,
+            });
             loadNextPage();
           }
         })
         .catch(() => {
-          console.log('Error loading data!');
           this._setIsLoading(false);
         });
     };
