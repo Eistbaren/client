@@ -1,6 +1,16 @@
 import React from 'react';
-import { Button, Menu, MenuItem, Slider, TextField } from '@mui/material';
+import {
+  Button,
+  IconButton,
+  InputAdornment,
+  Menu,
+  MenuItem,
+  Slider,
+  TextField,
+} from '@mui/material';
+
 import EditLocationIcon from '@mui/icons-material/EditLocation';
+import ClearIcon from '@mui/icons-material/Clear';
 
 import { GeographicCoordinates } from '../data';
 
@@ -15,11 +25,23 @@ export default function LocationDropdown(props: {
   radius: number | undefined;
   setRadius: (range: number) => void;
   disabled: boolean;
+  onClear: () => void;
 }) {
-  const { location, setLocation, radius, setRadius, disabled } = props;
+  const { location, setLocation, radius, setRadius, disabled, onClear } = props;
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
+  const noLocationDefined = location === undefined;
+  const currentlyChoosingLocation =
+    !noLocationDefined && location?.lon === undefined;
+
+  const value = noLocationDefined
+    ? undefined
+    : currentlyChoosingLocation
+    ? 'Choose...'
+    : `${location.lat?.toFixed(1)}°, ${location.lon?.toFixed(1)}°; ${radius}km`;
+
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -46,15 +68,20 @@ export default function LocationDropdown(props: {
       <TextField
         id='outlined-read-only-input'
         label='Location & Radius'
-        value={
-          location === undefined
-            ? `Choosing...; ${radius} km`
-            : `${location.lat?.toFixed(1)}°, ${location.lon?.toFixed(
-                1,
-              )}°; ${radius}km`
-        }
+        value={value || ''}
         InputProps={{
           readOnly: true,
+          endAdornment: !noLocationDefined && !currentlyChoosingLocation && (
+            <InputAdornment position='end'>
+              <IconButton
+                onClick={() => {
+                  onClear();
+                }}
+              >
+                <ClearIcon />
+              </IconButton>
+            </InputAdornment>
+          ),
         }}
         onClick={handleClick}
         aria-controls={open ? 'basic-menu' : undefined}
@@ -76,9 +103,13 @@ export default function LocationDropdown(props: {
             variant='outlined'
             onClick={changeLocation}
             startIcon={<EditLocationIcon />}
-            disabled={disabled}
+            disabled={disabled || currentlyChoosingLocation}
           >
-            Change center
+            {noLocationDefined
+              ? 'Choose center'
+              : currentlyChoosingLocation
+              ? 'Choose on map'
+              : 'Change center'}
           </Button>
         </MenuItem>
         <MenuItem>
@@ -91,7 +122,9 @@ export default function LocationDropdown(props: {
             step={1}
             min={1}
             max={50}
-            disabled={disabled}
+            disabled={
+              disabled || noLocationDefined || currentlyChoosingLocation
+            }
           />
         </MenuItem>
       </Menu>

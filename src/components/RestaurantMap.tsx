@@ -71,7 +71,9 @@ export default function RestaurantMap(params: {
         const c: Array<number> = toLonLat(
           e.map.getCoordinateFromPixel(e.pixel),
         );
-        center?.lon ?? setCenter({ lat: c[1], lon: c[0] });
+        if (center !== undefined && center.lon === undefined) {
+          setCenter({ lat: c[1], lon: c[0] });
+        }
       }}
     >
       <ROSM />

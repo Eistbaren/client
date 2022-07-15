@@ -83,7 +83,7 @@ export default function SearchPage() {
           pagination.pageSize,
         )
         .then(result => [result, result.results ?? []]),
-    showMap && query.radius !== undefined && query.location !== undefined,
+    showMap,
   );
   const [isLoading, restaurants, pagination] = restaurantApiHelp.state();
 
@@ -113,7 +113,9 @@ export default function SearchPage() {
 
   const handleLocationChanged = (location: GeographicCoordinates) => {
     if (!showMap) location.lat ?? setShowMap(true);
-    setQuery({ ...query, location: location });
+    if (query.radius === undefined)
+      setQuery({ ...query, location: location, radius: 5 });
+    else setQuery({ ...query, location: location });
   };
 
   return (
@@ -186,6 +188,9 @@ export default function SearchPage() {
               radius={query.radius}
               setRadius={radius => setQuery({ ...query, radius: radius })}
               disabled={isLoading}
+              onClear={() =>
+                setQuery({ ...query, radius: undefined, location: undefined })
+              }
             ></LocationDropdown>
           </Grid>
 
