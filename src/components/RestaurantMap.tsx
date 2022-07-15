@@ -56,6 +56,22 @@ export default function RestaurantMap(params: {
   const [showRestaurantPopup, setShowRestaurantPopup] = React.useState(false);
   const [renderRestaurantCard, setRenderRestaurantCard] = React.useState(false);
 
+  const handlePinClicked = (e: RFeatureUIEvent, restaurant: Restaurant) => {
+    if (
+      e.target.getGeometry() !== currentRestaurantCardGeometry ||
+      !showRestaurantPopup
+    ) {
+      setCurrentRestaurant(restaurant);
+      setCurrentRestaurantCardGeometry(
+        e.target.getGeometry() ?? currentRestaurantCardGeometry,
+      );
+      setShowRestaurantPopup(true);
+      setRenderRestaurantCard(true);
+    } else {
+      setShowRestaurantPopup(false);
+    }
+  };
+
   return (
     <RMap
       className={
@@ -86,45 +102,32 @@ export default function RestaurantMap(params: {
           e.map.getTargetElement().style.cursor = 'initial';
         }, [])}
       >
-        {restaurants.map(restaurant =>
-          restaurant.location &&
-          restaurant.location.lat &&
-          restaurant.location.lon ? (
-            <RFeature
-              geometry={
-                new Point(
-                  fromLonLat([
-                    restaurant.location.lon,
-                    restaurant.location.lat,
-                  ]),
-                )
-              }
-              key={`restaurant-pin-${restaurant.id}`}
-              onClick={e => {
-                if (
-                  e.target.getGeometry() !== currentRestaurantCardGeometry ||
-                  !showRestaurantPopup
-                ) {
-                  setCurrentRestaurant(restaurant);
-                  setCurrentRestaurantCardGeometry(
-                    e.target.getGeometry() ?? currentRestaurantCardGeometry,
-                  );
-                  setShowRestaurantPopup(true);
-                  setRenderRestaurantCard(true);
-                } else {
-                  setShowRestaurantPopup(false);
+        {restaurants.map(
+          restaurant =>
+            restaurant.location &&
+            restaurant.location.lat &&
+            restaurant.location.lon && (
+              <RFeature
+                geometry={
+                  new Point(
+                    fromLonLat([
+                      restaurant.location.lon,
+                      restaurant.location.lat,
+                    ]),
+                  )
                 }
-              }}
-            >
-              <RStyle>
-                <RIcon
-                  src='/images/location.svg'
-                  anchor={[0.5, 0.8]}
-                  scale={0.2}
-                />
-              </RStyle>
-            </RFeature>
-          ) : null,
+                key={`restaurant-pin-${restaurant.id}-${restaurant.location.lon}`}
+                onClick={e => handlePinClicked(e, restaurant)}
+              >
+                <RStyle>
+                  <RIcon
+                    src='/images/location.svg'
+                    anchor={[0.5, 0.8]}
+                    scale={0.2}
+                  />
+                </RStyle>
+              </RFeature>
+            ),
         )}
       </RLayerVector>
       <RLayerVector zIndex={10}>
