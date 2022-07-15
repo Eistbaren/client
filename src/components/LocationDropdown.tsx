@@ -108,7 +108,7 @@ export default function LocationDropdown(props: {
             {noLocationDefined
               ? 'Choose center'
               : currentlyChoosingLocation
-              ? 'Choose on map'
+              ? 'Click the map'
               : 'Change center'}
           </Button>
         </MenuItem>
