@@ -133,7 +133,7 @@ export default function SearchPage() {
             </Typography>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid item xs={9}>
             <TextField
               variant='outlined'
               label='Search for restaurants'
@@ -148,8 +148,15 @@ export default function SearchPage() {
             />
           </Grid>
 
+          <Grid item xs={3}>
+            <TimeDatePeopleDropdown
+              timeslot={query.time}
+              numberOfVisitors={query.numberOfVisitors}
+            />
+          </Grid>
+
           {filterFormItems.map((item, filterKey) => (
-            <Grid item xs={2.4} key={`filter-${filterKey}-${item.id}`}>
+            <Grid item xs={3} key={`filter-${filterKey}-${item.id}`}>
               <ComboBox
                 id={`filter-${filterKey}-${item.id}-comboBox`}
                 label={item.label}
@@ -171,14 +178,7 @@ export default function SearchPage() {
             </Grid>
           ))}
 
-          <Grid item xs={2.4}>
-            <TimeDatePeopleDropdown
-              timeslot={query.time}
-              numberOfVisitors={query.numberOfVisitors}
-            />
-          </Grid>
-
-          <Grid item xs={2.4}>
+          <Grid item xs={3}>
             <LocationDropdown
               location={query.location}
               setLocation={handleLocationChanged}

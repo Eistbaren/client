@@ -89,6 +89,7 @@ export default function LocationDropdown(props: {
         aria-haspopup='true'
         aria-expanded={open ? 'true' : undefined}
         disabled={disabled}
+        sx={{ width: '100%' }}
       />
       <Menu
         id='basic-menu'
