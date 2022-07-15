@@ -176,7 +176,7 @@ export default function ReservationApproval() {
               <Typography variant='h4' sx={{ color: 'primary.contrastText' }}>
                 Your Reservation
               </Typography>
-              {reservation && (
+              {showReservation && reservation && (
                 <Tooltip title='You will recieve an email with a confirmation link 24 hours before your reservation'>
                   {reservation.confirmed ? (
                     <Chip
@@ -194,11 +194,13 @@ export default function ReservationApproval() {
                 </Tooltip>
               )}
             </Stack>
-            <RestaurantCardSideways
-              restaurant={restaurant}
-              numberOfSeats={numberOfSeats}
-              onClick={() => setDetailModalOpen(true)}
-            />
+            {showReservation && (
+              <RestaurantCardSideways
+                restaurant={restaurant}
+                numberOfSeats={numberOfSeats}
+                onClick={() => setDetailModalOpen(true)}
+              />
+            )}
             <Box
               component='img'
               sx={{
