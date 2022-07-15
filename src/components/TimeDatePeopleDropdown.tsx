@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, Menu, MenuItem, TextField, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 import { timeslotToText, timeslotToDate } from './TimeslotText';
 
@@ -17,6 +18,8 @@ export default function TimeDatePeopleDropdown(props: {
   const { timeslot, numberOfVisitors } = props;
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const navigate = useNavigate();
+
   const open = Boolean(anchorEl);
 
   const value = `${timeslotToText(timeslot)} ${timeslotToDate(
@@ -33,7 +36,7 @@ export default function TimeDatePeopleDropdown(props: {
   };
 
   const changeTimeDatePeople = () => {
-    return;
+    navigate('/');
   };
 
   return (
@@ -60,7 +63,11 @@ export default function TimeDatePeopleDropdown(props: {
         }}
       >
         <MenuItem>
-          <Typography>To change this, you need to go one step back</Typography>
+          <Typography>
+            To change this, you need
+            <br />
+            to go one step back
+          </Typography>
         </MenuItem>
         <MenuItem>
           <Button variant='outlined' onClick={changeTimeDatePeople}>
