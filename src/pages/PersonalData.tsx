@@ -69,7 +69,6 @@ export default function PersonalData() {
         navigate(`/reservation-details/${reservation.id}`);
       })
       .catch(e => {
-        console.log(`Error creating reservation: ${e}`);
         if (e instanceof Response) {
           e.json().then(j => {
             if ((j.status as number) === 400) {

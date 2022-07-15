@@ -192,7 +192,7 @@ export default function TableSelectionPage() {
               {tables.map((table, tableKey) => {
                 return (
                   <FloorplanTable
-                    key={`floorplanTable-${tableKey}`}
+                    key={`floorplanTable-${table.id}-${tableKey}`}
                     image={`${configuration.basePath}/image/${table.floorPlan?.image}`}
                     tableOnFloorplan={{
                       position: {

@@ -21,39 +21,74 @@ import ComboBox from '../components/ComboBox';
 import LocationDropdown from '../components/LocationDropdown';
 import { Context } from '../data/Context';
 import PaginatedApi from '../data/PaginatedApi';
+import TimeDatePeopleDropdown from '../components/TimeDatePeopleDropdown';
 
-import { GeographicCoordinates } from '../data';
+import {
+  GeographicCoordinates,
+  queryToQueryStringArray,
+  restaurantTypeStrings,
+} from '../data';
 
 /**
  * Bootstrap function
  * @return {JSX.Element}
  */
 export default function SearchPage() {
-  const { restaurantApi } = React.useContext(Context);
+  const { restaurantApi, setQuery, query } = React.useContext(Context);
 
-  const filterFormItems = [
+  const filterFormItems: Array<{
+    id: 'type' | 'priceCategory' | 'averageRating';
+    label: string;
+    options: Map<number, string>;
+  }> = [
     {
+      id: 'type',
       label: 'Type',
-      options: ['Italian'],
+      options: restaurantTypeStrings,
     },
     {
+      id: 'priceCategory',
       label: 'Price',
-      options: ['€', '€€', '€€€'],
+      options: new Map([
+        [1, '💲'],
+        [2, '💲💲'],
+        [3, '💲💲💲'],
+      ]),
     },
     {
+      id: 'averageRating',
       label: 'Rating',
-      options: ['Medium', 'Good', 'Excellent'],
-    },
-    {
-      label: 'Time',
-      options: [],
+      options: new Map([
+        [1, '⭐'],
+        [2, '⭐⭐'],
+        [3, '⭐⭐⭐'],
+        [4, '⭐⭐⭐⭐'],
+        [5, '⭐⭐⭐⭐⭐'],
+      ]),
     },
   ];
 
-  const restaurantApiHelp = new PaginatedApi<Restaurant>(10, pagination =>
-    restaurantApi
-      .getRestaurants([], pagination.currentPage, pagination.pageSize)
-      .then(result => [result, result.results ?? []]),
+  const noLocationDefined = query.location === undefined;
+  const currentlyChoosingLocation =
+    !noLocationDefined && query?.location?.lon === undefined;
+
+  const [showMap, setShowMap] = React.useState(currentlyChoosingLocation);
+  const [detailModalRestaurant, setDetailModalRestaurant] =
+    React.useState<Restaurant>({});
+  const [detailModalOpen, setDetailModalOpen] = React.useState(false);
+  const reloadTimeoutRef = React.useRef(0);
+
+  const restaurantApiHelp = new PaginatedApi<Restaurant>(
+    10,
+    pagination =>
+      restaurantApi
+        .getRestaurants(
+          queryToQueryStringArray(query),
+          pagination.currentPage,
+          pagination.pageSize,
+        )
+        .then(result => [result, result.results ?? []]),
+    showMap,
   );
   const [isLoading, restaurants, pagination] = restaurantApiHelp.state();
 
@@ -61,9 +96,17 @@ export default function SearchPage() {
     restaurantApiHelp.initialLoad();
   }, []);
 
-  const [detailModalRestaurant, setDetailModalRestaurant] =
-    React.useState<Restaurant>({});
-  const [detailModalOpen, setDetailModalOpen] = React.useState(false);
+  // Only reload after there was no activity for 0.5 seconds!
+  React.useEffect(() => {
+    window.clearTimeout(reloadTimeoutRef.current);
+    reloadTimeoutRef.current = window.setTimeout(() => {
+      if (!isLoading) restaurantApiHelp.initialLoad();
+    }, 500);
+  }, [query]);
+
+  React.useEffect(() => {
+    if (showMap) restaurantApiHelp.initialLoad();
+  }, [showMap]);
 
   const openDetailModal = (restaurant: Restaurant) => {
     setDetailModalRestaurant(restaurant);
@@ -71,20 +114,14 @@ export default function SearchPage() {
   };
   const handleDetailModalClose = () => setDetailModalOpen(false);
 
-  const [showMap, setShowMap] = React.useState(false);
   const toggleMap = () => setShowMap(!showMap);
 
-  const [location, setLocation] = React.useState<GeographicCoordinates>({
-    lat: 48.139244,
-    lon: 11.574231,
-  });
-
-  const updateLocation = (loc: GeographicCoordinates) => {
-    loc.lat ?? setShowMap(true);
-    setLocation(loc);
+  const handleLocationChanged = (location: GeographicCoordinates) => {
+    if (!showMap) location.lat ?? setShowMap(true);
+    if (query.radius === undefined)
+      setQuery({ ...query, location: location, radius: 5 });
+    else setQuery({ ...query, location: location });
   };
-
-  const [range, setRange] = React.useState(5);
 
   return (
     <>
@@ -100,26 +137,57 @@ export default function SearchPage() {
             <TextField
               variant='outlined'
               label='Search for restaurants'
+              onChange={e =>
+                setQuery({
+                  ...query,
+                  query: e.target.value,
+                })
+              }
+              defaultValue={query.query ?? ''}
               fullWidth
             />
           </Grid>
 
           {filterFormItems.map((item, filterKey) => (
-            <Grid item xs={2.4} key={filterKey}>
+            <Grid item xs={2.4} key={`filter-${filterKey}-${item.id}`}>
               <ComboBox
-                id={`${filterKey}`}
+                id={`filter-${filterKey}-${item.id}-comboBox`}
                 label={item.label}
                 options={item.options}
+                value={query[item.id]}
+                onChange={value =>
+                  setQuery({
+                    ...query,
+                    [item.id]: value,
+                  })
+                }
+                onClear={() =>
+                  setQuery({
+                    ...query,
+                    [item.id]: undefined,
+                  })
+                }
               />
             </Grid>
           ))}
 
           <Grid item xs={2.4}>
+            <TimeDatePeopleDropdown
+              timeslot={query.time}
+              numberOfVisitors={query.numberOfVisitors}
+            />
+          </Grid>
+
+          <Grid item xs={2.4}>
             <LocationDropdown
-              location={location}
-              setLocation={updateLocation}
-              range={range}
-              setRange={setRange}
+              location={query.location}
+              setLocation={handleLocationChanged}
+              radius={query.radius}
+              setRadius={radius => setQuery({ ...query, radius: radius })}
+              disabled={isLoading}
+              onClear={() =>
+                setQuery({ ...query, radius: undefined, location: undefined })
+              }
             ></LocationDropdown>
           </Grid>
 
@@ -135,6 +203,7 @@ export default function SearchPage() {
                 variant='contained'
                 startIcon={showMap ? <GridViewIcon /> : <LocationOnIcon />}
                 onClick={toggleMap}
+                disabled={currentlyChoosingLocation}
               >
                 {showMap ? 'Show grid' : 'Show map'}
               </Button>
@@ -147,9 +216,9 @@ export default function SearchPage() {
                 restaurants={restaurants}
                 onClick={restaurant => openDetailModal(restaurant)}
                 isLoading={isLoading}
-                center={location}
-                setCenter={setLocation}
-                range={range}
+                center={query.location}
+                setCenter={handleLocationChanged}
+                radius={query.radius}
               ></RestaurantMap>
             </Grid>
           ) : (
@@ -160,7 +229,7 @@ export default function SearchPage() {
                 </Grid>
               ) : (
                 restaurants.map(restaurant => (
-                  <Grid item xs={2.4} key={restaurant.id}>
+                  <Grid item xs={2.4} key={`restaurant-card-${restaurant.id}`}>
                     <RestaurantCard
                       restaurant={restaurant}
                       onClick={() => openDetailModal(restaurant)}
@@ -170,7 +239,7 @@ export default function SearchPage() {
               )}
               {Array.from(new Array(isLoading ? pagination.pageSize : 0)).map(
                 (_, index) => (
-                  <Grid item xs={2.4} key={index}>
+                  <Grid item xs={2.4} key={`restaurant-card-skeleton-${index}`}>
                     <Card>
                       <Skeleton variant='rectangular' height={118} />
                       <Skeleton variant='text' />
@@ -180,23 +249,22 @@ export default function SearchPage() {
                   </Grid>
                 ),
               )}
+              <Grid item xs={12} className='center-children'>
+                <Button
+                  onClick={() => {
+                    restaurantApiHelp.loadNextPage();
+                  }}
+                  disabled={restaurantApiHelp.atLastPage() || isLoading}
+                >
+                  {restaurantApiHelp.atLastPage()
+                    ? "That's all!"
+                    : isLoading
+                    ? 'Loading...'
+                    : 'Load more'}
+                </Button>
+              </Grid>
             </>
           )}
-
-          <Grid item xs={12} className='center-children'>
-            <Button
-              onClick={() => {
-                restaurantApiHelp.loadNextPage();
-              }}
-              disabled={restaurantApiHelp.atLastPage() || isLoading}
-            >
-              {restaurantApiHelp.atLastPage()
-                ? "That's all!"
-                : isLoading
-                ? 'Loading...'
-                : 'Load more'}
-            </Button>
-          </Grid>
 
           <Grid item xs={12}></Grid>
         </Grid>

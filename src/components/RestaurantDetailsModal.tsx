@@ -62,8 +62,8 @@ export default function RestaurantDetailsModal(params: {
   const [isLoading, comments, pagination] = restaurantApiHelp.state();
 
   React.useEffect(() => {
-    restaurantApiHelp.initialLoad();
-  }, [params]);
+    if (open) restaurantApiHelp.initialLoad();
+  }, [open]);
 
   return (
     <Modal
@@ -72,12 +72,7 @@ export default function RestaurantDetailsModal(params: {
       aria-labelledby='modal-modal-title'
       aria-describedby='modal-modal-description'
     >
-      <Fade
-        in={open}
-        onAnimationEnd={() => {
-          restaurantApiHelp.reset();
-        }}
-      >
+      <Fade in={open}>
         <Card className='restaurant-detail-modal' style={{ outline: 'none' }}>
           <Grid container spacing={2} alignItems='center'>
             <Grid item xs={9}>
@@ -115,7 +110,9 @@ export default function RestaurantDetailsModal(params: {
               >
                 {(restaurant?.images?.length ?? 0) > 0 ? (
                   (restaurant?.images || []).map((image, imageKey) => (
-                    <ImageListItem key={`${restaurant.id}-image-${imageKey}`}>
+                    <ImageListItem
+                      key={`details-modal-${restaurant.id}-image-${imageKey}`}
+                    >
                       <img src={`${configuration.basePath}/image/${image}`} />
                     </ImageListItem>
                   ))
@@ -176,7 +173,7 @@ export default function RestaurantDetailsModal(params: {
             ) : (
               comments.map((comment, commentKey) => (
                 <RestaurantComment
-                  key={`${restaurant.id}-comment-${commentKey}`}
+                  key={`details-modal-${restaurant.id}-comment-${commentKey}`}
                   comment={comment}
                 ></RestaurantComment>
               ))
@@ -185,7 +182,7 @@ export default function RestaurantDetailsModal(params: {
             {Array.from(new Array(isLoading ? pagination.pageSize : 0)).map(
               (_, key) => (
                 <RestaurantCommentSkeleton
-                  key={`${restaurant.id}-commentSkeleton-${key}`}
+                  key={`details-modal-${restaurant.id}-comment-skeleton-${key}`}
                 ></RestaurantCommentSkeleton>
               ),
             )}
