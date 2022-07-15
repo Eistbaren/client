@@ -1,10 +1,12 @@
 import React from 'react';
-import { Button, Menu, MenuItem, TextField, Typography } from '@mui/material';
+import { Button, Menu, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 import { timeslotToText, timeslotToDate } from './TimeslotText';
 
 import { Timeslot } from '../data';
+
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
 /**
  * TimeDatePeopleDropdown
@@ -22,9 +24,9 @@ export default function TimeDatePeopleDropdown(props: {
 
   const open = Boolean(anchorEl);
 
-  const value = `${timeslotToText(timeslot)} ${timeslotToDate(
+  const value = `${timeslotToText(timeslot)} | ${timeslotToDate(
     timeslot,
-  )} ${numberOfVisitors} ${
+  )} | ${numberOfVisitors} ${
     (numberOfVisitors ?? 1) > 1 ? 'visitors' : 'visitor'
   }`;
 
@@ -62,18 +64,23 @@ export default function TimeDatePeopleDropdown(props: {
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem>
+        <div style={{ padding: '6px 16px', width: '100%' }}>
           <Typography>
             To change this, you need
             <br />
             to go one step back
           </Typography>
-        </MenuItem>
-        <MenuItem>
-          <Button variant='outlined' onClick={changeTimeDatePeople}>
+        </div>
+        <div style={{ padding: '6px 16px', width: '100%' }}>
+          <Button
+            sx={{ width: '100%' }}
+            variant='outlined'
+            onClick={changeTimeDatePeople}
+            startIcon={<ChevronLeftIcon />}
+          >
             Go back
           </Button>
-        </MenuItem>
+        </div>
       </Menu>
     </div>
   );

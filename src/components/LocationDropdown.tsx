@@ -4,7 +4,6 @@ import {
   IconButton,
   InputAdornment,
   Menu,
-  MenuItem,
   Slider,
   TextField,
 } from '@mui/material';
@@ -98,7 +97,7 @@ export default function LocationDropdown(props: {
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem>
+        <div style={{ padding: '6px 16px', width: '100%' }}>
           <Button
             variant='outlined'
             onClick={changeLocation}
@@ -111,8 +110,8 @@ export default function LocationDropdown(props: {
               ? 'Click the map'
               : 'Change center'}
           </Button>
-        </MenuItem>
-        <MenuItem>
+        </div>
+        <div style={{ padding: '6px 16px', width: '100%' }}>
           <Slider
             aria-label='Range'
             value={radius}
@@ -126,7 +125,7 @@ export default function LocationDropdown(props: {
               disabled || noLocationDefined || currentlyChoosingLocation
             }
           />
-        </MenuItem>
+        </div>
       </Menu>
     </div>
   );
