@@ -214,10 +214,10 @@ export default function ReservationApproval() {
         <Grid
           container
           item
-          marginTop={8}
+          marginTop={-2}
           xs={6}
           spacing={2}
-          alignContent='flex-start'
+          alignContent='center'
           gap={2}
         >
           <Grid item xs={12}>
