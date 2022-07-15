@@ -38,7 +38,7 @@ export default function LocationDropdown(props: {
   const value = noLocationDefined
     ? undefined
     : currentlyChoosingLocation
-    ? 'Choose...'
+    ? 'Click the map!'
     : `${location.lat?.toFixed(1)}°, ${location.lon?.toFixed(
         1,
       )}° | ${radius}km`;

@@ -68,7 +68,11 @@ export default function SearchPage() {
     },
   ];
 
-  const [showMap, setShowMap] = React.useState(false);
+  const noLocationDefined = query.location === undefined;
+  const currentlyChoosingLocation =
+    !noLocationDefined && query?.location?.lon === undefined;
+
+  const [showMap, setShowMap] = React.useState(currentlyChoosingLocation);
   const [detailModalRestaurant, setDetailModalRestaurant] =
     React.useState<Restaurant>({});
   const [detailModalOpen, setDetailModalOpen] = React.useState(false);
@@ -199,6 +203,7 @@ export default function SearchPage() {
                 variant='contained'
                 startIcon={showMap ? <GridViewIcon /> : <LocationOnIcon />}
                 onClick={toggleMap}
+                disabled={currentlyChoosingLocation}
               >
                 {showMap ? 'Show grid' : 'Show map'}
               </Button>
