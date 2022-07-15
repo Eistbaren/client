@@ -21,6 +21,7 @@ import ComboBox from '../components/ComboBox';
 import LocationDropdown from '../components/LocationDropdown';
 import { Context } from '../data/Context';
 import PaginatedApi from '../data/PaginatedApi';
+import TimeDatePeopleDropdown from '../components/TimeDatePeopleDropdown';
 
 import {
   GeographicCoordinates,
@@ -167,17 +168,9 @@ export default function SearchPage() {
           ))}
 
           <Grid item xs={2.4}>
-            <ComboBox
-              id={`filter-time-comboBox`}
-              label='Time'
-              options={new Map<number, string>([])}
-              value={undefined}
-              onChange={() => {
-                return;
-              }}
-              onClear={() => {
-                return;
-              }}
+            <TimeDatePeopleDropdown
+              timeslot={query.time}
+              numberOfVisitors={query.numberOfVisitors}
             />
           </Grid>
 

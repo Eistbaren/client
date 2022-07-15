@@ -6,7 +6,7 @@ import { ToggleButton, ToggleButtonGroup } from '@mui/material';
  * @return {JSX.Element}
  */
 export default function NumberOfPersonsPicker(props: {
-  numberOfPersons: number;
+  numberOfPersons: number | undefined;
   setNumberOfPersons: (person: number) => void;
 }) {
   const { numberOfPersons, setNumberOfPersons } = props;
