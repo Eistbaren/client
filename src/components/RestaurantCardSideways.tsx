@@ -38,7 +38,7 @@ export default function RestaurantCardSideways(params: {
       <Card
         onClick={onClick}
         className='restaurant-card'
-        sx={{ display: 'flex', boxShadow: 14, backgroundColor: 'grey.A200' }}
+        sx={{ display: 'flex', boxShadow: 5, backgroundColor: 'grey.A200' }}
       >
         {restaurant ? (
           <CardMedia

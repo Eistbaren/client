@@ -359,7 +359,7 @@ export default function ReservationApproval() {
                       href={`${configuration.basePath}/reservation/${reservation.id}/ics`}
                       target='_blank'
                       rel='noreferrer'
-                      sx={{ boxShadow: 3 }}
+                      sx={{ boxShadow: 5 }}
                       download
                       fullWidth
                     >
