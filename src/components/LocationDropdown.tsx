@@ -39,7 +39,9 @@ export default function LocationDropdown(props: {
     ? undefined
     : currentlyChoosingLocation
     ? 'Choose...'
-    : `${location.lat?.toFixed(1)}°, ${location.lon?.toFixed(1)}°; ${radius}km`;
+    : `${location.lat?.toFixed(1)}°, ${location.lon?.toFixed(
+        1,
+      )}° | ${radius}km`;
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);
