@@ -6,6 +6,8 @@ import {
   Skeleton,
   Card,
   Box,
+  CardContent,
+  CardActions,
 } from '@mui/material';
 
 import LocationOnIcon from '@mui/icons-material/LocationOn';
@@ -78,6 +80,7 @@ export default function SearchPage() {
   const [detailModalOpen, setDetailModalOpen] = React.useState(false);
   const [reloadTimeoutRunning, setReloadTimeoutRunning] = React.useState(false);
   const reloadTimeoutRef = React.useRef(0);
+  const searchInputTimeoutRef = React.useRef(0);
 
   const restaurantApiHelp = new PaginatedApi<Restaurant>(
     10,
@@ -126,6 +129,17 @@ export default function SearchPage() {
     else setQuery({ ...query, location: location });
   };
 
+  const handleSearchInput = (value: string) => {
+    //if (!reloadTimeoutRunning) setReloadTimeoutRunning(true);
+    window.clearTimeout(searchInputTimeoutRef.current);
+    searchInputTimeoutRef.current = window.setTimeout(() => {
+      setQuery({
+        ...query,
+        query: value,
+      });
+    }, 500);
+  };
+
   return (
     <>
       <div className='search-container'>
@@ -140,12 +154,7 @@ export default function SearchPage() {
             <TextField
               variant='outlined'
               label='Search for restaurants'
-              onChange={e =>
-                setQuery({
-                  ...query,
-                  query: e.target.value,
-                })
-              }
+              onChange={e => handleSearchInput(e.target.value)}
               defaultValue={query.query ?? ''}
               fullWidth
             />
@@ -248,10 +257,20 @@ export default function SearchPage() {
               ).map((_, index) => (
                 <Grid item xs={2.4} key={`restaurant-card-skeleton-${index}`}>
                   <Card>
-                    <Skeleton variant='rectangular' height={118} />
-                    <Skeleton variant='text' />
-                    <Skeleton variant='text' width={'60%'} />
-                    <Skeleton variant='text' width={'60%'} />
+                    <Skeleton variant='rectangular' height={140} />
+                    <CardContent>
+                      <Skeleton
+                        variant='text'
+                        sx={{ marginBottom: '0.35em' }}
+                        height={32}
+                      />
+                      <Skeleton variant='text' width={'60%'} />
+                      <Skeleton variant='text' width={'60%'} />
+                    </CardContent>
+
+                    <CardActions>
+                      <Skeleton variant='text' width={'60%'} height={36} />
+                    </CardActions>
                   </Card>
                 </Grid>
               ))}
