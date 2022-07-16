@@ -76,6 +76,7 @@ export default function SearchPage() {
   const [detailModalRestaurant, setDetailModalRestaurant] =
     React.useState<Restaurant>({});
   const [detailModalOpen, setDetailModalOpen] = React.useState(false);
+  const [reloadTimeoutRunning, setReloadTimeoutRunning] = React.useState(false);
   const reloadTimeoutRef = React.useRef(0);
 
   const restaurantApiHelp = new PaginatedApi<Restaurant>(
@@ -98,8 +99,10 @@ export default function SearchPage() {
 
   // Only reload after there was no activity for 0.5 seconds!
   React.useEffect(() => {
+    if (!reloadTimeoutRunning) setReloadTimeoutRunning(true);
     window.clearTimeout(reloadTimeoutRef.current);
     reloadTimeoutRef.current = window.setTimeout(() => {
+      setReloadTimeoutRunning(false);
       if (!isLoading) restaurantApiHelp.initialLoad();
     }, 500);
   }, [query]);
@@ -228,6 +231,7 @@ export default function SearchPage() {
                   No restaurant found
                 </Grid>
               ) : (
+                !reloadTimeoutRunning &&
                 restaurants.map(restaurant => (
                   <Grid item xs={2.4} key={`restaurant-card-${restaurant.id}`}>
                     <RestaurantCard
@@ -237,18 +241,20 @@ export default function SearchPage() {
                   </Grid>
                 ))
               )}
-              {Array.from(new Array(isLoading ? pagination.pageSize : 0)).map(
-                (_, index) => (
-                  <Grid item xs={2.4} key={`restaurant-card-skeleton-${index}`}>
-                    <Card>
-                      <Skeleton variant='rectangular' height={118} />
-                      <Skeleton variant='text' />
-                      <Skeleton variant='text' width={'60%'} />
-                      <Skeleton variant='text' width={'60%'} />
-                    </Card>
-                  </Grid>
+              {Array.from(
+                new Array(
+                  isLoading || reloadTimeoutRunning ? pagination.pageSize : 0,
                 ),
-              )}
+              ).map((_, index) => (
+                <Grid item xs={2.4} key={`restaurant-card-skeleton-${index}`}>
+                  <Card>
+                    <Skeleton variant='rectangular' height={118} />
+                    <Skeleton variant='text' />
+                    <Skeleton variant='text' width={'60%'} />
+                    <Skeleton variant='text' width={'60%'} />
+                  </Card>
+                </Grid>
+              ))}
               <Grid item xs={12} className='center-children'>
                 <Button
                   onClick={() => {
