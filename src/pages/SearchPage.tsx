@@ -130,7 +130,7 @@ export default function SearchPage() {
   };
 
   const handleSearchInput = (value: string) => {
-    //if (!reloadTimeoutRunning) setReloadTimeoutRunning(true);
+    if (!reloadTimeoutRunning) setReloadTimeoutRunning(true);
     window.clearTimeout(searchInputTimeoutRef.current);
     searchInputTimeoutRef.current = window.setTimeout(() => {
       setQuery({
