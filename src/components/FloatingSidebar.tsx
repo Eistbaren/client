@@ -4,12 +4,21 @@ import BookIcon from '@mui/icons-material/Book';
 
 /**
  * Displays the flaoting Sidebar with imprint and api docs
+ * @param {boolean} params
  * @return {JSX.Element}
  */
-export default function FloatingSidebar() {
+export default function FloatingSidebar(params: {
+  onImprintClicked: () => void;
+}) {
+  const { onImprintClicked } = params;
   return (
     <div className='social-icons'>
-      <Tooltip title='Imprint' placement='right' arrow>
+      <Tooltip
+        title='Imprint'
+        placement='right'
+        arrow
+        onClick={onImprintClicked}
+      >
         <IconButton>
           <InfoIcon fontSize='large' className='social-icon' />
         </IconButton>

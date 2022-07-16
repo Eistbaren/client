@@ -2,7 +2,7 @@ import { Button, Stack } from '@mui/material';
 import { CalendarPicker } from '@mui/x-date-pickers';
 
 import { Context } from '../data/Context';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 
 import NumberOfPersonsPicker from '../components/NumberOfPersonsPicker';
 import FloatingSidebar from '../components/FloatingSidebar';
@@ -10,6 +10,7 @@ import FloatingSidebar from '../components/FloatingSidebar';
 import '../css/Landingpage.css';
 import QueryTimeslotTimePicker from '../components/QueryTimeslotTimePicker';
 import { Link as RouterLink } from 'react-router-dom';
+import ImprintModal from '../components/ImprintModal';
 
 /**
  * Landingpage
@@ -17,6 +18,8 @@ import { Link as RouterLink } from 'react-router-dom';
  */
 export default function Landingpage() {
   const { query, setQuery } = useContext(Context);
+
+  const [imprintModalOpen, setImprintModalOpen] = useState(false);
 
   /**
    * Sets the date for both times
@@ -43,80 +46,86 @@ export default function Landingpage() {
   }
 
   return (
-    <div className='hero-container'>
-      <div className='hero-content'>
-        <h1 className='hero-heading'>
-          Book your next
-          <br />
-          culinary adventure
-        </h1>
-        <p className='hero-subheading'>
-          Experience the very best from thousands of different cuisines!
-        </p>
-        <Stack direction='row' spacing={2}>
-          <RouterLink
-            to='/search'
-            style={{ textDecoration: 'none', color: 'inherit' }}
-          >
-            <Button
-              variant='contained'
-              color='primary'
-              size='large'
-              sx={{ boxShadow: 3 }}
+    <>
+      <div className='hero-container'>
+        <div className='hero-content'>
+          <h1 className='hero-heading'>
+            Book your next
+            <br />
+            culinary adventure
+          </h1>
+          <p className='hero-subheading'>
+            Experience the very best from thousands of different cuisines!
+          </p>
+          <Stack direction='row' spacing={2}>
+            <RouterLink
+              to='/search'
+              style={{ textDecoration: 'none', color: 'inherit' }}
             >
-              Book a table
-            </Button>
-          </RouterLink>
-          <RouterLink
-            to='/search'
-            style={{ textDecoration: 'none', color: 'inherit' }}
-          >
-            <Button
-              variant='outlined'
-              color='secondary'
-              size='large'
-              sx={{ boxShadow: 14 }}
+              <Button
+                variant='contained'
+                color='primary'
+                size='large'
+                sx={{ boxShadow: 3 }}
+              >
+                Book a table
+              </Button>
+            </RouterLink>
+            <RouterLink
+              to='/search'
+              style={{ textDecoration: 'none', color: 'inherit' }}
             >
-              Start browsing
-            </Button>
-          </RouterLink>
-        </Stack>
-      </div>
-      <div className='hero-image-container'>
-        <p className='label'>Number of Persons</p>
-        <NumberOfPersonsPicker
-          numberOfPersons={query.numberOfVisitors}
-          setNumberOfPersons={newNumberOfVisiors =>
-            setQuery({ ...query, numberOfVisitors: newNumberOfVisiors })
-          }
-        />
-        <p className='label'>Pick a date & time</p>
-        <CalendarPicker
-          openTo='day'
-          date={new Date((query.time?.from ?? 0) * 1000)}
-          onChange={handleDateInput}
-          disablePast
-          views={['day']}
-          className='calendar-picker'
-        />
-        <div className='time-picker-container'>
-          <QueryTimeslotTimePicker
-            query={query}
-            setQuery={setQuery}
-            label='Start time'
-            timestampToChoose='from'
-          />
-          <QueryTimeslotTimePicker
-            query={query}
-            setQuery={setQuery}
-            label='End time'
-            timestampToChoose='to'
-            minTime={(query.time?.from ?? 0) + 60 * 30}
-          />
+              <Button
+                variant='outlined'
+                color='secondary'
+                size='large'
+                sx={{ boxShadow: 14 }}
+              >
+                Start browsing
+              </Button>
+            </RouterLink>
+          </Stack>
         </div>
-        <div className='background-image'></div>
-        <FloatingSidebar />
+        <div className='hero-image-container'>
+          <p className='label'>Number of Persons</p>
+          <NumberOfPersonsPicker
+            numberOfPersons={query.numberOfVisitors}
+            setNumberOfPersons={newNumberOfVisiors =>
+              setQuery({ ...query, numberOfVisitors: newNumberOfVisiors })
+            }
+          />
+          <p className='label'>Pick a date & time</p>
+          <CalendarPicker
+            openTo='day'
+            date={new Date((query.time?.from ?? 0) * 1000)}
+            onChange={handleDateInput}
+            disablePast
+            views={['day']}
+            className='calendar-picker'
+          />
+          <div className='time-picker-container'>
+            <QueryTimeslotTimePicker
+              query={query}
+              setQuery={setQuery}
+              label='Start time'
+              timestampToChoose='from'
+            />
+            <QueryTimeslotTimePicker
+              query={query}
+              setQuery={setQuery}
+              label='End time'
+              timestampToChoose='to'
+              minTime={(query.time?.from ?? 0) + 60 * 30}
+            />
+          </div>
+          <div className='background-image'></div>
+          <FloatingSidebar onImprintClicked={() => setImprintModalOpen(true)} />
+        </div>
       </div>
-    </div>
+      <ImprintModal
+        open={imprintModalOpen}
+        onClose={() => setImprintModalOpen(false)}
+      />
+    </>
   );
 }
