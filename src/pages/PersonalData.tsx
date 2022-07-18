@@ -122,8 +122,7 @@ export default function PersonalData() {
               </IconButton>
             }
             severity={alert?.severity}
-            variant='outlined'
-            sx={{ mb: 2 }}
+            sx={{ mb: 2, boxShadow: 5 }}
           >
             <AlertTitle>{alert?.title ?? 'An error occured!'}</AlertTitle>
             {alert?.body ??
