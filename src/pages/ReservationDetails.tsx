@@ -219,11 +219,11 @@ export default function ReservationApproval() {
             <Collapse in={showAlert}>
               <Alert
                 severity={alert?.severity}
-                style={{ marginBottom: '10px', marginTop: '10px' }}
-                variant='outlined'
+                style={{ marginBottom: '5px' }}
                 onClose={
                   showReservation ? () => setShowAlert(false) : undefined
                 }
+                sx={{ boxShadow: 5 }}
               >
                 <AlertTitle>{alert?.title}</AlertTitle>
                 {alert?.body}
