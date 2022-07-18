@@ -96,6 +96,13 @@ export default function TableSelectionPage() {
       alert('This table cannot be reserved!');
       return;
     }
+    if (
+      ((query.time?.from ?? 1) - new Date().getTime() / 1000) / 3600 < 12 ||
+      ((query.time?.to ?? 1) - new Date().getTime() / 1000) / 3600 < 12
+    ) {
+      alert('Reservation must be at least 12h in the future!');
+      return;
+    }
     if ((query.time?.from ?? 1) + 60 * 30 > (query.time?.to ?? 0)) {
       alert('Please select a valid time range!');
       return;

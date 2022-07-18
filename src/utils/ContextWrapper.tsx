@@ -27,7 +27,6 @@ export default function ContextWrapper(props: { children: JSX.Element }) {
 
   // default values
   const from = new Date();
-  from.setMinutes(from.getMinutes() + 30);
   from.setMinutes(0);
   from.setDate(from.getDate() + 1);
   const to = new Date(from);
