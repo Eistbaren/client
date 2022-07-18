@@ -15,6 +15,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PublicIcon from '@mui/icons-material/Public';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { Comment, Restaurant } from '../data/api';
 import React from 'react';
 import { Context } from '../data/Context';
@@ -128,19 +129,19 @@ export default function RestaurantDetailsModal(params: {
               <Divider />
             </Grid>
 
-            <Grid item xs={1}>
+            <Grid item xs={0.6}>
               <AccessTimeIcon />
             </Grid>
 
-            <Grid item xs={5}>
+            <Grid item xs={3.4}>
               Opening hours: <TimeslotText timeslot={restaurant.openingHours} />
             </Grid>
 
-            <Grid item xs={1}>
+            <Grid item xs={0.6}>
               <PublicIcon />
             </Grid>
 
-            <Grid item xs={5}>
+            <Grid item xs={3}>
               <Link
                 href={
                   restaurant.website?.includes('://')
@@ -152,8 +153,28 @@ export default function RestaurantDetailsModal(params: {
                   e.stopPropagation();
                 }}
               >
-                {restaurant.website}
+                Visit website
               </Link>
+            </Grid>
+
+            <Grid item xs={0.6}>
+              <LocationOnIcon />
+            </Grid>
+
+            <Grid item xs={3.8}>
+              <Link
+                href={`https://www.google.com/maps/place/${restaurant.location?.lat}+${restaurant.location?.lon}`}
+                target='_blank'
+                onClick={e => {
+                  e.stopPropagation();
+                }}
+              >
+                View on Google Maps
+              </Link>
+            </Grid>
+
+            <Grid item xs={12}>
+              <Divider />
             </Grid>
 
             <Grid item xs={12}>
