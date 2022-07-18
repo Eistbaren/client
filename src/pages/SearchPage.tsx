@@ -163,7 +163,7 @@ export default function SearchPage() {
           <Grid item xs={3}>
             <TimeDatePeopleDropdown
               timeslot={query.time}
-              numberOfVisitors={query.numberOfVisitors}
+              numberOfVisitors={query.numberVisitors}
             />
           </Grid>
 
