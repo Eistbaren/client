@@ -1,6 +1,6 @@
 import { TextField } from '@mui/material';
 import { TimePicker } from '@mui/x-date-pickers';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { Query, Timeslot } from '../data';
 
@@ -40,6 +40,19 @@ export default function QueryTimeslotTimePicker(
     return timeslot[ttc] ?? 0;
   };
 
+  useEffect(() => {
+    const diff =
+      (getTimstampType(query.time, timestampToChoose) -
+        new Date().getTime() / 1000) /
+      3600;
+    if (diff < 12) {
+      setError(true);
+      return;
+    } else {
+      setError(false);
+    }
+  }, [query]);
+
   const handleValueChanged = (value: Date | null) => {
     if (!(value instanceof Date) || isNaN(value?.getHours())) {
       return;
@@ -49,15 +62,6 @@ export default function QueryTimeslotTimePicker(
     );
     newDate.setHours(value?.getHours() ?? 0);
     newDate.setMinutes(value?.getMinutes() ?? 0);
-
-    const diff = (newDate.getTime() - new Date().getTime()) / 3600000;
-    console.log(diff);
-    if (diff < 12) {
-      setError(true);
-      return;
-    } else {
-      setError(false);
-    }
 
     const newTime: Timeslot = {};
     newTime[timestampNotToChoose] = getTimstampType(
