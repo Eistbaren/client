@@ -84,9 +84,9 @@ export default function Landingpage() {
         <div className='hero-image-container'>
           <p className='label'>Number of Persons</p>
           <NumberOfPersonsPicker
-            numberOfPersons={query.numberOfVisitors}
+            numberOfPersons={query.numberVisitors}
             setNumberOfPersons={newNumberOfVisiors =>
-              setQuery({ ...query, numberOfVisitors: newNumberOfVisiors })
+              setQuery({ ...query, numberVisitors: newNumberOfVisiors })
             }
           />
           <p className='label'>Pick a date & time</p>

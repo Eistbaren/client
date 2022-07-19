@@ -21,7 +21,7 @@ export interface Query {
   radius?: number;
   averageRating?: number;
   time?: Timeslot;
-  numberOfVisitors?: number;
+  numberVisitors?: number;
 }
 
 /**

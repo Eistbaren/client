@@ -6,6 +6,11 @@ import {
   Button,
   Chip,
   Collapse,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
   Grid,
   Skeleton,
   Stack,
@@ -49,6 +54,8 @@ export default function ReservationApproval() {
   const [isConfirmButtonLoading, setConfirmButtonLoading] =
     useState<boolean>(false);
   const [isCancelButtonLoading, setCancelButtonLoading] =
+    useState<boolean>(false);
+  const [confirmationDialogOpen, setConfirmationDialogOpen] =
     useState<boolean>(false);
 
   const { configuration, reservationApi, tableApi, restaurantApi } =
@@ -110,21 +117,26 @@ export default function ReservationApproval() {
     return a;
   };
 
-  const cancelReservation = async () => {
+  const cancelReservation = async (confirmed?: boolean) => {
+    if (confirmed === undefined || !confirmed) {
+      setConfirmationDialogOpen(true);
+      return;
+    }
+
+    setConfirmationDialogOpen(false);
     setCancelButtonLoading(true);
 
-    window.confirm('Are you sure you want to cancel your reservation?') &&
-      (await reservationApi
-        .deleteReservation(reservationId ?? '')
-        .then(() => {
-          successAlert('Reservation canceled!');
-          setReservation(undefined);
-          setShowReservation(false);
-        })
-        .catch(() => {
-          errorAlert('Something went wrong canceling your reservation');
-        }));
-    setCancelButtonLoading(false);
+    reservationApi
+      .deleteReservation(reservationId ?? '')
+      .then(() => {
+        successAlert('Reservation canceled!');
+        setReservation(undefined);
+        setShowReservation(false);
+      })
+      .catch(() => {
+        errorAlert('Something went wrong canceling your reservation');
+      })
+      .finally(() => setCancelButtonLoading(false));
   };
 
   const confirmReservation = async () => {
@@ -219,11 +231,11 @@ export default function ReservationApproval() {
             <Collapse in={showAlert}>
               <Alert
                 severity={alert?.severity}
-                style={{ marginBottom: '10px', marginTop: '10px' }}
-                variant='outlined'
+                style={{ marginBottom: '5px' }}
                 onClose={
                   showReservation ? () => setShowAlert(false) : undefined
                 }
+                sx={{ boxShadow: 5 }}
               >
                 <AlertTitle>{alert?.title}</AlertTitle>
                 {alert?.body}
@@ -402,6 +414,28 @@ export default function ReservationApproval() {
           hideReservationButton={true}
         ></RestaurantDetailsModal>
       )}
+
+      <Dialog
+        open={confirmationDialogOpen}
+        onClose={() => setConfirmationDialogOpen(false)}
+        aria-labelledby='alert-dialog-title'
+        aria-describedby='alert-dialog-description'
+      >
+        <DialogTitle id='alert-dialog-title'>
+          {'Cancel reservation?'}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id='alert-dialog-description'>
+            Are you sure you want to cancel your reservation?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmationDialogOpen(false)}>No</Button>
+          <Button onClick={() => cancelReservation(true)} autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

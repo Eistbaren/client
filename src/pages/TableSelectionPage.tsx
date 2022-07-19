@@ -107,7 +107,7 @@ export default function TableSelectionPage() {
       alert('Please select a valid time range!');
       return;
     }
-    if ((table?.seats ?? 0) < (query?.numberOfVisitors ?? 1)) {
+    if ((table?.seats ?? 0) < (query?.numberVisitors ?? 1)) {
       alert('This table does not have enough seats!');
       return;
     }
@@ -220,7 +220,7 @@ export default function TableSelectionPage() {
                       invalidToDate ||
                       reservedTables.indexOf(table.id ?? '') >= 0 ||
                       reservationsLoading ||
-                      (table?.seats ?? 0) < (query?.numberOfVisitors ?? 1)
+                      (table?.seats ?? 0) < (query?.numberVisitors ?? 1)
                     }
                     tooltip={
                       table.id === undefined ? (
@@ -241,8 +241,7 @@ export default function TableSelectionPage() {
                         </div>
                       ) : reservationsLoading ? (
                         'Please wait...'
-                      ) : (table?.seats ?? 0) <
-                        (query?.numberOfVisitors ?? 1) ? (
+                      ) : (table?.seats ?? 0) < (query?.numberVisitors ?? 1) ? (
                         'This table does not have enough seats'
                       ) : (
                         ''
