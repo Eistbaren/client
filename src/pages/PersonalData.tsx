@@ -148,6 +148,7 @@ export default function PersonalData() {
               ? 'Please enter your first and last name'
               : ''
           }
+          autoFocus
         />
 
         <TextField
