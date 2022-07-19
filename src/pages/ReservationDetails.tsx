@@ -332,7 +332,7 @@ export default function ReservationApproval() {
                 </Grid>
                 <Grid container item xs={12} spacing={2}>
                   {!reservation.confirmed && confirmationToken && (
-                    <Grid item xs>
+                    <Grid item xs={12}>
                       <LoadingButton
                         variant='contained'
                         color='success'
@@ -375,7 +375,7 @@ export default function ReservationApproval() {
                       download
                       fullWidth
                     >
-                      ICS File
+                      Add to calendar
                     </Button>
                   </Grid>
                 </Grid>
