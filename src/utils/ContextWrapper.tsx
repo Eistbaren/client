@@ -39,7 +39,7 @@ export default function ContextWrapper(props: { children: JSX.Element }) {
         from: Math.floor(from.valueOf() / 1000),
         to: Math.floor(to.valueOf() / 1000),
       },
-      numberOfVisitors: 1,
+      numberVisitors: 1,
     },
     restaurant: {},
     reservationCreationRequest: {},
