@@ -91,10 +91,10 @@ export default function QueryTimeslotTimePicker(
       onChange={handleValueChanged}
       renderInput={params => (
         <TextField
-          {...params}
           label={label}
           error={invalidDate}
           helperText={invalidDate && 'Must be at least 12h in the future'}
+          {...params}
         />
       )}
       minutesStep={30}
