@@ -375,7 +375,7 @@ export default function ReservationApproval() {
                       download
                       fullWidth
                     >
-                      ICS File
+                      Add to calendar
                     </Button>
                   </Grid>
                 </Grid>
