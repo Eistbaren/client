@@ -1,4 +1,4 @@
-import { Button, Stack } from '@mui/material';
+import { Button } from '@mui/material';
 import { CalendarPicker } from '@mui/x-date-pickers';
 
 import { Context } from '../data/Context';
@@ -9,7 +9,6 @@ import FloatingSidebar from '../components/FloatingSidebar';
 
 import '../css/Landingpage.css';
 import QueryTimeslotTimePicker from '../components/QueryTimeslotTimePicker';
-import { Link as RouterLink } from 'react-router-dom';
 import ImprintModal from '../components/ImprintModal';
 
 import { useNavigate } from 'react-router-dom';
