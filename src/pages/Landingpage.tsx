@@ -21,6 +21,9 @@ export default function Landingpage() {
 
   const [imprintModalOpen, setImprintModalOpen] = useState(false);
 
+  const [invalidFromDate, setInvalidFromDate] = useState(false);
+  const [invalidToDate, setInvaliToDate] = useState(false);
+
   /**
    * Sets the date for both times
    * @param  {Date} value
@@ -67,23 +70,15 @@ export default function Landingpage() {
                 color='primary'
                 size='large'
                 sx={{ boxShadow: 3 }}
+                disabled={invalidFromDate || invalidToDate}
               >
-                Book a table
+                Find a table
               </Button>
             </RouterLink>
             <RouterLink
               to='/search'
               style={{ textDecoration: 'none', color: 'inherit' }}
-            >
-              <Button
-                variant='outlined'
-                color='secondary'
-                size='large'
-                sx={{ boxShadow: 14 }}
-              >
-                Start browsing
-              </Button>
-            </RouterLink>
+            ></RouterLink>
           </Stack>
         </div>
         <div className='hero-image-container'>
@@ -107,12 +102,16 @@ export default function Landingpage() {
             <QueryTimeslotTimePicker
               query={query}
               setQuery={setQuery}
+              invalidDate={invalidFromDate}
+              setInvalidDate={setInvalidFromDate}
               label='Start time'
               timestampToChoose='from'
             />
             <QueryTimeslotTimePicker
               query={query}
               setQuery={setQuery}
+              invalidDate={invalidToDate}
+              setInvalidDate={setInvaliToDate}
               label='End time'
               timestampToChoose='to'
               minTime={(query.time?.from ?? 0) + 60 * 30}

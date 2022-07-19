@@ -24,6 +24,9 @@ export default function TableSelectionPage() {
     configuration,
   } = React.useContext(Context);
 
+  const [invalidFromDate, setInvalidFromDate] = React.useState(false);
+  const [invalidToDate, setInvalidToDate] = React.useState(false);
+
   if (
     restaurant.openingHours?.from === undefined ||
     restaurant.openingHours.to === undefined
@@ -96,10 +99,7 @@ export default function TableSelectionPage() {
       alert('This table cannot be reserved!');
       return;
     }
-    if (
-      ((query.time?.from ?? 1) - new Date().getTime() / 1000) / 3600 < 12 ||
-      ((query.time?.to ?? 1) - new Date().getTime() / 1000) / 3600 < 12
-    ) {
+    if (invalidFromDate || invalidToDate) {
       alert('Reservation must be at least 12h in the future!');
       return;
     }
@@ -155,6 +155,8 @@ export default function TableSelectionPage() {
           <QueryTimeslotTimePicker
             query={query}
             setQuery={setQuery}
+            invalidDate={invalidFromDate}
+            setInvalidDate={setInvalidFromDate}
             label='Start time'
             timestampToChoose='from'
             // include 15 minutes buffer, it does not work otherwise \(*~*)/
@@ -167,6 +169,8 @@ export default function TableSelectionPage() {
           <QueryTimeslotTimePicker
             query={query}
             setQuery={setQuery}
+            invalidDate={invalidToDate}
+            setInvalidDate={setInvalidToDate}
             label='End time'
             timestampToChoose='to'
             minTime={(query.time?.from ?? 0) + 60 * 30}
@@ -212,6 +216,8 @@ export default function TableSelectionPage() {
                       },
                     }}
                     disabled={
+                      invalidFromDate ||
+                      invalidToDate ||
                       reservedTables.indexOf(table.id ?? '') >= 0 ||
                       reservationsLoading ||
                       (table?.seats ?? 0) < (query?.numberOfVisitors ?? 1)

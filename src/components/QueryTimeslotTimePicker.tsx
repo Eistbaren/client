@@ -1,12 +1,14 @@
 import { TextField } from '@mui/material';
 import { TimePicker } from '@mui/x-date-pickers';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { Query, Timeslot } from '../data';
 
 interface QueryTimeslotTimePickerProps {
   query: Query;
   setQuery: (query: Query) => void;
+  invalidDate: boolean;
+  setInvalidDate: (invalid: boolean) => void;
   label: string;
   timestampToChoose: 'from' | 'to';
   minTime?: number;
@@ -21,9 +23,16 @@ interface QueryTimeslotTimePickerProps {
 export default function QueryTimeslotTimePicker(
   props: QueryTimeslotTimePickerProps,
 ) {
-  const { query, setQuery, label, timestampToChoose, minTime, maxTime } = props;
-
-  const [error, setError] = React.useState(false);
+  const {
+    query,
+    setQuery,
+    invalidDate,
+    setInvalidDate,
+    label,
+    timestampToChoose,
+    minTime,
+    maxTime,
+  } = props;
 
   const minDate = minTime === undefined ? undefined : new Date(minTime * 1000);
   const maxDate = maxTime === undefined ? undefined : new Date(maxTime * 1000);
@@ -46,10 +55,10 @@ export default function QueryTimeslotTimePicker(
         new Date().getTime() / 1000) /
       3600;
     if (diff < 12) {
-      setError(true);
+      setInvalidDate(true);
       return;
     } else {
-      setError(false);
+      setInvalidDate(false);
     }
   }, [query]);
 
@@ -84,8 +93,8 @@ export default function QueryTimeslotTimePicker(
         <TextField
           {...params}
           label={label}
-          error={error}
-          helperText={error && 'Must be at least 12h in the future'}
+          error={invalidDate}
+          helperText={invalidDate && 'Must be at least 12h in the future'}
         />
       )}
       minutesStep={30}
