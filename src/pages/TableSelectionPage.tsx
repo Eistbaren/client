@@ -24,6 +24,9 @@ export default function TableSelectionPage() {
     configuration,
   } = React.useContext(Context);
 
+  const [invalidFromDate, setInvalidFromDate] = React.useState(false);
+  const [invalidToDate, setInvalidToDate] = React.useState(false);
+
   if (
     restaurant.openingHours?.from === undefined ||
     restaurant.openingHours.to === undefined
@@ -91,22 +94,66 @@ export default function TableSelectionPage() {
     );
   };
 
-  const handleTablePicked = (table: Table) => {
+  const fixSize = (originalSize?: number) => {
+    return (originalSize ?? 0) * sizeFactor;
+  };
+
+  window.addEventListener('resize', () => handleResize());
+
+  const isInOpeningHours = () => {
+    if (
+      !restaurant.openingHours?.from ||
+      !restaurant.openingHours?.to ||
+      !query.time?.from ||
+      !query.time?.to
+    ) {
+      return false;
+    }
+    // Extract hours and minutes and delete seconds
+    const openingFromMinutes = (restaurant.openingHours.from % 86400) / 60;
+    const openingToMinutes = (restaurant.openingHours.to % 86400) / 60;
+    const queryFromMinutes = (query.time.from % 86400) / 60;
+    const queryToMinutes = (query.time.to % 86400) / 60;
+    console.log(openingFromMinutes);
+    return (
+      queryFromMinutes >= openingFromMinutes &&
+      queryToMinutes >= openingFromMinutes &&
+      queryFromMinutes <= openingToMinutes &&
+      queryToMinutes <= openingToMinutes
+    );
+  };
+
+  const disableTable = (table: Table): string => {
     if (table.id === undefined) {
-      alert('This table cannot be reserved!');
-      return;
+      return 'This table cannot be reserved!';
+    }
+    if (invalidFromDate || invalidToDate) {
+      return 'Reservation time must be at least 12h in the future!';
+    }
+    if (!isInOpeningHours()) {
+      return 'Reservation time is outside of the opening hours!';
     }
     if ((query.time?.from ?? 1) + 60 * 30 > (query.time?.to ?? 0)) {
-      alert('Please select a valid time range!');
-      return;
+      return 'Invalid time range!';
+    }
+    if (reservedTables.indexOf(table.id ?? '') >= 0) {
+      return 'This table is already reserved!';
     }
     if ((table?.seats ?? 0) < (query?.numberVisitors ?? 1)) {
-      alert('This table does not have enough seats!');
+      return 'This table does not have enough seats!';
+    }
+    return '';
+  };
+
+  const handleTablePicked = (table: Table) => {
+    const msg = disableTable(table);
+    if (msg !== '') {
+      alert(msg);
       return;
     }
     setReservationCreationRequest({
       ...reservationCreationRequest,
-      tables: [table.id],
+      tables: [table.id ?? ''],
       time: query.time,
     });
     navigate(`/personal-data`);
@@ -117,12 +164,6 @@ export default function TableSelectionPage() {
       r => (r.tables?.indexOf(tableId) ?? -1) >= 0,
     );
   };
-
-  const fixSize = (originalSize?: number) => {
-    return (originalSize ?? 0) * sizeFactor;
-  };
-
-  window.addEventListener('resize', () => handleResize());
 
   return (
     <div className={'table-selection-container'}>
@@ -148,6 +189,8 @@ export default function TableSelectionPage() {
           <QueryTimeslotTimePicker
             query={query}
             setQuery={setQuery}
+            invalidDate={invalidFromDate}
+            setInvalidDate={setInvalidFromDate}
             label='Start time'
             timestampToChoose='from'
             // include 15 minutes buffer, it does not work otherwise \(*~*)/
@@ -160,6 +203,8 @@ export default function TableSelectionPage() {
           <QueryTimeslotTimePicker
             query={query}
             setQuery={setQuery}
+            invalidDate={invalidToDate}
+            setInvalidDate={setInvalidToDate}
             label='End time'
             timestampToChoose='to'
             minTime={(query.time?.from ?? 0) + 60 * 30}
@@ -204,13 +249,11 @@ export default function TableSelectionPage() {
                         height: fixSize(table.floorPlan?.size?.height),
                       },
                     }}
-                    disabled={
-                      reservedTables.indexOf(table.id ?? '') >= 0 ||
-                      reservationsLoading ||
-                      (table?.seats ?? 0) < (query?.numberVisitors ?? 1)
-                    }
+                    disabled={reservationsLoading || disableTable(table) !== ''}
                     tooltip={
-                      table.id === undefined ? (
+                      reservationsLoading ? (
+                        'Please wait...'
+                      ) : table.id === undefined ? (
                         'There is a problem with this table!'
                       ) : reservedTables.indexOf(table.id ?? '') >= 0 ? (
                         <div>
@@ -226,12 +269,8 @@ export default function TableSelectionPage() {
                               ))}
                           </ul>
                         </div>
-                      ) : reservationsLoading ? (
-                        'Please wait...'
-                      ) : (table?.seats ?? 0) < (query?.numberVisitors ?? 1) ? (
-                        'This table does not have enough seats'
                       ) : (
-                        ''
+                        disableTable(table)
                       )
                     }
                     onClick={() => {

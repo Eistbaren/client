@@ -1,11 +1,14 @@
 import { TextField } from '@mui/material';
 import { TimePicker } from '@mui/x-date-pickers';
+import { useEffect } from 'react';
 
 import { Query, Timeslot } from '../data';
 
 interface QueryTimeslotTimePickerProps {
   query: Query;
   setQuery: (query: Query) => void;
+  invalidDate: boolean;
+  setInvalidDate: (invalid: boolean) => void;
   label: string;
   timestampToChoose: 'from' | 'to';
   minTime?: number;
@@ -20,7 +23,16 @@ interface QueryTimeslotTimePickerProps {
 export default function QueryTimeslotTimePicker(
   props: QueryTimeslotTimePickerProps,
 ) {
-  const { query, setQuery, label, timestampToChoose, minTime, maxTime } = props;
+  const {
+    query,
+    setQuery,
+    invalidDate,
+    setInvalidDate,
+    label,
+    timestampToChoose,
+    minTime,
+    maxTime,
+  } = props;
 
   const minDate = minTime === undefined ? undefined : new Date(minTime * 1000);
   const maxDate = maxTime === undefined ? undefined : new Date(maxTime * 1000);
@@ -36,6 +48,19 @@ export default function QueryTimeslotTimePicker(
 
     return timeslot[ttc] ?? 0;
   };
+
+  useEffect(() => {
+    const diff =
+      (getTimstampType(query.time, timestampToChoose) -
+        new Date().getTime() / 1000) /
+      3600;
+    if (diff < 12) {
+      setInvalidDate(true);
+      return;
+    } else {
+      setInvalidDate(false);
+    }
+  }, [query]);
 
   const handleValueChanged = (value: Date | null) => {
     if (!(value instanceof Date) || isNaN(value?.getHours())) {
@@ -64,7 +89,14 @@ export default function QueryTimeslotTimePicker(
     <TimePicker
       value={new Date(getTimstampType(query.time, timestampToChoose) * 1000)}
       onChange={handleValueChanged}
-      renderInput={params => <TextField {...params} label={label} />}
+      renderInput={params => (
+        <TextField
+          label={label}
+          error={invalidDate}
+          helperText={invalidDate && 'Must be at least 12h in the future'}
+          {...params}
+        />
+      )}
       minutesStep={30}
       views={['hours', 'minutes']}
       ampm={false}

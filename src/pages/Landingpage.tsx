@@ -1,4 +1,4 @@
-import { Button, Stack } from '@mui/material';
+import { Button } from '@mui/material';
 import { CalendarPicker } from '@mui/x-date-pickers';
 
 import { Context } from '../data/Context';
@@ -9,8 +9,9 @@ import FloatingSidebar from '../components/FloatingSidebar';
 
 import '../css/Landingpage.css';
 import QueryTimeslotTimePicker from '../components/QueryTimeslotTimePicker';
-import { Link as RouterLink } from 'react-router-dom';
 import ImprintModal from '../components/ImprintModal';
+
+import { useNavigate } from 'react-router-dom';
 
 /**
  * Landingpage
@@ -20,6 +21,11 @@ export default function Landingpage() {
   const { query, setQuery } = useContext(Context);
 
   const [imprintModalOpen, setImprintModalOpen] = useState(false);
+
+  const [invalidFromDate, setInvalidFromDate] = useState(false);
+  const [invalidToDate, setInvaliToDate] = useState(false);
+
+  const navigate = useNavigate();
 
   /**
    * Sets the date for both times
@@ -57,34 +63,16 @@ export default function Landingpage() {
           <p className='hero-subheading'>
             Experience the very best from thousands of different cuisines!
           </p>
-          <Stack direction='row' spacing={2}>
-            <RouterLink
-              to='/search'
-              style={{ textDecoration: 'none', color: 'inherit' }}
-            >
-              <Button
-                variant='contained'
-                color='primary'
-                size='large'
-                sx={{ boxShadow: 3 }}
-              >
-                Book a table
-              </Button>
-            </RouterLink>
-            <RouterLink
-              to='/search'
-              style={{ textDecoration: 'none', color: 'inherit' }}
-            >
-              <Button
-                variant='outlined'
-                color='secondary'
-                size='large'
-                sx={{ boxShadow: 14 }}
-              >
-                Start browsing
-              </Button>
-            </RouterLink>
-          </Stack>
+          <Button
+            variant='contained'
+            color='primary'
+            size='large'
+            sx={{ boxShadow: 3 }}
+            disabled={invalidFromDate || invalidToDate}
+            onClick={() => navigate('/search')}
+          >
+            Find a table
+          </Button>
         </div>
         <div className='hero-image-container'>
           <p className='label'>Number of Persons</p>
@@ -107,12 +95,16 @@ export default function Landingpage() {
             <QueryTimeslotTimePicker
               query={query}
               setQuery={setQuery}
+              invalidDate={invalidFromDate}
+              setInvalidDate={setInvalidFromDate}
               label='Start time'
               timestampToChoose='from'
             />
             <QueryTimeslotTimePicker
               query={query}
               setQuery={setQuery}
+              invalidDate={invalidToDate}
+              setInvalidDate={setInvaliToDate}
               label='End time'
               timestampToChoose='to'
               minTime={(query.time?.from ?? 0) + 60 * 30}
