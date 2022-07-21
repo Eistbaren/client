@@ -2,13 +2,13 @@ import {
   AppBar,
   Toolbar,
   Stepper,
-  StepLabel,
   Step,
   Box,
   Container,
+  StepButton,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import '../css/Header.css';
 
@@ -18,6 +18,7 @@ import '../css/Header.css';
  */
 export default function Header() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const routes = [
     '/',
@@ -50,9 +51,17 @@ export default function Header() {
           </Link>
           <Box sx={{ width: '80%', flexGrow: 1 }}>
             <Stepper activeStep={step}>
-              {steps.map(label => (
+              {steps.map((label, index) => (
                 <Step key={`header-step-${label}`}>
-                  <StepLabel>{label}</StepLabel>
+                  <StepButton
+                    color='inherit'
+                    onClick={() =>
+                      index < step ? navigate(routes[index]) : undefined
+                    }
+                    disabled={index >= step}
+                  >
+                    {label}
+                  </StepButton>
                 </Step>
               ))}
             </Stepper>
