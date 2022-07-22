@@ -24,8 +24,8 @@ export default function TableSelectionPage() {
     configuration,
   } = React.useContext(Context);
 
-  const [invalidFromDate, setInvalidFromDate] = React.useState(false);
-  const [invalidToDate, setInvalidToDate] = React.useState(false);
+  const [invalidFromDate, setInvalidFromDate] = React.useState<string>('');
+  const [invalidToDate, setInvalidToDate] = React.useState<string>('');
 
   if (
     restaurant.openingHours?.from === undefined ||
@@ -53,7 +53,7 @@ export default function TableSelectionPage() {
       restaurantApi
         .getRestaurantReservations(
           restaurant.id ?? '',
-          query.time?.from ?? 0,
+          (query.time?.from ?? 0) + 60, // Add one minute to allow reservation directly after
           query.time?.to ?? 0,
           pagination.currentPage,
           pagination.pageSize,
@@ -130,8 +130,11 @@ export default function TableSelectionPage() {
     if (table.id === undefined) {
       return 'This table cannot be reserved!';
     }
-    if (invalidFromDate || invalidToDate) {
-      return 'Reservation time must be at least 12h in the future!';
+    if (invalidFromDate !== '') {
+      return 'Reservation time ' + invalidFromDate;
+    }
+    if (invalidToDate !== '') {
+      return 'Reservation time ' + invalidToDate;
     }
     if (!isInOpeningHours()) {
       return 'Reservation time is outside of the opening hours!';

@@ -22,8 +22,8 @@ export default function Landingpage() {
 
   const [imprintModalOpen, setImprintModalOpen] = useState(false);
 
-  const [invalidFromDate, setInvalidFromDate] = useState(false);
-  const [invalidToDate, setInvaliToDate] = useState(false);
+  const [invalidFromDate, setInvalidFromDate] = useState('');
+  const [invalidToDate, setInvaliToDate] = useState('');
 
   const navigate = useNavigate();
 
@@ -68,7 +68,7 @@ export default function Landingpage() {
             color='primary'
             size='large'
             sx={{ boxShadow: 3 }}
-            disabled={invalidFromDate || invalidToDate}
+            disabled={invalidFromDate !== '' || invalidToDate !== ''}
             onClick={() => navigate('/search')}
           >
             Find a table
