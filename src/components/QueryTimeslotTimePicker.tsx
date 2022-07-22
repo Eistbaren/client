@@ -7,8 +7,8 @@ import { Query, Timeslot } from '../data';
 interface QueryTimeslotTimePickerProps {
   query: Query;
   setQuery: (query: Query) => void;
-  invalidDate: boolean;
-  setInvalidDate: (invalid: boolean) => void;
+  invalidDate: string;
+  setInvalidDate: (invalid: string) => void;
   label: string;
   timestampToChoose: 'from' | 'to';
   minTime?: number;
@@ -55,10 +55,19 @@ export default function QueryTimeslotTimePicker(
         new Date().getTime() / 1000) /
       3600;
     if (diff < 12) {
-      setInvalidDate(true);
+      setInvalidDate('must be at least 12h in the future!');
       return;
+    }
+    if (
+      new Date(
+        getTimstampType(query.time, timestampToChoose) * 1000,
+      ).getMinutes() %
+        30 !==
+      0
+    ) {
+      setInvalidDate('must be in 30 min intervals!');
     } else {
-      setInvalidDate(false);
+      setInvalidDate('');
     }
   }, [query]);
 
@@ -92,16 +101,8 @@ export default function QueryTimeslotTimePicker(
       renderInput={params => (
         <TextField
           label={label}
-          error={invalidDate}
-          helperText={
-            invalidDate
-              ? 'Must be at least 12h in the future'
-              : new Date(
-                  getTimstampType(query.time, timestampToChoose) * 1000,
-                ).getMinutes() %
-                  30 !==
-                  0 && 'Must be in 30 min intervals'
-          }
+          error={invalidDate !== ''}
+          helperText={invalidDate}
           {...params}
         />
       )}
