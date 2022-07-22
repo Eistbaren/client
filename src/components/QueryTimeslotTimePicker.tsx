@@ -93,7 +93,15 @@ export default function QueryTimeslotTimePicker(
         <TextField
           label={label}
           error={invalidDate}
-          helperText={invalidDate && 'Must be at least 12h in the future'}
+          helperText={
+            invalidDate
+              ? 'Must be at least 12h in the future'
+              : new Date(
+                  getTimstampType(query.time, timestampToChoose) * 1000,
+                ).getMinutes() %
+                  30 !==
+                  0 && 'Must be in 30 min intervals'
+          }
           {...params}
         />
       )}

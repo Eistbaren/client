@@ -53,7 +53,7 @@ export default function TableSelectionPage() {
       restaurantApi
         .getRestaurantReservations(
           restaurant.id ?? '',
-          query.time?.from ?? 0,
+          (query.time?.from ?? 0) + 60, // Add one minute to allow reservation directly after
           query.time?.to ?? 0,
           pagination.currentPage,
           pagination.pageSize,
