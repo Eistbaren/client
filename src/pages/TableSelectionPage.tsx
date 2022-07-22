@@ -109,12 +109,15 @@ export default function TableSelectionPage() {
     ) {
       return false;
     }
+
     // Extract hours and minutes and delete seconds
-    const openingFromMinutes = (restaurant.openingHours.from % 86400) / 60;
-    const openingToMinutes = (restaurant.openingHours.to % 86400) / 60;
-    const queryFromMinutes = (query.time.from % 86400) / 60;
-    const queryToMinutes = (query.time.to % 86400) / 60;
-    console.log(openingFromMinutes);
+    // + 7200 is for timezone adjustment from UTC to GMT+2
+    const openingFromMinutes =
+      ((restaurant.openingHours.from + 7200) % 86400) / 60;
+    const openingToMinutes = ((restaurant.openingHours.to + 7200) % 86400) / 60;
+    const queryFromMinutes = ((query.time.from + 7200) % 86400) / 60;
+    const queryToMinutes = ((query.time.to + 7200) % 86400) / 60;
+
     return (
       queryFromMinutes >= openingFromMinutes &&
       queryToMinutes >= openingFromMinutes &&
