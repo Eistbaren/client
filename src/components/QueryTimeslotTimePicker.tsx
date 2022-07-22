@@ -80,6 +80,7 @@ export default function QueryTimeslotTimePicker(
     );
     newDate.setHours(value?.getHours() ?? 0);
     newDate.setMinutes(value?.getMinutes() ?? 0);
+    newDate.setSeconds(0);
 
     const newTime: Timeslot = {};
     newTime[timestampNotToChoose] = getTimstampType(
