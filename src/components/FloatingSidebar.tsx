@@ -24,7 +24,7 @@ export default function FloatingSidebar(params: {
         </IconButton>
       </Tooltip>
       <Tooltip title='Documentation' placement='right' arrow>
-        <IconButton href='https://reservation-bear.de/api/' target='_blank'>
+        <IconButton href='https://www.reservation-bear.de/api/' target='_blank'>
           <BookIcon fontSize='large' className='social-icon' />
         </IconButton>
       </Tooltip>
